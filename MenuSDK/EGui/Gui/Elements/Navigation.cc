@@ -15,10 +15,16 @@ EGUI_API bool EGuiMain::Tab(const char* title, bool selected, Vec2 size) {
 		changed = true;
 	}
 
-	if (selected) {
-		drawList.FilledRectangle(NextDrawPos, size, Color(255, 255, 255, 10));
-		drawList.FilledRectangle(NextDrawPos + Vec2(0, size.y), { size.x, 1 }, EGuiColors.MenuTheme);
-	}
+	if (selected)
+		tab_alpha[GetItemIdentifier()] = Animations.lerp(tab_alpha[GetItemIdentifier()], 255, timing.getDeltaTime() / 20);
+	else
+		tab_alpha[GetItemIdentifier()] = Animations.lerp(tab_alpha[GetItemIdentifier()], 0, timing.getDeltaTime() / 20);
+
+	drawList.FilledRectangle(NextDrawPos, size, Color(255, 255, 255, tab_alpha[GetItemIdentifier()] / 25.5));
+
+	drawList.PushAlpha(tab_alpha[GetItemIdentifier()]);
+	drawList.FilledRectangle(NextDrawPos + Vec2(0, size.y), { size.x, 1 }, EGuiColors.MenuTheme);
+	drawList.PopAlpha();
 
 	drawList.Text(title, { NextDrawPos.x + size.x / 2, NextDrawPos.y + size.y / 2 }, CENTER_XY, drawList.TitleFont, false, selected ? EGuiColors.TextColor : EGuiColors.TextColorDisabled);
 

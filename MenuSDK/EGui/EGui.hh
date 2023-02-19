@@ -33,6 +33,7 @@
 #include "Backend/Input/Input.hh"
 #include "Backend/Window/Window.hh"
 #include "Backend/Animation/Timing.hh"
+#include "Backend/Animation/Animation.h"
 #include "Backend/Graphics/Direct2D/Direct2D.h"
 #include "Backend/Graphics/DirectX.hh"
 #include "Backend/Render/Renderer.hh"

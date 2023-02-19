@@ -3,8 +3,7 @@
 
 Util utility;
 
-EGUI_API string Util::GetFPS()
-{
+EGUI_API float Util::GetFPS() {
     static int frameCount = 0;
     static auto startTime = std::chrono::high_resolution_clock::now();
     static float fps = 0.0f;
@@ -16,7 +15,11 @@ EGUI_API string Util::GetFPS()
         frameCount = 0;
         startTime = currentTime;
     }
-    return std::to_string(fps);
+    return fps;
+}
+
+EGUI_API string Util::GetFPS_str() {
+    return std::to_string(GetFPS());
 }
 
 EGUI_API long Util::map(long x, long in_min, long in_max, long out_min, long out_max) {

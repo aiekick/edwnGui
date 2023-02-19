@@ -23,6 +23,7 @@
     <ClCompile Include="EGui\Gui\Elements\Keybind.cc" />
     <ClCompile Include="EGui\Backend\Animation\Timing.cpp" />
     <ClCompile Include="EGui\Backend\Graphics\Direct2D\Direct2D.cpp" />
+    <ClCompile Include="EGui\Backend\Animation\Animation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.hh" />
@@ -42,5 +43,6 @@
     <ClInclude Include="EGui\Backend\Render\Fonts\Fonts.hh" />
     <ClInclude Include="EGui\Backend\Animation\Timing.hh" />
     <ClInclude Include="EGui\Backend\Graphics\Direct2D\Direct2D.h" />
+    <ClInclude Include="EGui\Backend\Animation\Animation.h" />
   </ItemGroup>
 </Project>
