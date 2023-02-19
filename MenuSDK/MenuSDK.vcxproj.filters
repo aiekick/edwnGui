@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Core.cc" />
+    <ClCompile Include="EGui\Backend\Input\Input.cc" />
+    <ClCompile Include="EGui\Gui\Dragging.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Navigation.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Checkbox.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Frame.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Combo.cc" />
+    <ClCompile Include="EGui\Backend\Render\Renderer.cc" />
+    <ClCompile Include="EGui\Backend\Utility\Utility.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Slider.cc" />
+    <ClCompile Include="EGui\Gui\Elements\MultiCombo.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Listbox.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Button.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Colorpicker.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Popup.cc" />
+    <ClCompile Include="EGui\EGui.cc" />
+    <ClCompile Include="EGui\Backend\Graphics\DirectX.cc" />
+    <ClCompile Include="EGui\Backend\Window\Window.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Textbox.cc" />
+    <ClCompile Include="EGui\Gui\Elements\Keybind.cc" />
+    <ClCompile Include="EGui\Backend\Animation\Timing.cpp" />
+    <ClCompile Include="EGui\Backend\Graphics\Direct2D\Direct2D.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common.hh" />
+    <ClInclude Include="EGui\Backend\Render\Renderer.hh" />
+    <ClInclude Include="EGui\Backend\Render\Types\Color.hh" />
+    <ClInclude Include="EGui\Backend\Input\Input.hh" />
+    <ClInclude Include="EGui\Backend\Render\Types\Vector.hh" />
+    <ClInclude Include="EGui\Backend\Render\Types\Vector2D.hh" />
+    <ClInclude Include="EGui\EGui.hh" />
+    <ClInclude Include="EGui\Backend\Render\Types\Rect.hh" />
+    <ClInclude Include="EGui\Backend\Render\Types\Vertex.hh" />
+    <ClInclude Include="EGui\Backend\Utility\Utility.hh" />
+    <ClInclude Include="EGui\Backend\Render\Textures\Textures.hh" />
+    <ClInclude Include="EGui\Backend\Render\Types\Easing.hh" />
+    <ClInclude Include="EGui\Backend\Graphics\DirectX.hh" />
+    <ClInclude Include="EGui\Backend\Window\Window.hh" />
+    <ClInclude Include="EGui\Backend\Render\Fonts\Fonts.hh" />
+    <ClInclude Include="EGui\Backend\Animation\Timing.hh" />
+    <ClInclude Include="EGui\Backend\Graphics\Direct2D\Direct2D.h" />
+  </ItemGroup>
+</Project>
