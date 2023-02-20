@@ -24,8 +24,8 @@ EGUI_API bool EGuiMain::Window(int id, const char* title, bool draggable) {
 }
 
 EGUI_API bool EGuiMain::EndWindow() {
-    if (GetWindowDragability())
-        MenuPos = Dragging(GetWindowId(), { GetDraggingBounds().x, GetDraggingBounds().y }, { GetWindowSize().x, GetWindowSize().y }, false);
+    if (GetWindowDragability()) /* Changing the *true* statement on the end makes it so it can drag off screen off = no off screen */
+        MenuPos = Dragging(GetWindowId(), { GetDraggingBounds().x, GetDraggingBounds().y }, { GetWindowSize().x, GetWindowSize().y }, true);
 
     // Restore all stored data.
     EGui.DisableInputArea = Rect(0, 0, 0, 0);

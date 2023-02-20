@@ -18,7 +18,7 @@ EGUI_API bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& sele
     drawList.Sprite(drawList.BackgroundTexture, NextDrawPos, Size);
 
     drawList.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor);
-    drawList.Text(title, NextDrawPos + Vec2(Size.x / 2, 2), CENTER, drawList.Verdana, true, EGuiColors.TextColor);
+    drawList.Text(title, NextDrawPos + Vec2(Size.x / 2, 2), CENTER, drawList.Verdana, false, EGuiColors.TextColor);
 
     if (this_state[GetItemIdentifier()]) {
         drawList.FilledRectangle(NextDrawPos + Vec2(0, Size.y), Size + Vec2(0, Size.y * (sizeof(items) - 3)), EGuiColors.ElementBackColor);
@@ -30,7 +30,7 @@ EGUI_API bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& sele
             if (Input.ButtonBehaviour(NextDrawPos + Vec2(0, Size.y * (item_index + 1)), Size, PRESS))
                 selected[item_index] = !selected[item_index];
 
-            drawList.Text(items[item_index], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * item_index)), CENTER, drawList.Verdana, true, selected[item_index] ? EGuiColors.MenuTheme : Color(255, 255, 255, 255));
+            drawList.Text(items[item_index], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * item_index)), CENTER, drawList.Verdana, false, selected[item_index] ? EGuiColors.MenuTheme : Color(255, 255, 255, 255));
         }
     }
 

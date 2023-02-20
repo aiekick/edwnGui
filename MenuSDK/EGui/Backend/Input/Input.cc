@@ -43,11 +43,12 @@ EGUI_API bool EInput::ButtonBehaviour(Vec2 pos, Vec2 size, int button_type) {
 	if (!window.IsWindowParent())
 		return false;
 
-	// Generate a unique ID for the button based on its position, size, and type.
+	// Generate a unique ID for the button based on its position, size, and type. This is fucking retarded - edwn change it, will cause high memory usage.
 	int id = pos.x + pos.y + button_type;
 
 	bool pressed = false;
 	bool hovered = IsMouseHoveringRect(pos, size);
+
 	static std::unordered_map<int, bool> clicked;
 
 	// Only process button press if the user is not currently dragging.

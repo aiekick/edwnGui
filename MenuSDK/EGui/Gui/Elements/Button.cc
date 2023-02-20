@@ -14,7 +14,7 @@ EGUI_API bool EGuiMain::Button(const char* title, Vec2 Size) {
 
 	drawList.Sprite(drawList.BackgroundTexture, NextDrawPos, Size);
 	drawList.Rectangle(NextDrawPos, Size, pressed ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor);
-	drawList.Text(title, NextDrawPos + Vec2(Size.x / 2, 2), CENTER, drawList.Verdana, true, EGuiColors.TextColor);
+	drawList.Text(title, NextDrawPos + Vec2(Size.x / 2, 2), CENTER, drawList.Verdana, false, EGuiColors.TextColor);
 
 	SetNextDrawPos(OriginalPos);
 	SetNextDrawPosEx({0, 18 + EGuiStyle.Padding });

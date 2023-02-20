@@ -28,7 +28,7 @@ EGUI_API bool EGuiMain::Keybind(const char* id, int& key)
 		}
 	}
 
-	drawList.Text(("[" + (key == NULL ? "..." : keystr) + "]").c_str(), Pos + Vec2(EGuiStyle.Padding, 0), LEFT, drawList.Verdana, true, binding[id] ? EGuiColors.MenuTheme : EGuiColors.TextColor);
+	drawList.Text(("[" + (key == NULL ? "..." : keystr) + "]").c_str(), Pos + Vec2(EGuiStyle.Padding, 0), LEFT, drawList.Verdana, false, binding[id] ? EGuiColors.MenuTheme : EGuiColors.TextColor);
 
 	return true;
 }

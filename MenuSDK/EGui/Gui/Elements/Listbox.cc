@@ -16,7 +16,7 @@ EGUI_API bool EGuiMain::Listbox(const char* title, int* selected, const char* it
     // Draw listbox.
     drawList.Sprite(drawList.BackgroundTexture, NextDrawPos, Size);
     drawList.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor);
-    drawList.Text(title, NextDrawPos + Vec2(Size.x / 2, 2), CENTER, drawList.Verdana, true, EGuiColors.TextColor);
+    drawList.Text(title, NextDrawPos + Vec2(Size.x / 2, 2), CENTER, drawList.Verdana, false, EGuiColors.TextColor);
 
 	// Calculate size of menu and draw menu background.
     drawList.FilledRectangle(NextDrawPos + Vec2(0, Size.y), Size + Vec2(0, Size.y * (sizeof(items) - 3)), EGuiColors.ElementBackColor);
@@ -35,7 +35,7 @@ EGUI_API bool EGuiMain::Listbox(const char* title, int* selected, const char* it
         }
 
         // Draw menu item.
-        drawList.Text(items[i], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * i)), CENTER, drawList.Verdana, true, *selected == i ? EGuiColors.MenuTheme : Color(255, 255, 255, 255));
+        drawList.Text(items[i], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * i)), CENTER, drawList.Verdana, false, *selected == i ? EGuiColors.MenuTheme : Color(255, 255, 255, 255));
     }
 
     // Restore original draw position.

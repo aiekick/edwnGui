@@ -47,7 +47,7 @@ EGUI_API void EGuiMain::DemoWindow() {
     if (Window(-1, "BotLucky", true)) {
         /* fixes position for rendering & elements */
         SetNextDrawPos(MenuPos);
-        SetNextDrawPosEx({ 140, 0 });
+        SetNextDrawPosEx({ 140, 1 });
         
         /* draws and handles tabs */
         if (Tab("HOME", tab == HOME)) tab = HOME;
@@ -59,22 +59,45 @@ EGUI_API void EGuiMain::DemoWindow() {
 
         /* sets position for left group */
         SetNextDrawPos(MenuPos);
-        SetNextDrawPosEx({ 15, 45 });
+
+        float spacing = 15;
+        SetNextDrawPosEx({ spacing, 30.f + spacing });
+
+        Vec2 Size = { (MenuSize.x / 2) - spacing * 1.5f, MenuSize.y - (30.f + spacing * 2.f) };
+
+        Vec2 LeftPos = { MenuPos.x + spacing, MenuPos.y + 30 + spacing };
+        Vec2 RightPos = { MenuPos.x + Size.x + spacing * 2, MenuPos.y + 30 + spacing };
 
         /* handle children (NONONO not those type lol, your weird for thinking that) */
         switch (tab) {
         case 0:
-            Child("Settings", { MenuSize.x / 2 - 25, MenuSize.y - 60});
+            Child("Settings", Size);
+            {
+                static bool test_checkbox;
+                Checkbox("Example check box", &test_checkbox);
+
+                static int test_keybind;
+                Keybind("Example key bind", test_keybind);
+
+                static int test_int_slider = 42;
+                Slider("Example slider int", 0, 100, &test_int_slider);
+
+                static float test_float_slider = 56.f;
+                Slider("Example slider float", 0.f, 100.f, &test_float_slider);
+                
+                static string test_textbox = "Your a big fat fucking nigger";
+                Textbox("Example text box", test_textbox);
+            }
             EndChild();
 
-            SetNextDrawPosEx({ MenuSize.x / 2 - 10, 0 });
+            SetNextDrawPos(RightPos);
 
-            Child("User Interface", { MenuSize.x / 2 - 20, MenuSize.y / 2 - 34 });
+            Child("User Interface", { Size.x, (Size.y / 2) - spacing / 2 });
             EndChild();
 
-            SetNextDrawPosEx({ 0, MenuSize.y / 2 - 25 });
+            SetNextDrawPosEx({ 0, (Size.y / 2) + spacing / 2 });
 
-            Child("Post Process (Too lazy to add switching)", { MenuSize.x / 2 - 20, MenuSize.y / 2 - 34 });
+            Child("Post Process (Too lazy to add switching)", { Size.x, (Size.y / 2) - spacing / 2 });
             EndChild();
 
             break;

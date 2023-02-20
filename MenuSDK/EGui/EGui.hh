@@ -126,7 +126,7 @@ struct EGuiMain {
 	EGUI_API bool IsDragging(int id);
 
 	// Window settings --------------------------------------------------------------------------------------------
-	EGUI_API Vec2 MenuPos = { 550, 300 };
+	EGUI_API Vec2 MenuPos = { 100, 100 };
 	EGUI_API Vec2 MenuSize = { 650, 665 };
 
 	// NextDrawPos ------------------------------------------------------------------------------------------------
@@ -167,7 +167,7 @@ struct EGuiMain {
 	EGUI_API bool EndChild();
 
 	// Tabs -------------------------------------------------------------------------------------------------------
-	EGUI_API bool Tab(const char* title, bool selected, Vec2 size = Vec2(100, 30));
+	EGUI_API bool Tab(const char* title, bool selected, Vec2 size = Vec2(100, 29));
 	EGUI_API bool SubTab(const char* title, bool selected, Vec2 size = Vec2(100, 28));
 	EGUI_API int CurrentTab = 0;
 	EGUI_API int CurrentSubTab = 0;
@@ -178,7 +178,7 @@ struct EGuiMain {
 	EGUI_API bool MultiCombobox(const char* title, std::vector<bool>& selected, const char* items[]);
 	EGUI_API bool Listbox(const char* title, int* selected, const char* items[]);
 	EGUI_API bool Slider(const char* title, int min, int max, int* currentValue, const char* format = "");
-	EGUI_API bool Slider(const char* title, int min, int max, float* currentValue, const char* format = "");
+	EGUI_API bool Slider(const char* title, float min, float max, float* currentValue, const char* format = "");
 	EGUI_API bool Button(const char* title, Vec2 Size = { 0, 0 });
 	EGUI_API bool Textbox(const char* title, std::string &str);
 	EGUI_API bool Keybind(const char* id, int& key);

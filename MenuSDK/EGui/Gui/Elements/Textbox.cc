@@ -52,10 +52,10 @@ EGUI_API bool EGuiMain::Textbox(const char* title, std::string &str) {
     }
 
     // Draw dropdown button.
-    drawList.Sprite(drawList.BackgroundTexture, NextDrawPos, Size);
-    drawList.Rectangle(NextDrawPos, Size, typing[GetItemIdentifier()] ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor);
+    drawList.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
+    drawList.Rectangle(NextDrawPos, Size, typing[GetItemIdentifier()] ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
 
-    drawList.Text((str.empty() && !typing[GetItemIdentifier()]) ? title : str.c_str(), NextDrawPos + Vec2(Size.x / 2, 2), CENTER, drawList.Verdana, true, EGuiColors.TextColor);
+    drawList.Text((str.empty() && !typing[GetItemIdentifier()]) ? title : str.c_str(), NextDrawPos + Vec2(Size.x / 2, 2), CENTER, drawList.Verdana, false, EGuiColors.TextColor);
 
     // Restore original draw position.
     SetNextDrawPos(OriginalPos);
