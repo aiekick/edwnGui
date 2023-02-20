@@ -193,6 +193,7 @@
     <ClCompile Include="EGui\Backend\Input\Input.cc" />
     <ClCompile Include="EGui\Backend\Render\Renderer.cc" />
     <ClCompile Include="EGui\Backend\Utility\Utility.cc" />
+    <ClCompile Include="EGui\Gui\Resizing.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EGui\Backend\Animation\Animation.h" />

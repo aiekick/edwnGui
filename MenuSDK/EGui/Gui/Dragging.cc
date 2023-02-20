@@ -7,6 +7,9 @@ EGUI_API Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscr
 	if (!window.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), Input.GetWindowSize()))
 		return pos;
 
+	if (InResizingArea())
+		return pos;
+
 	Vec2 NewPos = pos;
 
 	for (auto const& [thisid, isDragged] : DraggingState) {

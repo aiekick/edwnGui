@@ -5,6 +5,9 @@ guiColors EGuiColors;
 EGuiDebugWindow DebugWindow;
 EGuiMain EGui;
 
+std::unordered_map<int, Vec2> EGuiMain::MenuPos;
+std::unordered_map<int, Vec2> EGuiMain::MenuSize;
+
 EGUI_API void EGuiMain::Begin() {
     graphics.CreateD3D();
     graphics.CreateD3DPP();
@@ -40,11 +43,19 @@ enum {
 EGUI_API void EGuiMain::DemoWindow() {
     /* Set our constraints for this window */
     //SetNextWindowPos({ 100, 100 });
-    SetNextWindowSize({ 750, 490 });
+    static bool set = false;
+
+    if (!set) {
+        SetNextWindowSize({ 750, 490 }, { 750, 490 });
+        set = true;
+    }
 
     static int tab = 0;
 
     if (Window(-1, "BotLucky", true)) {
+        auto MenuPos = GetWindowPos();
+        auto MenuSize = GetWindowSize();
+
         /* fixes position for rendering & elements */
         SetNextDrawPos(MenuPos);
         SetNextDrawPosEx({ 140, 1 });
@@ -104,4 +115,10 @@ EGUI_API void EGuiMain::DemoWindow() {
         }
     }
     EndWindow();
+
+    /*SetNextWindowSize({ 600, 490 });
+    if (Window(10, "test", true)) {
+
+    }
+    EndWindow();*/
 };

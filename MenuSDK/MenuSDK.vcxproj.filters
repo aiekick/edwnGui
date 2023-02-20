@@ -24,6 +24,7 @@
     <ClCompile Include="EGui\Backend\Animation\Timing.cpp" />
     <ClCompile Include="EGui\Backend\Graphics\Direct2D\Direct2D.cpp" />
     <ClCompile Include="EGui\Backend\Animation\Animation.cpp" />
+    <ClCompile Include="EGui\Gui\Resizing.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.hh" />

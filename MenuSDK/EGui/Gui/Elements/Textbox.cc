@@ -24,6 +24,9 @@ EGUI_API bool EGuiMain::Textbox(const char* title, std::string &str) {
     if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS))
         typing[GetItemIdentifier()] = !typing[GetItemIdentifier()];
 
+    if (Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(NextDrawPos, Size))
+        typing[GetItemIdentifier()] = false;
+
     if (typing[GetItemIdentifier()]) {
         for (int i = 32; i <= 222; i++) {
             if ((i > 32 && i < 48) || (i > 57 && i < 65) || (i > 90 && i < 186))

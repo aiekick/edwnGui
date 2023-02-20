@@ -121,13 +121,14 @@ struct EGuiMain {
 	EGUI_API void End();
 	EGUI_API void DemoWindow();
 
+	// Resizing
+	EGUI_API Vec2 Resizing(int id, Vec2 pos, Vec2 size);
+	EGUI_API bool InResizingArea();
+	EGUI_API bool IsResizing(int id);
+
 	// Dragging ---------------------------------------------------------------------------------------------------
 	EGUI_API Vec2 Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen = true, bool Child = false, Vec2 SnapPos = { 0, 0 });
 	EGUI_API bool IsDragging(int id);
-
-	// Window settings --------------------------------------------------------------------------------------------
-	EGUI_API Vec2 MenuPos = { 100, 100 };
-	EGUI_API Vec2 MenuSize = { 650, 665 };
 
 	// NextDrawPos ------------------------------------------------------------------------------------------------
 	EGUI_API Vec2 NextDrawPos = { 0, 0 };
@@ -136,18 +137,22 @@ struct EGuiMain {
 	EGUI_API void SetNextDrawPos(Vec2 pos) { PreviousDrawPos = NextDrawPos; NextDrawPos = pos; }
 	EGUI_API void SetNextDrawPosEx(Vec2 pos) { PreviousDrawPos = NextDrawPos; NextDrawPos = NextDrawPos + pos; }
 
+	// Window settings --------------------------------------------------------------------------------------------
+	EGUI_API int WindowId = -1;
+	EGUI_API static std::unordered_map<int, Vec2> MenuPos;
+	EGUI_API static std::unordered_map<int, Vec2> MenuSize;
+
 	// Window -----------------------------------------------------------------------------------------------------
-	EGUI_API [[nodiscard]]Vec2 GetWindowPos() const { return MenuPos; }
-	EGUI_API [[nodiscard]]Vec2 GetWindowSize() const { return MenuSize; }
-	EGUI_API void SetNextWindowPos(Vec2 pos) { MenuPos = pos; }
-	EGUI_API void SetNextWindowPosEx(Vec2 pos) { MenuPos = MenuPos + pos; }
-	EGUI_API void SetNextWindowSize(Vec2 Size) { MenuSize = Size; }
-	EGUI_API void SetNextWindowConstraints(Rect rect) { MenuPos = Vec2(rect.x, rect.y); MenuSize = Vec2(rect.w, rect.h); }
+	Vec2 NextWindowPos, NextWindowSize, NextWindowSmallSize = Vec2(0, 0);
+	EGUI_API [[nodiscard]]Vec2 GetWindowPos() const { return MenuPos[WindowId]; }
+	EGUI_API [[nodiscard]]Vec2 GetWindowSize() const { return MenuSize[WindowId]; }
+	EGUI_API void SetNextWindowPos(Vec2 pos) { NextWindowPos = pos; }
+	EGUI_API void SetNextWindowPosEx(Vec2 pos) { NextWindowPos = NextWindowPos + pos; }
+	EGUI_API void SetNextWindowSize(Vec2 Smallest_Size, Vec2 Size) { NextWindowSmallSize = Size;  NextWindowSize = Size; }
 	EGUI_API bool Window(int id, const char* title, bool draggable = true);
 	EGUI_API bool EndWindow();
 
 	// Window ID --------------------------------------------------------------------------------------------------
-	EGUI_API int WindowId = 0;
 	EGUI_API bool CanDragWindow = false;
 	EGUI_API Rect DraggingBounds = Rect(0, 0, 0, 0);
 	EGUI_API void SetWindowDraggingBounds(Rect Bounds) { DraggingBounds = Bounds; }
