@@ -87,14 +87,16 @@ void EGuiMain::DemoWindow() {
         /* fixes position for rendering & elements */
         SetNextDrawPos(MenuPos);
         SetNextDrawPosEx({ 140, 1 });
+
+        Vec2 TabSize = {(MenuSize.x - 140) / 6, 29};
         
         /* draws and handles tabs */
-        if (Tab("HOME", tab == HOME)) tab = HOME;
-        if (Tab("LEGIT", tab == LEGIT)) tab = LEGIT;
-        if (Tab("RAGE", tab == RAGE)) tab = RAGE;
-        if (Tab("DEFENSE", tab == DEFENSE)) tab = DEFENSE;
-        if (Tab("VISUALS", tab == VISUALS)) tab = VISUALS;
-        if (Tab("MISC", tab == MISC)) tab = MISC;
+        if (Tab("HOME", tab == HOME, TabSize)) tab = HOME;
+        if (Tab("LEGIT", tab == LEGIT, TabSize)) tab = LEGIT;
+        if (Tab("RAGE", tab == RAGE, TabSize)) tab = RAGE;
+        if (Tab("DEFENSE", tab == DEFENSE, TabSize)) tab = DEFENSE;
+        if (Tab("VISUALS", tab == VISUALS, TabSize)) tab = VISUALS;
+        if (Tab("MISC", tab == MISC, TabSize)) tab = MISC;
 
         /* sets position for left group */
         SetNextDrawPos(MenuPos);
