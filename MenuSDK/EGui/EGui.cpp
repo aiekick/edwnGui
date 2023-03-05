@@ -9,11 +9,8 @@ std::unordered_map<int, Vec2> EGuiMain::MenuPos;
 std::unordered_map<int, Vec2> EGuiMain::MenuSize;
 
 void EGuiMain::Begin() {
-    graphics.CreateD3D();
-    graphics.CreateD3DPP();
-    graphics.CreateD3DDevice();
-
-    renderer.Init();
+    graphics.Create();
+    renderer.CreateObjects();
 }
 
 void EGuiMain::PreRender() {
@@ -76,7 +73,7 @@ void EGuiMain::DemoPhysics() {
 
 void EGuiMain::DemoWindow() {
     SetNextWindowPos({ 100, 100 });
-    SetNextWindowSize({ 750, 490 }, { 750, 490 });
+    SetNextWindowSize({ 650, 390 }, { 750, 490 });
 
     static int tab = 0;
 

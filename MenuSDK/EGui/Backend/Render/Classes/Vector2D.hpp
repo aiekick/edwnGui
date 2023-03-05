@@ -28,6 +28,14 @@ struct Vec2 {
         return Vec2(x - other.x, y - other.y);
     }
 
+    Vec2 operator*(const int& other) const {
+        return Vec2(x * other, y * other);
+    }
+
+    Vec2 operator*(const float& other) const {
+        return Vec2(x * other, y * other);
+    }
+
     bool operator==(const Vec2& other) const {
         return x == other.x && y == other.y;
     }

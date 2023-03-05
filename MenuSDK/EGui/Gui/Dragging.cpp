@@ -4,10 +4,7 @@ static std::unordered_map<int, bool> DraggingState;
 static std::unordered_map<int, bool> TriedDragOutside;
 static std::unordered_map<int, Vec2> Difference;
 Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool Child, Vec2 SnapPos) {
-	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), Input.GetWindowSize()))
-		return pos;
-
-	if (InResizingArea())
+	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), Input.GetWindowSize()) || InResizingArea())
 		return pos;
 
 	Vec2 NewPos = pos;

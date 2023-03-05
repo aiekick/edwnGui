@@ -1,5 +1,7 @@
 #include "../../EGui.hpp"
 
+static std::unordered_map<int, bool> outline_up;
+static std::unordered_map<int, float> outline_alpha;
 bool EGuiMain::Window(int id, const char* title, bool draggable) {
     if (!(NextWindowPos == Vec2(0, 0))) {
         MenuPos[id] = NextWindowPos;
@@ -24,8 +26,24 @@ bool EGuiMain::Window(int id, const char* title, bool draggable) {
     renderer.FilledRectangle(MenuPos[WindowId], Vec2(MenuSize[WindowId].x, 25), EGuiColors.FrameHeaderColor, EGuiStyle.FrameRounding);
     renderer.FilledRectangle(MenuPos[WindowId] + Vec2(0, 20), Vec2(MenuSize[WindowId].x, 10), EGuiColors.FrameHeaderColor);
     
+    float delta_time = timing.getDeltaTime();
+
+    if (IsResizing(GetWindowId()) && outline_up[GetItemIdentifier()])
+        outline_alpha[GetItemIdentifier()] = clamp(Animations.lerp(outline_alpha[GetItemIdentifier()], 255.f, delta_time * 4), 0.f, 255.f);
+    else
+        outline_alpha[GetItemIdentifier()] = clamp(Animations.lerp(outline_alpha[GetItemIdentifier()], 0.f, delta_time * 4), 0.f, 255.f);
+
+    if (outline_alpha[GetItemIdentifier()] <= 10.f) //min alpha
+        outline_up[GetItemIdentifier()] = !outline_up[GetItemIdentifier()];
+    else if (outline_alpha[GetItemIdentifier()] >= 254.f) // max alpha
+        outline_up[GetItemIdentifier()] = !outline_up[GetItemIdentifier()];
+
     //Outline
     renderer.Rectangle(MenuPos[WindowId], MenuSize[WindowId], EGuiColors.FrameBorderColor, EGuiStyle.FrameRounding);
+
+    renderer.PushAlpha(outline_alpha[GetItemIdentifier()]);
+    renderer.Rectangle(MenuPos[WindowId], MenuSize[WindowId], EGuiColors.MenuTheme, EGuiStyle.FrameRounding);
+    renderer.PopAlpha();
 
     //Title
     renderer.Text(title, MenuPos[WindowId] + Vec2(50, 6), LEFT, renderer.TitleFont, false, EGuiColors.TextColor);

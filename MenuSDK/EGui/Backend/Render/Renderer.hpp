@@ -52,7 +52,6 @@ struct ERenderer {
     IDirect3DTexture9* AlphaTexture;
     IDirect3DTexture9* MouseTexture;
 
-    void Init();
     void CreateObjects();
     void ReleaseObjects();
     void Reset();

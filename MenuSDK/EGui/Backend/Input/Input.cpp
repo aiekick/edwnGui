@@ -32,7 +32,7 @@ bool EInput::IsMouseHoveringRect(Vec2 pos, Vec2 size)
 		//@todo: get our actual current cursor size incase of custom cursors. https://forums.codeguru.com/showthread.php?449040-get-the-system-current-cursor-size
 		//The (x = -7, y = -30) is to compensate for our cursor size.
 
-		if ((p.x - (EGui.Windowed ? 7 : 0) - WindowPos.x >= pos.x && p.x - (EGui.Windowed ? 7 : 0) - WindowPos.x <= pos.x + size.x) && (p.y - (EGui.Windowed ? 30 : 0) - WindowPos.y >= pos.y && p.y - (EGui.Windowed ? 30 : 0) - WindowPos.y <= pos.y + size.y))
+		if ((p.x - 7- WindowPos.x >= pos.x && p.x - 7 - WindowPos.x <= pos.x + size.x) && (p.y - 30 - WindowPos.y >= pos.y && p.y - 30 - WindowPos.y <= pos.y + size.y))
 			return true;
 	}
 

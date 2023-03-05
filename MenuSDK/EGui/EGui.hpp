@@ -18,6 +18,8 @@
 #include <unordered_map>
 #include <map>
 #include <dwrite.h>
+#include <chrono>
+#include <cmath>
 
 // EGui source files
 #include "Backend/Render/Classes/Color.hpp"
@@ -83,11 +85,8 @@ struct EGuiMain {
 	string GetVersion() { return EGUI_VERSION; }
 
 	// Window -----------------------------------------------------------------------------------------------------
-	bool Windowed = false;
 	HWND hwnd = NULL;
-	bool NoWindowHeader = false;
 	void SetWindowHandle(HWND hWnd) { hwnd = hWnd; }
-	void SetWindowed(bool state) { Windowed = state; }
 
 	// Direct3D ---------------------------------------------------------------------------------------------------
 	IDirect3D9* D3D = NULL;
@@ -159,7 +158,7 @@ struct EGuiMain {
 	[[nodiscard]]Vec2 GetWindowSize() const { return MenuSize[WindowId]; }
 	void SetNextWindowPos(Vec2 pos) { if (!CanSetWindowPos[GetWindowId()]) NextWindowPos = pos; CanSetWindowPos[GetWindowId()] = true; }
 	void SetNextWindowPosEx(Vec2 pos) { if (!CanSetWindowPos[GetWindowId()]) NextWindowPos = NextWindowPos + pos; CanSetWindowPos[GetWindowId()] = true; }
-	void SetNextWindowSize(Vec2 Smallest_Size, Vec2 Size) { if (!CanSetWindowSize[GetWindowId()]) { NextWindowSmallSize = Size;  NextWindowSize = Size; } CanSetWindowSize[GetWindowId()] = true; }
+	void SetNextWindowSize(Vec2 Smallest_Size, Vec2 Size) { if (!CanSetWindowSize[GetWindowId()]) { NextWindowSmallSize = Smallest_Size;  NextWindowSize = Size; } CanSetWindowSize[GetWindowId()] = true; }
 	bool Window(int id, const char* title, bool draggable = true);
 	bool EndWindow();
 

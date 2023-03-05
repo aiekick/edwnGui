@@ -21,8 +21,6 @@ void ERenderer::CreateObjects() {
 }
 
 void ERenderer::ReleaseObjects() {
-    if (EGui.Sprite)
-        EGui.Sprite->Release();
     if (Verdana.D3DXFont)
         Verdana.D3DXFont->Release();
     if (Tahombd.D3DXFont)
@@ -33,14 +31,6 @@ void ERenderer::ReleaseObjects() {
         TabIcon.D3DXFont->Release();
     if (TitleFont.D3DXFont)
         TitleFont.D3DXFont->Release();
-}
-
-void ERenderer::Init()
-{
-    if (NeedsUpdate) {
-        CreateObjects();
-        NeedsUpdate = false;
-    }
 }
 
 void ERenderer::Reset()
@@ -155,7 +145,20 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
     D3DCOLOR d3dclr = ColorToD3DColor(clr);
 
     if (rounding) {
-        vertex vert[64] = {};
+        FilledRectangle(Pos + Vec2(rounding, 0), Vec2(Size.x - (rounding * 2), rounding), clr); //TopRect
+        FilledRectangle(Pos + Vec2(0, rounding), Vec2(Size.x, Size.y - (rounding * 2)), clr); //MiddleRect
+        FilledRectangle(Pos + Vec2(rounding, Size.y - rounding), Vec2(Size.x - (rounding * 2), rounding), clr); //BottomRect
+        Triangle(Pos + Vec2(0, rounding), Pos + Vec2(rounding, 0), Pos + Vec2(rounding, rounding), clr); //TopL
+        Triangle(Pos + Vec2(0, Size.y - rounding), Pos + Vec2(rounding, Size.y), Pos + Vec2(rounding, Size.y - rounding), clr); //BomL
+        Triangle(Pos + Vec2(Size.x - rounding, rounding), Pos + Vec2(Size.x - rounding, 0), Pos + Vec2(Size.x, rounding), clr); //TopR
+        Triangle(Pos + Vec2(Size.x - rounding, Size.y - rounding), Pos + Vec2(Size.x - rounding, Size.y), Pos + Vec2(Size.x, Size.y - rounding), clr); //BomR
+        FilledCircle(Pos, rounding, clr, QUARTER, 0.f); //Top left
+        FilledCircle(Pos + Vec2(Size.x - (rounding * 2), 0), rounding, clr, QUARTER, 90.f); //Top right
+        FilledCircle(Pos + Vec2(Size.x - (rounding * 2), Size.y - (rounding * 2)), rounding, clr, QUARTER, 180.f); //Bom right
+        FilledCircle(Pos + Vec2(0, Size.y - (rounding * 2)), rounding, clr, QUARTER, 270.f); //Bom left
+        return;
+
+        /*vertex vert[64] = {};
 
         for (int i = 0; i < 4; i++)
         {
@@ -184,7 +187,7 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
         EGui.Device->SetPixelShader(nullptr);
 
         EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 62, vert, sizeof(vertex));
-        return;
+        return;*/
     }
 
     vertex vertices[4] = {
@@ -345,7 +348,7 @@ void ERenderer::Circle(Vec2 Pos, float radius, Color clr, int e_completion, floa
     D3DCOLOR d3dclr = ColorToD3DColor(clr);
     Pos = Pos + Vec2(radius, radius);
 
-    const int NUM_VERTICES = 365; // Use more vertices to get a smoother circle
+    const int NUM_VERTICES = 363; // Use more vertices to get a smoother circle
 
     std::vector<vertex> circle(NUM_VERTICES + 2);
     float angle = rotation * D3DX_PI / 180;
@@ -457,9 +460,15 @@ void ERenderer::FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion
     EGui.Device->SetPixelShader(NULL);
     EGui.Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
 
+    // prepare primitive
+    EGui.Device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
+
     EGui.Device->SetStreamSource(0, EGui.VertexBuffer, 0, sizeof(vertex));
     EGui.Device->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, NUM_VERTICES - 1);
     EGui.VertexBuffer->Release();
+
+    // restore primitive
+    EGui.Device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, FALSE);
 }
 
 void ERenderer::BorderedCircle(Vec2 Pos, float radius, Color clr, Color borderClr, int e_completion, float rotation) {

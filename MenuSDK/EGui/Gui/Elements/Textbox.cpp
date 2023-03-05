@@ -2,11 +2,11 @@
 
 #include "../../EGui.hpp"
 
+static std::unordered_map<int, bool> typing;
+static std::unordered_map<int, float> textbox_alpha;
+
 bool EGuiMain::Textbox(const char* title, std::string &str) {
     SetItemIdentifier(GetItemIdentifier() + 1);
-
-    // Keep track of whether we are typing or not.
-    static std::unordered_map<int, bool> typing;
 
     // Keep track of whether the selected value has changed.
     bool value_changed = false;
@@ -54,9 +54,20 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
             typing[GetItemIdentifier()] = !typing[GetItemIdentifier()];
     }
 
+    float delta_time = timing.getDeltaTime();
+
+    if (typing[GetItemIdentifier()])
+        textbox_alpha[GetItemIdentifier()] = clamp(Animations.lerp(textbox_alpha[GetItemIdentifier()], 255.f, delta_time * 8), 0.f, 255.f);
+    else
+        textbox_alpha[GetItemIdentifier()] = clamp(Animations.lerp(textbox_alpha[GetItemIdentifier()], 0.f, delta_time * 8), 0.f, 255.f);
+
     // Draw dropdown button.
     renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
-    renderer.Rectangle(NextDrawPos, Size, typing[GetItemIdentifier()] ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
+    renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
+
+    renderer.PushAlpha(textbox_alpha[GetItemIdentifier()]);
+    renderer.Rectangle(NextDrawPos, Size, EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
+    renderer.PopAlpha();
 
     renderer.Text((str.empty() && !typing[GetItemIdentifier()]) ? title : str.c_str(), NextDrawPos + Vec2(Size.x / 2, 2), CENTER, renderer.Verdana, false, EGuiColors.TextColor);
 

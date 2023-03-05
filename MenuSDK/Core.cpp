@@ -1,7 +1,7 @@
 #include "Common.hpp"
 
 int main() {
-    wnd.ExampleWindow("EGui - " + EGui.GetVersion(), false);
+    wnd.CreateGraphicsWindow("EGui - " + EGui.GetVersion());
     EGui.Begin();
 
     MSG msg;
