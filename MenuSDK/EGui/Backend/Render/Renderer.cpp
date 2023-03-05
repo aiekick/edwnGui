@@ -145,37 +145,23 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
     D3DCOLOR d3dclr = ColorToD3DColor(clr);
 
     if (rounding) {
-        FilledRectangle(Pos + Vec2(rounding, 0), Vec2(Size.x - (rounding * 2), rounding), clr); //TopRect
-        FilledRectangle(Pos + Vec2(0, rounding), Vec2(Size.x, Size.y - (rounding * 2)), clr); //MiddleRect
-        FilledRectangle(Pos + Vec2(rounding, Size.y - rounding), Vec2(Size.x - (rounding * 2), rounding), clr); //BottomRect
-        Triangle(Pos + Vec2(0, rounding), Pos + Vec2(rounding, 0), Pos + Vec2(rounding, rounding), clr); //TopL
-        Triangle(Pos + Vec2(0, Size.y - rounding), Pos + Vec2(rounding, Size.y), Pos + Vec2(rounding, Size.y - rounding), clr); //BomL
-        Triangle(Pos + Vec2(Size.x - rounding, rounding), Pos + Vec2(Size.x - rounding, 0), Pos + Vec2(Size.x, rounding), clr); //TopR
-        Triangle(Pos + Vec2(Size.x - rounding, Size.y - rounding), Pos + Vec2(Size.x - rounding, Size.y), Pos + Vec2(Size.x, Size.y - rounding), clr); //BomR
-        FilledCircle(Pos, rounding, clr, QUARTER, 0.f); //Top left
-        FilledCircle(Pos + Vec2(Size.x - (rounding * 2), 0), rounding, clr, QUARTER, 90.f); //Top right
-        FilledCircle(Pos + Vec2(Size.x - (rounding * 2), Size.y - (rounding * 2)), rounding, clr, QUARTER, 180.f); //Bom right
-        FilledCircle(Pos + Vec2(0, Size.y - (rounding * 2)), rounding, clr, QUARTER, 270.f); //Bom left
-        return;
-
-        /*vertex vert[64] = {};
+        vertex vert[64] = {};
 
         for (int i = 0; i < 4; i++)
         {
-            int xxx = Pos.x + ((i < 2) ? (Size.x - rounding) : rounding);
-            int yyy = Pos.y + ((i % 3) ? (Size.y - rounding) : rounding);
+            Vec2 Point = { Pos.x + ((i < 2) ? (Size.x - rounding) : rounding) , Pos.y + ((i % 3) ? (Size.y - rounding) : rounding) };
 
-            float tttt = 90.f * i;
+            float rotation = 90.f * i;
 
             for (int j = 0; j < 16; j++)
             {
-                float _aaaaaa = (tttt + j * 6.f);
-                _aaaaaa = (_aaaaaa * toRadians);
+                float fixed = (rotation + j * 6.f);
+                fixed = (fixed * toRadians);
 
                 const auto vert_idx = (i * 16) + j;
 
-                vert[vert_idx].x = float(xxx + rounding * std::sin(_aaaaaa));
-                vert[vert_idx].y = float(yyy - rounding * std::cos(_aaaaaa));
+                vert[vert_idx].x = float(Point.x + rounding * std::sinf(fixed));
+                vert[vert_idx].y = float(Point.y - rounding * std::cosf(fixed));
                 vert[vert_idx].z = 0.0f;
                 vert[vert_idx].rhw = 1.0f;
                 vert[vert_idx].color = d3dclr;
@@ -187,7 +173,7 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
         EGui.Device->SetPixelShader(nullptr);
 
         EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 62, vert, sizeof(vertex));
-        return;*/
+        return;
     }
 
     vertex vertices[4] = {
@@ -449,13 +435,6 @@ void ERenderer::FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion
         circle[i].y = ynew + Pos.y;
     }
 
-    EGui.Device->CreateVertexBuffer((NUM_VERTICES + 2) * sizeof(vertex), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE, D3DPOOL_DEFAULT, &EGui.VertexBuffer, NULL);
-
-    VOID* pVertices;
-    EGui.VertexBuffer->Lock(0, (NUM_VERTICES + 2) * sizeof(vertex), (void**)&pVertices, 0);
-    memcpy(pVertices, &circle[0], (NUM_VERTICES + 2) * sizeof(vertex));
-    EGui.VertexBuffer->Unlock();
-
     EGui.Device->SetTexture(0, NULL);
     EGui.Device->SetPixelShader(NULL);
     EGui.Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
@@ -463,9 +442,7 @@ void ERenderer::FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion
     // prepare primitive
     EGui.Device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
 
-    EGui.Device->SetStreamSource(0, EGui.VertexBuffer, 0, sizeof(vertex));
-    EGui.Device->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, NUM_VERTICES - 1);
-    EGui.VertexBuffer->Release();
+    EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, NUM_VERTICES, &circle[0], sizeof(vertex));
 
     // restore primitive
     EGui.Device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, FALSE);

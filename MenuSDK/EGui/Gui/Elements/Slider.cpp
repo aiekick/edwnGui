@@ -23,9 +23,9 @@ bool EGuiMain::Slider(const char* title, int min, int max, int* currentValue, co
 
 	bool hovering = Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size);
 
-	if ((Input.IsKeyPressed(VK_LEFT) && hovering) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), button_size, PRESS))
+	if ((hovering && Input.IsKeyPressed(VK_LEFT)) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), button_size, PRESS))
 		*currentValue = *currentValue - 1;
-	else if ((Input.IsKeyPressed(VK_RIGHT) && hovering) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), button_size, PRESS))
+	else if ((hovering && Input.IsKeyPressed(VK_RIGHT)) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), button_size, PRESS))
 		*currentValue = *currentValue + 1;
 
 	if (dragging[GetItemIdentifier()]) {
@@ -80,18 +80,18 @@ bool EGuiMain::Slider(const char* title, float min, float max, float* currentVal
 	bool hovering = Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size);
 
 	if ((Input.IsKeyPressed(VK_LEFT) && hovering) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), button_size, PRESS))
-		*currentValue = *currentValue - 1;
+		*currentValue = *currentValue - 1.f;
 	else if ((Input.IsKeyPressed(VK_RIGHT) && hovering) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), button_size, PRESS))
-		*currentValue = *currentValue + 1;
+		*currentValue = *currentValue + 1.f;
 
 	if (dragging[GetItemIdentifier()]) {
 		int formula = (Input.GetMousePos().x - GetNextDrawPos().x);
 		*currentValue = utility.map(formula, 0, slider_size.x, min, max + 1);
 	}
 
-	*currentValue = std::clamp(*currentValue, float(min), float(max));
+	*currentValue = std::clamp(*currentValue, min, max);
 
-	std::string Value = std::to_string((int)* currentValue);
+	std::string Value = std::to_string((int) *currentValue);
 	Value.append(format);
 
 	slider_x[GetItemIdentifier()] = clamp(Animations.lerp(slider_x[GetItemIdentifier()], utility.map(*currentValue, min, max, 0, slider_size.x), timing.getDeltaTime() * 8), 0.f, slider_size.x);

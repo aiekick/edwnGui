@@ -45,5 +45,8 @@
     <ClInclude Include="EGui\Backend\Render\Fonts\Fonts.hpp" />
     <ClInclude Include="EGui\Backend\Animation\Timing.hpp" />
     <ClInclude Include="EGui\Backend\Animation\Animation.hpp" />
+    <ClInclude Include="EGui\Backend\Threading\atomic_lock.h" />
+    <ClInclude Include="EGui\Backend\Threading\packed_heap.h" />
+    <ClInclude Include="EGui\Backend\Threading\shared_mutex.h" />
   </ItemGroup>
 </Project>

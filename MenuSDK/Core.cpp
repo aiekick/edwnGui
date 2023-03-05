@@ -15,6 +15,7 @@ int main() {
 
         EGui.PreRender();
         {
+            SetWindowTextA(EGui.hwnd, std::to_string(utility.GetFps()).c_str());
             EGui.DemoWindow();
         }
         EGui.Render();

@@ -88,12 +88,12 @@ bool EInput::IsKeyDown(int key) {
 	return (GetKeyState(key) & 0x80);
 }
 
+static std::unordered_map<int, bool> keypressed;
 bool EInput::IsKeyPressed(int key)
 {
 	if (!wnd.IsWindowParent())
 		return false;
 
-	static std::unordered_map<int, bool> keypressed;
 	bool pressed = false;
 
 	if ((GetKeyState(key) & 0x80) != 0 && !keypressed[key])
