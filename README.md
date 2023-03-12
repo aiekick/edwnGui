@@ -8,7 +8,7 @@ Here is a quick example on how to make a test environment window.
 #include "EGui.hpp"
 
 int main() {
-    wnd.ExampleWindow("EGui Test Environment", false);
+    wnd.CreateGraphicsWindow("EGui - " + EGui.GetVersion());
     EGui.Begin();
 
     MSG msg;
@@ -21,9 +21,10 @@ int main() {
         }
 
         EGui.PreRender();
-        {
-            EGui.DemoWindow();
-        }
+        
+        //Render data here, run our demo window.
+        EGui.DemoWindow();
+        
         EGui.Render();
 
     } EGui.End();
