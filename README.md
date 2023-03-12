@@ -4,7 +4,7 @@ EGui is a Direct3D9 Graphical User Interface made for ease of use for beginners.
 
 ## How easy exactly is it to use?
 Here is a quick example on how to make a test environment window.
-```
+```cpp
 #include "EGui.hpp"
 
 int main() {
