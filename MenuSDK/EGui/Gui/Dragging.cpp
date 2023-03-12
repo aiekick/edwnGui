@@ -4,7 +4,7 @@ static std::unordered_map<int, bool> DraggingState;
 static std::unordered_map<int, bool> TriedDragOutside;
 static std::unordered_map<int, Vec2> Difference;
 Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool Child, Vec2 SnapPos) {
-	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), Input.GetWindowSize()) || InResizingArea())
+	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), wnd.GetWindowSize()) || InResizingArea())
 		return pos;
 
 	Vec2 NewPos = pos;
@@ -16,7 +16,7 @@ Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool
 		}
 	}
 
-	if (!DraggingState[id] && Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(pos, size))
+	if (!GetWindowDragability() || (!DraggingState[id] && Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(pos, size)))
 		TriedDragOutside[id] = true;
 	else if (!DraggingState[id] && !Input.IsKeyDown(VK_LBUTTON))
 		TriedDragOutside[id] = false;
@@ -39,7 +39,7 @@ Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool
 
 	//This restricts our element from going out of window bounds
 	if (!CanDragOffscreen)
-		NewPos = { std::clamp(NewPos.x, 0.f, Input.GetWindowSize().x - size.x), std::clamp(NewPos.y, 0.f, Input.GetWindowSize().y - size.y) };
+		NewPos = { std::clamp(NewPos.x, 0.f, wnd.GetWindowSize().x - size.x), std::clamp(NewPos.y, 0.f, wnd.GetWindowSize().y - size.y) };
 
 	return NewPos;
 }

@@ -16,9 +16,9 @@ bool EGuiMain::Slider(const char* title, int min, int max, int* currentValue, co
 	Vec2 OriginalPos = NextDrawPos;
 	SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
 
-	if (Input.ButtonBehaviour(NextDrawPos + Vec2(0, text_size.y), slider_size, HOLD))
+	if (!dragging[GetItemIdentifier()] && Input.IsKeyDown(VK_LBUTTON) && Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size))
 		dragging[GetItemIdentifier()] = true;
-	else
+	else if (dragging[GetItemIdentifier()] && !Input.IsKeyDown(VK_LBUTTON))
 		dragging[GetItemIdentifier()] = false;
 
 	bool hovering = Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size);
@@ -30,7 +30,7 @@ bool EGuiMain::Slider(const char* title, int min, int max, int* currentValue, co
 
 	if (dragging[GetItemIdentifier()]) {
 		int formula = (Input.GetMousePos().x - GetNextDrawPos().x);
-		*currentValue = utility.map(formula, 0, slider_size.x, min, max + 1);
+		*currentValue = Math.Map(formula, 0, (int)slider_size.x, min, max + 1);
 	}
 
 	*currentValue = std::clamp(*currentValue, min, max);
@@ -38,7 +38,7 @@ bool EGuiMain::Slider(const char* title, int min, int max, int* currentValue, co
 	std::string Value = std::to_string(*currentValue);
 	Value.append(format);
 
-	slider_x[GetItemIdentifier()] = clamp(Animations.lerp(slider_x[GetItemIdentifier()], utility.map(*currentValue, min, max, 0, slider_size.x), timing.getDeltaTime() * 8), 0.f, slider_size.x);
+	slider_x[GetItemIdentifier()] = clamp(Animations.lerp(slider_x[GetItemIdentifier()], Math.Map(*currentValue, min, max, 0, (int)slider_size.x), timing.getDeltaTime() * 8), 0.f, slider_size.x);
 
 	renderer.FilledRectangle(NextDrawPos + Vec2(0, text_size.y), slider_size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
 	renderer.Text(title, NextDrawPos, LEFT, renderer.Verdana, false, EGuiColors.TextColor);
@@ -72,21 +72,21 @@ bool EGuiMain::Slider(const char* title, float min, float max, float* currentVal
 	auto OriginalPos = NextDrawPos;
 	SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
 
-	if (Input.ButtonBehaviour(NextDrawPos + Vec2(0, text_size.y), slider_size, HOLD))
+	if (!dragging[GetItemIdentifier()] && Input.IsKeyDown(VK_LBUTTON) && Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size))
 		dragging[GetItemIdentifier()] = true;
-	else
+	else if (dragging[GetItemIdentifier()] && !Input.IsKeyDown(VK_LBUTTON))
 		dragging[GetItemIdentifier()] = false;
 
 	bool hovering = Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size);
 
-	if ((Input.IsKeyPressed(VK_LEFT) && hovering) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), button_size, PRESS))
+	if ((hovering && Input.IsKeyPressed(VK_LEFT)) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), button_size, PRESS))
 		*currentValue = *currentValue - 1.f;
-	else if ((Input.IsKeyPressed(VK_RIGHT) && hovering) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), button_size, PRESS))
+	else if ((hovering && Input.IsKeyPressed(VK_RIGHT)) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), button_size, PRESS))
 		*currentValue = *currentValue + 1.f;
 
 	if (dragging[GetItemIdentifier()]) {
 		int formula = (Input.GetMousePos().x - GetNextDrawPos().x);
-		*currentValue = utility.map(formula, 0, slider_size.x, min, max + 1);
+		*currentValue = Math.Map(formula, 0, (int)slider_size.x, (int)min, (int)max + 1);
 	}
 
 	*currentValue = std::clamp(*currentValue, min, max);
@@ -94,7 +94,7 @@ bool EGuiMain::Slider(const char* title, float min, float max, float* currentVal
 	std::string Value = std::to_string((int) *currentValue);
 	Value.append(format);
 
-	slider_x[GetItemIdentifier()] = clamp(Animations.lerp(slider_x[GetItemIdentifier()], utility.map(*currentValue, min, max, 0, slider_size.x), timing.getDeltaTime() * 8), 0.f, slider_size.x);
+	slider_x[GetItemIdentifier()] = clamp(Animations.lerp(slider_x[GetItemIdentifier()], Math.Map((int)*currentValue, (int)min, (int)max, 0, (int)slider_size.x), timing.getDeltaTime() * 8), 0.f, slider_size.x);
 
 	renderer.FilledRectangle(NextDrawPos + Vec2(0, text_size.y), slider_size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
 	renderer.Text(title, NextDrawPos, LEFT, renderer.Verdana, false, EGuiColors.TextColor);

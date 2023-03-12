@@ -2,29 +2,13 @@
 
 EInput Input;
 
-Vec2 EInput::GetWindowPos() {
-	RECT rect = { NULL };
-	if (GetWindowRect(EGui.hwnd, &rect))
-		return Vec2(rect.left, rect.top);
-
-	return Vec2(0, 0);
-}
-
-Vec2 EInput::GetWindowSize() {
-	RECT rect = { NULL };
-	if (GetClientRect(EGui.hwnd, &rect)) // -1 because the outline is drawn there lol and getclientrect does not account for it
-		return Vec2(rect.right - rect.left - 1, rect.bottom - rect.top - 1);
-
-	return Vec2(0, 0);
-}
-
 //This could use a recode, try using ScreenToClient(hwnd, cursor_point), it should compensate for the window pos. too FUCKING tired, need sleep. its like 2pm and I been up for like 20 hours.
 bool EInput::IsMouseHoveringRect(Vec2 pos, Vec2 size)
 {
 	if (!wnd.IsWindowParent())
 		return false;
 
-	Vec2 WindowPos = GetWindowPos();
+	Vec2 WindowPos = wnd.GetWindowPos();
 
 	POINT p;
 	if (GetCursorPos(&p))

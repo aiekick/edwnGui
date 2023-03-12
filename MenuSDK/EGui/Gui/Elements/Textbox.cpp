@@ -69,7 +69,11 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
     renderer.Rectangle(NextDrawPos, Size, EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
     renderer.PopAlpha();
 
-    renderer.Text((str.empty() && !typing[GetItemIdentifier()]) ? title : str.c_str(), NextDrawPos + Vec2(Size.x / 2, 2), CENTER, renderer.Verdana, false, EGuiColors.TextColor);
+    std::string temp = str;
+    if (str.length() > 50U) //This can vary depending on your textbox size, make this dynamic in the future.
+        temp = str.substr(0U, 50U).append(("..."));
+
+    renderer.Text((str.empty() && !typing[GetItemIdentifier()]) ? title : temp.c_str(), NextDrawPos + Vec2(Size.x / 2, 2), CENTER, renderer.Verdana, false, EGuiColors.TextColor);
 
     // Restore original draw position.
     SetNextDrawPos(OriginalPos);

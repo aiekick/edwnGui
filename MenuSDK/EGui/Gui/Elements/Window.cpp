@@ -55,9 +55,7 @@ bool EGuiMain::Window(int id, const char* title, bool draggable) {
 }
 
 bool EGuiMain::EndWindow() {
-    if (GetWindowDragability()) /* Changing the *true* statement on the end makes it so it can drag off screen off = no off screen */
-        MenuPos[WindowId] = Dragging(GetWindowId(), { GetDraggingBounds().x, GetDraggingBounds().y }, { GetWindowSize().x, GetWindowSize().y }, true);
-
+    MenuPos[WindowId] = Dragging(GetWindowId(), { GetDraggingBounds().x, GetDraggingBounds().y }, { GetWindowSize().x, GetWindowSize().y }, true);
     MenuSize[WindowId] = Resizing(GetWindowId(), MenuPos[WindowId], MenuSize[WindowId]);
 
     // Restore all stored data.

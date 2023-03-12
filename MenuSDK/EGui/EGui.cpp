@@ -2,7 +2,6 @@
 
 guiStyle EGuiStyle;
 guiColors EGuiColors;
-EGuiDebugWindow DebugWindow;
 EGuiMain EGui;
 
 std::unordered_map<int, Vec2> EGuiMain::MenuPos;
@@ -16,7 +15,7 @@ void EGuiMain::Begin() {
 void EGuiMain::PreRender() {
     //we need to do this in order to maintain animations.
     timing.updateDeltaTime();
-    utility.UpdateFpsCounter();
+    timing.updateFrameRate();
     graphics.Begin();
 }
 
@@ -34,11 +33,6 @@ bool EGuiMain::InputAreaDisabled() {
     return !(DisableInputArea == Rect(0, 0, 0, 0));
 }
 
-void EGuiMain::SetCursor(CursorStyle style)
-{
-    g_CursorStyle = static_cast<int>(style);
-}
-
 // for demo wnd.
 enum {
     HOME = 0,
@@ -49,27 +43,38 @@ enum {
     MISC
 };
 
-void EGuiMain::DemoPhysics() {
-    static Vec2 Block_Pos = { 200, 200 };
-    static Vec2 Block_Speed = { 1, 1 };
-    static Vec2 Block_Size = { 20, 20 };
+float Grav = 9.81f;
+void EGuiMain::DemoPhysics(Object* object) {
+    float Gravity = Grav * object->Size * object->Weight;
 
-    if (Block_Pos.x >= Input.GetWindowSize().x)
-        Block_Speed.x = -Block_Speed.x;
+    // apply gravity to the block
+    object->Velocity.y += Gravity * timing.getDeltaTime();
 
-    if (Block_Pos.x <= 0)
-        Block_Speed.x = -Block_Speed.x;
+    // apply friction to the block
+    float friction = object->Friction * object->Velocity.x;
+    object->Velocity.x -= friction * timing.getDeltaTime();
 
-    if (Block_Pos.y >= Input.GetWindowSize().y)
-        Block_Speed.y = -Block_Speed.y;
+    object->Position.x += object->Velocity.x * timing.getDeltaTime();
+    object->Position.y += object->Velocity.y * timing.getDeltaTime();
 
-    if (Block_Pos.y <= 0)
-        Block_Speed.y = -Block_Speed.y;
+    object->Position.x = std::clamp(object->Position.x, 0.f, wnd.GetWindowSize().x - object->Size * 2);
+    object->Position.y = std::clamp(object->Position.y, 0.f, wnd.GetWindowSize().y - object->Size * 2);
 
-    //Update
-    Block_Pos = Block_Pos + Block_Speed;
+    if (object->Position.y >= wnd.GetWindowSize().y - object->Size * 2 - 1 && object->Velocity.y <= 0.5f)
+        object->Velocity.x -= object->Friction * object->Velocity.x;
 
-    renderer.FilledRectangle(Block_Pos, Block_Size, Color(255, 255, 255, 255));
+    if (object->Position.x >= wnd.GetWindowSize().x - object->Size * 2 || object->Position.x <= 0)
+        object->Velocity.x = -object->Velocity.x * object->BounceFactor;
+
+    if (object->Position.y >= wnd.GetWindowSize().y - object->Size * 2 || object->Position.y <= 0)
+        object->Velocity.y = -object->Velocity.y * object->BounceFactor;
+
+    renderer.FilledCircle(object->Position, object->Size, object->Color);
+}
+
+void EGuiMain::DemoShapes() {
+    renderer.FilledCircle({ 10, 10 }, 50, { 255, 255, 255, 255 });
+    //renderer.FilledRectangle({ 10, 10 }, { 100, 100 }, { 255, 255, 255, 255 }, 25);
 }
 
 void EGuiMain::DemoWindow() {
@@ -112,20 +117,8 @@ void EGuiMain::DemoWindow() {
         case 0:
             Child("Settings", Size);
             {
-                static bool test_checkbox;
-                Checkbox("Example check box", &test_checkbox);
-                static int test_keybind;
-                Keybind("Example key bind", test_keybind);
-                static int test_int_slider = 42;
-                Slider("Example slider int", 0, 100, &test_int_slider);
-                static float test_float_slider = 56.f;
-                Slider("Example slider float", 0.f, 100.f, &test_float_slider);
-
-                static string test_textbox = "Your a big fat fucking nigger";
-                Textbox("Example text box", test_textbox);
-
-                if (Button("Example button"))
-                    printf("Button pressed\n");
+                static float test_float_slider = 50.f;
+                Slider("Test slider", 0.f, 100.f, &test_float_slider, " splatzys");
             }
             EndChild();
 

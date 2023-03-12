@@ -47,6 +47,22 @@ LRESULT WINAPI EGui_ImplWin32_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+Vec2 EWindow::GetWindowPos() {
+	RECT rect = { NULL };
+	if (GetWindowRect(EGui.hwnd, &rect))
+		return Vec2(rect.left, rect.top);
+
+	return Vec2(0, 0);
+}
+
+Vec2 EWindow::GetWindowSize() {
+	RECT rect = { NULL };
+	if (GetClientRect(EGui.hwnd, &rect)) // -1 because the outline is drawn there lol and getclientrect does not account for it
+		return Vec2(rect.right - rect.left - 1, rect.bottom - rect.top - 1);
+
+	return Vec2(0, 0);
+}
+
 bool EWindow::CreateGuiWindow(std::string title, Vec2 wPos, Vec2 wSize)
 {
 	if (wPos == Vec2(0, 0)) wPos = Pos;

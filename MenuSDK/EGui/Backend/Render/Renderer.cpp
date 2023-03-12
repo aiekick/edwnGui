@@ -113,29 +113,61 @@ void ERenderer::Line(Vec2 Pos, Vec2 Pos2, Color clr)
     EGui.Device->DrawPrimitiveUP(D3DPT_LINELIST, 1, vertices, sizeof(vertex));
 }
 
-void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding)
-{
-    if (rounding > 0) {
-        Circle(Pos, rounding, clr, QUARTER, 0.f); //Top left
-        Line(Pos + Vec2(rounding, 0), Pos + Vec2(Size.x - (rounding), 0), clr); //Top
-        Circle(Pos + Vec2(Size.x - (rounding * 2), 0), rounding, clr, QUARTER, 90.f); //Top right
-        Line(Pos + Vec2(Size.x, rounding), Pos + Vec2(Size.x, Size.y - (rounding)), clr); //Right
-        Circle(Pos + Vec2(Size.x - (rounding * 2), Size.y - (rounding * 2)), rounding, clr, QUARTER, 180.f); //Bom right
-        Line(Pos + Vec2(rounding, Size.y), Pos + Vec2(Size.x - (rounding), Size.y), clr); //Top
-        Circle(Pos + Vec2(0, Size.y - (rounding * 2)), rounding, clr, QUARTER, 270.f); //Bom left
-        Line(Pos + Vec2(0, rounding), Pos + Vec2(0, Size.y - (rounding)), clr); //Left
-    }
-    else
-    {
-        FilledRectangle(Pos, Vec2(Size.x, 1), clr, 0.f); // Top
-        FilledRectangle(Vec2(Pos.x, Pos.y + Size.y - 1), Vec2(Size.x, 1), clr, 0.f); // Bottom
-        FilledRectangle(Vec2(Pos.x, Pos.y + 1), Vec2(1, Size.y - 2 * 1), clr, 0.f); // Left
-        FilledRectangle(Vec2(Pos.x + Size.x - 1, Pos.y + 1), Vec2(1, Size.y - 2 * 1), clr, 0.f); // Right
-    }
-}
-
 auto toRadians = PI / 180;
 auto toDegrees = 180 / PI;
+
+void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding)
+{
+    if (PushingAlpha)
+        clr = Color(clr.r(), clr.g(), clr.b(), PushingAlphaAmount);
+
+    D3DCOLOR d3dclr = ColorToD3DColor(clr);
+
+    if (rounding) {
+        const int segments = rounding;
+        vertex* verts = new vertex[(segments * 4) + 2];
+        int cur_vert = 0;
+
+        for (int i = 0; i < 4; i++)
+        {
+            Vec2 point = { Pos.x + ((i < 2) ? (Size.x - rounding) : rounding), Pos.y + ((i % 3) ? (Size.y - rounding) : rounding) };
+            float angle_start = 90.f * (i - 1);
+            float angle_end = angle_start + 90.f;
+
+            for (int j = 0; j < segments; j++)
+            {
+                float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(segments)) * static_cast<float>(j);
+                angle *= toRadians;
+
+                verts[cur_vert].x = point.x + rounding * std::cos(angle);
+                verts[cur_vert].y = point.y + rounding * std::sin(angle);
+                verts[cur_vert].z = 0.0f;
+                verts[cur_vert].rhw = 1.0f;
+                verts[cur_vert].color = d3dclr;
+
+                cur_vert++;
+            }
+        }
+
+        // Manually add another vertex at the end to close the loop
+        verts[cur_vert] = verts[0];
+        cur_vert++;
+
+        EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, cur_vert - 1, verts, sizeof(vertex));
+        delete[] verts;
+        return;
+    }
+
+    vertex vertices[5] = {
+        { Pos.x, Pos.y, 0.0f, 1.0f, d3dclr },
+        { Pos.x + Size.x, Pos.y, 0.0f, 1.0f, d3dclr },
+        { Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
+        { Pos.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
+        { Pos.x, Pos.y, 0.0f, 1.0f, d3dclr }
+    };
+
+    EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, vertices, sizeof(vertex));
+}
 
 void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiFlags flags)
 {
@@ -145,34 +177,37 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
     D3DCOLOR d3dclr = ColorToD3DColor(clr);
 
     if (rounding) {
-        vertex vert[64] = {};
+        const int segments = rounding;
+        vertex* verts = new vertex[(segments * 4) + 2];
+        int cur_vert = 0;
 
         for (int i = 0; i < 4; i++)
         {
-            Vec2 Point = { Pos.x + ((i < 2) ? (Size.x - rounding) : rounding) , Pos.y + ((i % 3) ? (Size.y - rounding) : rounding) };
+            Vec2 point = { Pos.x + ((i < 2) ? (Size.x - rounding) : rounding), Pos.y + ((i % 3) ? (Size.y - rounding) : rounding) };
+            float angle_start = 90.f * (i - 1);
+            float angle_end = angle_start + 90.f;
 
-            float rotation = 90.f * i;
-
-            for (int j = 0; j < 16; j++)
+            for (int j = 0; j < segments; j++)
             {
-                float fixed = (rotation + j * 6.f);
-                fixed = (fixed * toRadians);
+                float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(segments)) * static_cast<float>(j);
+                angle *= toRadians;
 
-                const auto vert_idx = (i * 16) + j;
+                verts[cur_vert].x = point.x + rounding * std::cos(angle);
+                verts[cur_vert].y = point.y + rounding * std::sin(angle);
+                verts[cur_vert].z = 0.0f;
+                verts[cur_vert].rhw = 1.0f;
+                verts[cur_vert].color = d3dclr;
 
-                vert[vert_idx].x = float(Point.x + rounding * std::sinf(fixed));
-                vert[vert_idx].y = float(Point.y - rounding * std::cosf(fixed));
-                vert[vert_idx].z = 0.0f;
-                vert[vert_idx].rhw = 1.0f;
-                vert[vert_idx].color = d3dclr;
+                cur_vert++;
             }
         }
 
-        EGui.Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
-        EGui.Device->SetTexture(NULL, NULL);
-        EGui.Device->SetPixelShader(nullptr);
+        // Manually add another vertex at the end to close the loop
+        verts[cur_vert] = verts[0];
+        cur_vert++;
 
-        EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 62, vert, sizeof(vertex));
+        EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, cur_vert - 1, verts, sizeof(vertex));
+        delete[] verts;
         return;
     }
 
@@ -182,10 +217,6 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
         { Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
         { Pos.x + Size.x, Pos.y, 0.0f, 1.0f, d3dclr }
     };
-
-    EGui.Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
-    EGui.Device->SetTexture(NULL, NULL);
-    EGui.Device->SetPixelShader(nullptr);
 
     EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertex));
 }
@@ -212,10 +243,6 @@ void ERenderer::Gradient(Vec2 Pos, Vec2 Size, Color LColor, Color ROtherColor, b
         { Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, Rd3dclr }
     };
 
-    EGui.Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
-    EGui.Device->SetTexture(0, nullptr);
-    EGui.Device->SetPixelShader(nullptr);
-
     EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertex));
 }
 
@@ -239,10 +266,6 @@ void ERenderer::Gradient4(Vec2 Pos, Vec2 Size, Color TopLColor, Color TopRColor,
         { Pos.x, Pos.y + Size.y, 0.0f, 1.0f, BomLd3dclr },
         { Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, BomRd3dclr }
     };
-
-    EGui.Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
-    EGui.Device->SetTexture(0, nullptr);
-    EGui.Device->SetPixelShader(nullptr);
 
     EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertex));
 }
@@ -320,10 +343,6 @@ void ERenderer::Triangle(Vec2 Top, Vec2 Left, Vec2 Right, Color clr)
         },
     };
 
-    EGui.Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
-    EGui.Device->SetTexture(0, nullptr);
-    EGui.Device->SetPixelShader(nullptr);
-
     EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertices, sizeof(vertex));
 }
 
@@ -334,55 +353,49 @@ void ERenderer::Circle(Vec2 Pos, float radius, Color clr, int e_completion, floa
     D3DCOLOR d3dclr = ColorToD3DColor(clr);
     Pos = Pos + Vec2(radius, radius);
 
-    const int NUM_VERTICES = 363; // Use more vertices to get a smoother circle
+    const int NUM_VERTICES = clamp((int)radius, 32, 100); // more will look smoother, 72 looks great. there is no reason to go any higher unless you are drawing a huge circle.
 
-    std::vector<vertex> circle(NUM_VERTICES + 2);
+    std::vector<vertex> circle(NUM_VERTICES + 1);
     float angle = rotation * D3DX_PI / 180;
     float pi;
 
+    // this is for how much of the circle is shown, FULL = full circle, HALF = half of a circle, Quarter = 1/4 of the circle.
     if (e_completion == FULL) pi = D3DX_PI;
     if (e_completion == HALF) pi = D3DX_PI / 2;
     if (e_completion == QUARTER) pi = D3DX_PI / 3.91;
 
-    for (int i = 0; i < NUM_VERTICES + 2; i++)
-    {
-        circle[i].x = (float)(Pos.x - radius * cos(i * (2 * pi / NUM_VERTICES)));
-        circle[i].y = (float)(Pos.y - radius * sin(i * (2 * pi / NUM_VERTICES)));
-        circle[i].z = 0;
-        circle[i].rhw = 1;
-        circle[i].color = d3dclr;
+    // Use a Bezier curve to generate the circle
+    for (int i = 0; i < NUM_VERTICES + 1; i++) {
+        float t = (float)i / (float)NUM_VERTICES;
+        float x = Pos.x + radius * cos(2 * pi * t + angle);
+        float y = Pos.y + radius * sin(2 * pi * t + angle);
+        circle[NUM_VERTICES - i].x = x;  // <-- Reverse the vertex order here
+        circle[NUM_VERTICES - i].y = y;
+        circle[NUM_VERTICES - i].z = 0;
+        circle[NUM_VERTICES - i].rhw = 1;
+        circle[NUM_VERTICES - i].color = d3dclr;
     }
 
-    // Rotate matrix
-    int _res = NUM_VERTICES;
-    for (int i = 0; i < _res; i++)
-    {
-        // translate point back to origin:
-        circle[i].x -= Pos.x;
-        circle[i].y -= Pos.y;
+    // create the vertex buffer
+    EGui.Device->CreateVertexBuffer((NUM_VERTICES + 1) * sizeof(vertex), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE, D3DPOOL_DEFAULT, &EGui.VertexBuffer, NULL);
 
-        // rotate point
-        float xnew = circle[i].x * cos(angle) - circle[i].y * sin(angle);
-        float ynew = circle[i].x * sin(angle) + circle[i].y * cos(angle);
-
-        // translate point back:
-        circle[i].x = xnew + Pos.x;
-        circle[i].y = ynew + Pos.y;
-    }
-
-    EGui.Device->CreateVertexBuffer((NUM_VERTICES) * sizeof(vertex), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE, D3DPOOL_DEFAULT, &EGui.VertexBuffer, NULL);
-
+    // allocate memory for the vertex buffer
     VOID* pVertices;
-    EGui.VertexBuffer->Lock(0, (NUM_VERTICES) * sizeof(vertex), (void**)&pVertices, 0);
-    memcpy(pVertices, &circle[0], (NUM_VERTICES) * sizeof(vertex));
+    EGui.VertexBuffer->Lock(0, (NUM_VERTICES + 1) * sizeof(vertex), (void**)&pVertices, 0);
+    memcpy(pVertices, &circle[0], (NUM_VERTICES + 1) * sizeof(vertex));
     EGui.VertexBuffer->Unlock();
 
-    EGui.Device->SetTexture(0, NULL);
-    EGui.Device->SetPixelShader(NULL);
-    EGui.Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
-
+    // prepare primitive
+    EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
     EGui.Device->SetStreamSource(0, EGui.VertexBuffer, 0, sizeof(vertex));
-    EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, 360, pVertices, sizeof(vertex));
+
+    // render primitive
+    EGui.Device->DrawPrimitive(D3DPT_LINESTRIP, 0, NUM_VERTICES);
+
+    // restore primitive
+    EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, FALSE);
+
+    // release vertex buffer
     EGui.VertexBuffer->Release();
 }
 
@@ -393,59 +406,50 @@ void ERenderer::FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion
     D3DCOLOR d3dclr = ColorToD3DColor(clr);
     Pos = Pos + Vec2(radius, radius);
 
-    const int NUM_VERTICES = 363; // Use more vertices to get a smoother circle
+    const int NUM_VERTICES = clamp((int)radius, 32, 100); // more will look smoother, 72 looks great. there is no reason to go any higher unless you are drawing a huge circle.
 
-    std::vector<vertex> circle(NUM_VERTICES + 2);
+    std::vector<vertex> circle(NUM_VERTICES + 1);
     float angle = rotation * D3DX_PI / 180;
     float pi;
 
+    // this is for how much of the circle is shown, FULL = full circle, HALF = half of a circle, Quarter = 1/4 of the circle.
     if (e_completion == FULL) pi = D3DX_PI;
     if (e_completion == HALF) pi = D3DX_PI / 2;
-    if (e_completion == QUARTER) pi = D3DX_PI / 4;
+    if (e_completion == QUARTER) pi = D3DX_PI / 3.91;
 
-    circle[0].x = Pos.x;
-    circle[0].y = Pos.y;
-    circle[0].z = 0;
-    circle[0].rhw = 1;
-    circle[0].color = d3dclr;
-
-    for (int i = 0; i < NUM_VERTICES + 2; i++)
-    {
-        circle[i].x = (float)(Pos.x - radius * cos(i * (2 * pi / NUM_VERTICES)));
-        circle[i].y = (float)(Pos.y - radius * sin(i * (2 * pi / NUM_VERTICES)));
-        circle[i].z = 0;
-        circle[i].rhw = 1;
-        circle[i].color = d3dclr;
+    // Use a Bezier curve to generate the circle
+    for (int i = 0; i < NUM_VERTICES + 1; i++) {
+        float t = (float)i / (float)NUM_VERTICES;
+        float x = Pos.x + radius * cos(2 * pi * t + angle);
+        float y = Pos.y + radius * sin(2 * pi * t + angle);
+        circle[NUM_VERTICES - i].x = x;  // <-- Reverse the vertex order here
+        circle[NUM_VERTICES - i].y = y;
+        circle[NUM_VERTICES - i].z = 0;
+        circle[NUM_VERTICES - i].rhw = 1;
+        circle[NUM_VERTICES - i].color = d3dclr;
     }
 
-    // Rotate matrix
-    int _res = NUM_VERTICES + 2;
-    for (int i = 0; i < _res; i++)
-    {
-        // translate point back to origin:
-        circle[i].x -= Pos.x;
-        circle[i].y -= Pos.y;
+    // create the vertex buffer
+    EGui.Device->CreateVertexBuffer((NUM_VERTICES + 1) * sizeof(vertex), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE, D3DPOOL_DEFAULT, &EGui.VertexBuffer, NULL);
 
-        // rotate point
-        float xnew = circle[i].x * cos(angle) - circle[i].y * sin(angle);
-        float ynew = circle[i].x * sin(angle) + circle[i].y * cos(angle);
-
-        // translate point back:
-        circle[i].x = xnew + Pos.x;
-        circle[i].y = ynew + Pos.y;
-    }
-
-    EGui.Device->SetTexture(0, NULL);
-    EGui.Device->SetPixelShader(NULL);
-    EGui.Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+    // allocate memory for the vertex buffer
+    VOID* pVertices;
+    EGui.VertexBuffer->Lock(0, (NUM_VERTICES + 1) * sizeof(vertex), (void**)&pVertices, 0);
+    memcpy(pVertices, &circle[0], (NUM_VERTICES + 1) * sizeof(vertex));
+    EGui.VertexBuffer->Unlock();
 
     // prepare primitive
-    EGui.Device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
+    EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
+    EGui.Device->SetStreamSource(0, EGui.VertexBuffer, 0, sizeof(vertex));
 
-    EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, NUM_VERTICES, &circle[0], sizeof(vertex));
+    // render primitive
+    EGui.Device->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, NUM_VERTICES);
 
     // restore primitive
-    EGui.Device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, FALSE);
+    EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, FALSE);
+
+    // release vertex buffer
+    EGui.VertexBuffer->Release();
 }
 
 void ERenderer::BorderedCircle(Vec2 Pos, float radius, Color clr, Color borderClr, int e_completion, float rotation) {

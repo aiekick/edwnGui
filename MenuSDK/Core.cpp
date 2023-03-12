@@ -15,7 +15,7 @@ int main() {
 
         EGui.PreRender();
         {
-            SetWindowTextA(EGui.hwnd, std::to_string(utility.GetFps()).c_str());
+            wnd.SetGraphicsWindowTitle("EGui, fps: " + std::to_string(timing.getFrameRate()));
             EGui.DemoWindow();
         }
         EGui.Render();

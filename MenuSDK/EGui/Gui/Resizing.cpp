@@ -4,7 +4,7 @@ static std::unordered_map<int, bool> ResizingState;
 static std::unordered_map<int, bool> TriedResizeOutside;
 static std::unordered_map<int, Vec2> Difference;
 Vec2 EGuiMain::Resizing(int id, Vec2 pos, Vec2 size) {
-	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), Input.GetWindowSize()))
+	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), wnd.GetWindowSize()))
 		return size;
 
 	Vec2 NewSize = size;

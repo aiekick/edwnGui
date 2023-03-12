@@ -55,3 +55,24 @@ void Timing::updateDeltaTime() {
 float Timing::getDeltaTime() {
     return deltaTime;
 }
+
+static int FrameRate = 0;
+void Timing::updateFrameRate() {
+    static int frameCount = 0;
+    static auto startTime = std::chrono::high_resolution_clock::now();
+    static float fps_ = 0.0f;
+    frameCount++;
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
+    if (elapsedTime >= 1000.0f) {
+        fps_ = (float)frameCount / (elapsedTime / 1000.0f);
+        frameCount = 0;
+        startTime = currentTime;
+    }
+
+    FrameRate = fps_;
+}
+
+int Timing::getFrameRate() {
+    return FrameRate;
+}

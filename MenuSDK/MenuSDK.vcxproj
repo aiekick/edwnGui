@@ -172,6 +172,8 @@
   <ItemGroup>
     <ClCompile Include="EGui\Backend\Animation\Animation.cpp" />
     <ClCompile Include="EGui\Backend\Animation\Timing.cpp" />
+    <ClCompile Include="EGui\Backend\Render\Wrapper.cpp" />
+    <ClCompile Include="EGui\Backend\Utility\Math.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Child.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Keybind.cpp" />
     <ClCompile Include="EGui\Gui\Elements\SubTabs.cpp" />
@@ -193,7 +195,6 @@
     <ClCompile Include="EGui\Gui\Elements\Tabs.cpp" />
     <ClCompile Include="EGui\Backend\Input\Input.cpp" />
     <ClCompile Include="EGui\Backend\Render\Renderer.cpp" />
-    <ClCompile Include="EGui\Backend\Utility\Utility.cpp" />
     <ClCompile Include="EGui\Gui\Resizing.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -207,16 +208,17 @@
     <ClInclude Include="EGui\Backend\Render\Classes\Rect.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Vector.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Vector2D.hpp" />
+    <ClInclude Include="EGui\Backend\Render\Wrapper.hpp" />
     <ClInclude Include="EGui\Backend\Threading\atomic_lock.h" />
     <ClInclude Include="EGui\Backend\Threading\packed_heap.h" />
     <ClInclude Include="EGui\Backend\Threading\shared_mutex.h" />
+    <ClInclude Include="EGui\Backend\Utility\Math.hpp" />
     <ClInclude Include="EGui\EGui.hpp" />
     <ClInclude Include="EGui\Backend\Graphics\DirectX.hpp" />
     <ClInclude Include="EGui\Backend\Win32\Wnd.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="EGui\Backend\Input\Input.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Vertex.hpp" />
-    <ClInclude Include="EGui\Backend\Utility\Utility.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

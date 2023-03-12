@@ -39,6 +39,9 @@ void Graphics::SetupRenderStates(IDirect3DDevice9 *Device) {
     Device->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
     Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
     Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+    Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+    Device->SetTexture(NULL, NULL);
+    Device->SetPixelShader(nullptr);
 }
 
 void Graphics::Create() {
@@ -47,6 +50,11 @@ void Graphics::Create() {
     EGui.d3dparams.Windowed = true;
     EGui.d3dparams.SwapEffect = D3DSWAPEFFECT_DISCARD;
     EGui.d3dparams.BackBufferFormat = D3DFMT_UNKNOWN;
+    EGui.d3dparams.EnableAutoDepthStencil = TRUE;
+    EGui.d3dparams.AutoDepthStencilFormat = D3DFMT_D16;
+    EGui.d3dparams.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+    EGui.d3dparams.MultiSampleType = D3DMULTISAMPLE_4_SAMPLES;
+    EGui.d3dparams.MultiSampleQuality = 0;
     
     // create device
     HRESULT result = EGui.D3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, EGui.hwnd,

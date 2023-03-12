@@ -9,7 +9,6 @@
     <ClCompile Include="EGui\Gui\Elements\Window.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Combo.cpp" />
     <ClCompile Include="EGui\Backend\Render\Renderer.cpp" />
-    <ClCompile Include="EGui\Backend\Utility\Utility.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Slider.cpp" />
     <ClCompile Include="EGui\Gui\Elements\MultiCombo.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Listbox.cpp" />
@@ -26,6 +25,8 @@
     <ClCompile Include="EGui\Gui\Elements\SubTabs.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Child.cpp" />
     <ClCompile Include="EGui\Backend\Animation\Animation.cpp" />
+    <ClCompile Include="EGui\Backend\Render\Wrapper.cpp" />
+    <ClCompile Include="EGui\Backend\Utility\Math.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.hpp" />
@@ -37,7 +38,6 @@
     <ClInclude Include="EGui\EGui.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Rect.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Vertex.hpp" />
-    <ClInclude Include="EGui\Backend\Utility\Utility.hpp" />
     <ClInclude Include="EGui\Backend\Render\Textures\Textures.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Easings.hpp" />
     <ClInclude Include="EGui\Backend\Graphics\DirectX.hpp" />
@@ -48,5 +48,7 @@
     <ClInclude Include="EGui\Backend\Threading\atomic_lock.h" />
     <ClInclude Include="EGui\Backend\Threading\packed_heap.h" />
     <ClInclude Include="EGui\Backend\Threading\shared_mutex.h" />
+    <ClInclude Include="EGui\Backend\Render\Wrapper.hpp" />
+    <ClInclude Include="EGui\Backend\Utility\Math.hpp" />
   </ItemGroup>
 </Project>

@@ -1,3 +1,13 @@
+//1.00
+/* EGui is software provided to you by Edwin777 (main developer)
+* Everyone helped, your feedback was extremely helpful and will be extremely helpful within the coming years.
+* I plan to maintain this code and fix security/code issues over time. this message was wrote march 11th, 2023.
+* EGui was a dream of mine for a long time and it finally became a reality once I got back into school.
+* I feel the support and the hate really helped me get this far into the project, Thank you to all who supported.
+* To all who hated, I respect your opinion as I am a beginner to coding but you saying its impossible was a really big motivator for me.
+* Thanks to all for the motivation, I hope yall can build off of my work and make something better. -Edwin777
+*/
+
 #pragma once
 #define DIRECTINPUT_VERSION 0x800
 #define EGUI_VERSION "pre pre pre alpha lol"
@@ -29,13 +39,14 @@
 #include "Backend/Render/Classes/Rect.hpp"
 #include "Backend/Render/Classes/Easings.hpp"
 #include "Backend/Render/Textures/Textures.hpp"
-#include "Backend/Utility/utility.hpp"
+#include "Backend/Utility/Math.hpp"
 #include "Backend/Input/Input.hpp"
-#include "Backend/Win32/Wnd.hpp"
+#include "Backend/Win32/wnd.hpp"
 #include "Backend/Animation/Timing.hpp"
 #include "Backend/Animation/Animation.hpp"
 #include "Backend/Graphics/DirectX.hpp"
 #include "Backend/Render/renderer.hpp"
+//#include "Backend/Render/Wrapper.hpp"
 
 // Pragma comments
 #pragma comment (lib, "d3d9.lib")
@@ -65,19 +76,14 @@ struct guiColors {
 	Color ElementColorOn = MenuTheme;
 };
 
-struct EGuiDebugWindow {
-	float Alpha = 255;
-	bool Line;
-	bool Rectangle;
-	bool FilledRectangle;
-	bool BorderedRectangle;
-	bool Gradient;
-	bool Triangle;
-	bool Circle;
-	bool FilledCircle;
-	bool BorderedCircle;
-	bool Text;
-	bool Sprite;
+struct Object {
+	float Friction = 0.5f;
+	float BounceFactor = 0.7f;
+	float Weight = 100.f;
+	float Size = 20;
+	Vec2 Position = { 0, 0 };
+	Vec2 Velocity = { -1000, 0 };
+	Color Color = { 255, 0, 0, 255 };
 };
 
 struct EGuiMain {
@@ -100,8 +106,9 @@ struct EGuiMain {
 	// EGui -------------------------------------------------------------------------------------------------------
 	void Begin();
 	void End();
-	void DemoPhysics();
+	void DemoPhysics(Object* object);
 	void DemoWindow();
+	void DemoShapes();
 
 	// Render -----------------------------------------------------------------------------------------------------
 	void PreRender();
@@ -264,23 +271,8 @@ struct EGuiMain {
 			{190, '.',  '>'},
 			{191, '/',  '?'}
 	};
-
-
-	// Cursor ---------------------------------------------------------------------------------------------------------
-	using CursorStyle = enum struct ESCursorStyle : int {
-		NONE = 0,
-		ARROW,
-		HAND,
-		IBEAM,
-		PIPETTE,
-		MOVE
-	};
-
-	void SetCursor(CursorStyle cursor);
-	int g_CursorStyle;
 };
 
 extern guiStyle EGuiStyle;
 extern guiColors EGuiColors;
-extern EGuiDebugWindow DebugWindow;
 extern EGuiMain EGui;
