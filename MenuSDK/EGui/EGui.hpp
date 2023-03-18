@@ -44,6 +44,7 @@
 #include "Backend/Win32/wnd.hpp"
 #include "Backend/Animation/Timing.hpp"
 #include "Backend/Animation/Animation.hpp"
+#include "Backend/Camera/Camera.hpp"
 #include "Backend/Graphics/DirectX.hpp"
 #include "Backend/Render/renderer.hpp"
 //#include "Backend/Render/Wrapper.hpp"
@@ -51,6 +52,10 @@
 // Pragma comments
 #pragma comment (lib, "d3d9.lib")
 #pragma comment (lib, "d3dx9.lib")
+
+#define PI 3.14159265359
+#define PI_2 1.570796326795
+#define PI_SQR 9.869604401090658
 
 struct guiStyle {
 	float Alpha = 255.f;
@@ -67,6 +72,7 @@ struct guiColors {
 	Color FrameHeaderColor = Color(25, 39, 58, 255);
 	Color FrameBorderColor = Color(0, 0, 0, 255);
 	Color ChildBgColor = Color(25, 39, 58, 255);
+	Color ChildHeaderColor = Color(15, 29, 48, 255);
 	Color TextColor = Color(250, 250, 250, 255);
 	Color TextColorHovered = Color(255, 255, 255, 255);
 	Color TextColorDisabled = Color(240, 240, 240, 255);
@@ -204,7 +210,12 @@ struct EGuiMain {
 	bool Button(const char* title, Vec2 Size = { 0, 0 });
 	bool Textbox(const char* title, std::string &str);
 	bool Keybind(const char* id, int& key);
-	bool ColorPicker(const char* title, Color* selected);
+	bool ColorPicker(const char* title, Color* selected, bool alpha_bar = true);
+	bool Popup(const char* text, Vec2 position, Color clr);
+
+	void RenderColorPickers();
+	void RenderPopups();
+
 	bool InputAreaDisabled();
 	Rect DisableInputArea = {0, 0, 0, 0};
 

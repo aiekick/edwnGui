@@ -73,7 +73,7 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
     if (str.length() > 50U) //This can vary depending on your textbox size, make this dynamic in the future.
         temp = str.substr(0U, 50U).append(("..."));
 
-    renderer.Text((str.empty() && !typing[GetItemIdentifier()]) ? title : temp.c_str(), NextDrawPos + Vec2(Size.x / 2, 2), CENTER, renderer.Verdana, false, EGuiColors.TextColor);
+    renderer.Text(renderer.Verdana, (str.empty() && !typing[GetItemIdentifier()]) ? title : temp.c_str(), NextDrawPos + Vec2(4, 2), EGuiColors.TextColor, LEFT);
 
     // Restore original draw position.
     SetNextDrawPos(OriginalPos);

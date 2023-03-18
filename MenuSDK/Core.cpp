@@ -1,7 +1,7 @@
 #include "Common.hpp"
 
 int main() {
-    wnd.CreateGraphicsWindow("EGui - " + EGui.GetVersion());
+    wnd.CreateGraphicsWindow("EGui - " + EGui.GetVersion(), { 1280, 800 });
     EGui.Begin();
 
     MSG msg;
@@ -10,12 +10,11 @@ int main() {
         if (PeekMessage(&msg, nullptr, 0u, 0u, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
-            continue;
         }
 
         EGui.PreRender();
         {
-            wnd.SetGraphicsWindowTitle("EGui, fps: " + std::to_string(timing.getFrameRate()));
+            wnd.SetGraphicsWindowTitle("EGui, fps: " + std::to_string(timing.getFrameRate()) + " Highest fps: " + std::to_string(timing.getFrameRateMax()));
             EGui.DemoWindow();
         }
         EGui.Render();

@@ -2,18 +2,6 @@
 #include "../../EGui.hpp"
 #include <memory>
 
-#define get_a(col) (((col)&0xff000000)>>24)
-#define get_r(col) (((col)&0x00ff0000)>>16)
-#define get_g(col) (((col)&0x0000ff00)>>8)
-#define get_b(col) ((col)&0x000000ff)
-
-#define ExtractAlpha(x) ((x>>24)&255)
-#define ExtractRed(x) ((x>>16)&255)
-#define ExtractGreen(x) ((x>>12)&255)
-#define ExtractBlue(x) (x&255)
-
-#define PI_SQUARED 9.86960440109
-
 enum circle_type { FULL, HALF, QUARTER };
 enum text_alignment { LEFT, CENTER, CENTER_XY, RIGHT };
 
@@ -34,11 +22,9 @@ enum EGuiFlags {
 };
 
 struct FontData {
-    LPD3DXFONT D3DXFont;
-    std::string name = "Verdana";
-    int weight = 400;
-    int quality = 0;
-    int size = 12;
+    LPD3DXFONT Font;
+    bool drop_shadow;
+    bool outline;
 };
 
 struct ERenderer {
@@ -52,13 +38,20 @@ struct ERenderer {
     IDirect3DTexture9* AlphaTexture;
     IDirect3DTexture9* MouseTexture;
 
+    bool NeedsUpdate = true;
+    bool Initialized = false;
+
+    bool PushingFont = false;
+    bool PushingAlpha = false;
+    int PushingAlphaAmount = 0;
+
     void CreateObjects();
     void ReleaseObjects();
     void Reset();
-    FontData NewFont(std::string name, int weight, int quality, int size);
+    FontData AddFont(std::string name, int weight, int size, bool dropshadow = false, bool outline = false);
 
-    D3DCOLOR ColorToD3DColor(Color clr) {
-	    return D3DCOLOR_RGBA((int)clr.r(), (int)clr.g(), (int)clr.b(), (int)clr.a());
+    D3DCOLOR TranslateColor(Color clr) {
+	    return D3DCOLOR_RGBA((int)clr.r(), (int)clr.g(), (int)clr.b(), PushingAlpha ? PushingAlphaAmount : (int)clr.a());
     }
 
     void PushFont(FontData font);
@@ -85,18 +78,10 @@ struct ERenderer {
     void FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion = FULL, float rotation = 0.f);
     void BorderedCircle(Vec2 Pos, float radius, Color clr, Color borderClr, int e_completion = FULL, float rotation = 0.f);
 
-    void Text(const char* Text, Vec2 Pos, int Orientation, FontData Font, bool Bordered, Color clr, Vec2 MaxSize = Vec2(0, 0));
+    void Text(FontData Font, const char* text, Vec2 Pos, Color clr, int Orientation);
     Vec2 GetTextSize(FontData Font, const char* Text);
 
     void Sprite(LPDIRECT3DTEXTURE9 Texture, Vec2 Pos, Vec2 Size, Color clr = Color(255, 255, 255, 255));
-
-    //Shared data D3D & D2D.
-    bool NeedsUpdate = true;
-    bool Initialized = false;
-
-    bool PushingFont = false;
-    bool PushingAlpha = false;
-    int PushingAlphaAmount = 0;
 };
 
 extern ERenderer renderer;

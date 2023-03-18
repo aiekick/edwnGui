@@ -46,7 +46,7 @@ bool EGuiMain::Window(int id, const char* title, bool draggable) {
     renderer.PopAlpha();
 
     //Title
-    renderer.Text(title, MenuPos[WindowId] + Vec2(50, 6), LEFT, renderer.TitleFont, false, EGuiColors.TextColor);
+    renderer.Text(renderer.Verdana, title, MenuPos[WindowId] + Vec2(50, 6), EGuiColors.TextColor, LEFT);
 
     //Resize Area
     renderer.FilledRectangle(MenuPos[WindowId] + MenuSize[WindowId] - Vec2(10, 10), Vec2(10, 10), EGuiColors.FrameHeaderColor, 2);
@@ -55,6 +55,9 @@ bool EGuiMain::Window(int id, const char* title, bool draggable) {
 }
 
 bool EGuiMain::EndWindow() {
+    RenderColorPickers();
+    RenderPopups();
+
     MenuPos[WindowId] = Dragging(GetWindowId(), { GetDraggingBounds().x, GetDraggingBounds().y }, { GetWindowSize().x, GetWindowSize().y }, true);
     MenuSize[WindowId] = Resizing(GetWindowId(), MenuPos[WindowId], MenuSize[WindowId]);
 

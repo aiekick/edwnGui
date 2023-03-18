@@ -27,6 +27,7 @@
     <ClCompile Include="EGui\Backend\Animation\Animation.cpp" />
     <ClCompile Include="EGui\Backend\Render\Wrapper.cpp" />
     <ClCompile Include="EGui\Backend\Utility\Math.cpp" />
+    <ClCompile Include="EGui\Backend\Camera\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.hpp" />
@@ -50,5 +51,6 @@
     <ClInclude Include="EGui\Backend\Threading\shared_mutex.h" />
     <ClInclude Include="EGui\Backend\Render\Wrapper.hpp" />
     <ClInclude Include="EGui\Backend\Utility\Math.hpp" />
+    <ClInclude Include="EGui\Backend\Camera\Camera.hpp" />
   </ItemGroup>
 </Project>

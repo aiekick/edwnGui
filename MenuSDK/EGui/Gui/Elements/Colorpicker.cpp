@@ -1,74 +1,68 @@
 #include "../../EGui.hpp"
 
-bool EGuiMain::ColorPicker(const char* title, Color* selected) {
+struct ColorData {
+	const char* title;
+	Vec2 pos;
+	Color clr;
+	bool alpha_bar;
+};
+
+static std::unordered_map<int, ColorData> color_data;
+static std::unordered_map<int, bool> color_open;
+static std::unordered_map<int, bool> color_alpha;
+
+bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
     SetItemIdentifier(GetItemIdentifier() + 1);
 
-    // this_state is an array of booleans that will store the open/closed state of the color picker for each instance.
-    static bool this_state[] = { false };
+	Vec2 size = { 25, 10 };
+	Vec2 pos = { (GetChildPos().x + GetChildSize().x - EGuiStyle.Padding) - size.x, PreviousDrawPos.y };
 
-    // Keep track of whether the selected color has changed.
-    bool value_changed = false;
+	renderer.FilledRectangle(pos, size, *selected, EGuiStyle.ElementRounding);
+	renderer.Rectangle(pos, size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
 
-    // Calculate size of color picker button.
-    auto Size = Vec2({ GetChildSize().x - ((12 + EGuiStyle.Padding) * 2 + EGuiStyle.Padding), 18 });
+	if (Input.ButtonBehaviour(pos, size, PRESS))
+		color_open[GetItemIdentifier()] = !color_open[GetItemIdentifier()];
 
-    // Calculate unique ID for color picker.
+	//create color popup.
+	if (color_open[GetItemIdentifier()]) {
+		ColorData temp;
+		temp.title = title;
+		temp.pos = pos + Vec2(size.x + 10, 0);
+		temp.clr = *selected;
+		temp.alpha_bar = alpha_bar;
 
-    // Ensure open state is either true or false.
-    if (this_state[GetItemIdentifier()] != (true || false))
-        this_state[GetItemIdentifier()] = false;
+		color_data[color_data.size() + 1] = temp;
+	}
 
-    // Save current draw position.
-    auto OriginalPos = GetNextDrawPos();
+	return true;
+}
 
-    // Set next draw position to right of color picker button.
-    SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
+void EGuiMain::RenderColorPickers() {
+	//render
+	for (int i = 1; i <= color_data.size(); i++) {
+		Vec2 text_size = renderer.GetTextSize(renderer.Verdana, color_data[i].title);
+		Vec2 size = { 200, 175 + text_size.y };
 
-    // Toggle open state of color picker when button is pressed.
-    if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS))
-        this_state[GetItemIdentifier()] = !this_state[GetItemIdentifier()];
+		//frame
+		renderer.BorderedRectangle(color_data[i].pos, size, EGuiColors.ChildBgColor, EGuiColors.ElementBorderColor);
+		renderer.BorderedRectangle(color_data[i].pos, {size.x, text_size.y + 5}, EGuiColors.ChildHeaderColor, EGuiColors.ElementBorderColor);
 
-    // Draw color picker button.
-    renderer.Sprite(renderer.BackgroundTexture, NextDrawPos, Size);
-    renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor);
-    renderer.Text(title, NextDrawPos + Vec2(Size.x / 2, 2), CENTER, renderer.Verdana, true, EGuiColors.TextColor);
+		//color gradient
+		renderer.Gradient(color_data[i].pos + Vec2(5, text_size.y + 10), size - Vec2(25, 40), Color(255, 255, 255, 255), color_data[i].clr);
+		renderer.Gradient(color_data[i].pos + Vec2(5, text_size.y + 10), size - Vec2(25, 40), Color(0, 0, 0, 0), Color(0, 0, 0, 255), true);
 
-    // Draw the selected color on the button
-    renderer.FilledRectangle(NextDrawPos + Vec2(Size.x - 10, 2), Vec2(8, 14), *selected);
+		//color bar
 
-    // If color picker is open, draw color picker.
-    if (this_state[GetItemIdentifier()]) {
-        // Calculate size of color picker and draw color picker background.
-        renderer.FilledRectangle(NextDrawPos + Vec2(0, Size.y), Size + Vec2(0, Size.y * 2), EGuiColors.ElementBackColor);
-        renderer.Rectangle(NextDrawPos, Size + Vec2(0, Size.y * 2), EGuiColors.MenuTheme);
+		renderer.Rectangle(color_data[i].pos + Vec2(size.x - 15, text_size.y + 10), { 10, size.y - 40 }, Color(0, 0, 0, 255));
 
-        // Draw color grid
-        for (int i = 0; i < 20; ++i) {
-            for (int j = 0; j < 20; ++j) {
-                // here you can define your own logic to generate the color grid, 
-                // for example you could use a color wheel algorithm, or a gradient of colors
-                Color color = Color(i * 12, j * 12, 255);
-                renderer.FilledRectangle(NextDrawPos + Vec2(i * 10, Size.y + j * 10), Vec2(10, 10), color);
-                if (Input.ButtonBehaviour(NextDrawPos + Vec2(i * 10, Size.y + j * 10), Vec2(10, 10), PRESS)) {
-                    *selected = color;
-                    value_changed = true;
-                }
-            }
-        }
-        //Correction for background elements.
-        DisableInputArea = Rect(NextDrawPos.x, NextDrawPos.y + Size.y, Size.x, Size.y * 2);
-    }
+		//alpha bar
+		renderer.Gradient(color_data[i].pos + Vec2(5, size.y - 15), { size.x - 25, 10 }, Color(0, 0, 0, 255), color_data[i].clr);
+		renderer.Rectangle(color_data[i].pos + Vec2(5, size.y - 15), { size.x - 25, 10 }, Color(0, 0, 0, 255));
 
-    // Restore original draw position.
-    SetNextDrawPos(OriginalPos);
+		//title
+		renderer.Text(renderer.Verdana, color_data[i].title, { color_data[i].pos.x + 4, color_data[i].pos.y + 2 }, EGuiColors.TextColor, LEFT);
+	}
 
-    // Set next draw position below color picker.
-    SetNextDrawPosEx({ 0, 18 + EGuiStyle.Padding + (this_state[GetItemIdentifier()] ? Size.y * 2 : 0) });
-
-    // If the selected color has changed, toggle the open state of the color picker.
-    if (value_changed)
-        this_state[GetItemIdentifier()] = !this_state[GetItemIdentifier()];
-
-    // Return whether the selected color has changed.
-    return value_changed;
+	//clear.
+	color_data.clear();
 }

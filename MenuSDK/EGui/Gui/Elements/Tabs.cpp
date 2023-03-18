@@ -1,6 +1,6 @@
 #include "../../EGui.hpp"
 
-static std::unordered_map<int, int> tab_alpha;
+static std::unordered_map<int, float> tab_alpha;
 
 bool EGuiMain::Tab(const char* title, bool selected, Vec2 size) {
 	SetItemIdentifier(GetItemIdentifier() + 1);
@@ -27,7 +27,7 @@ bool EGuiMain::Tab(const char* title, bool selected, Vec2 size) {
 	renderer.FilledRectangle(NextDrawPos + Vec2(0, size.y), { size.x, 2 }, EGuiColors.MenuTheme);
 	renderer.PopAlpha();
 
-	renderer.Text(title, { NextDrawPos.x + size.x / 2, NextDrawPos.y + size.y / 2 }, CENTER_XY, renderer.TitleFont, false, selected ? EGuiColors.TextColor : EGuiColors.TextColorDisabled);
+	renderer.Text(renderer.TitleFont, title, { NextDrawPos.x + size.x / 2, NextDrawPos.y + size.y / 2 }, selected ? EGuiColors.TextColor : EGuiColors.TextColorDisabled, CENTER_XY);
 
 	SetNextDrawPosEx({ size.x, 0 });
 

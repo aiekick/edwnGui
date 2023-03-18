@@ -7,7 +7,7 @@ struct EWindow {
 	Vec2 GetWindowPos();
 	Vec2 GetWindowSize();
 
-	void CreateGraphicsWindow(std::string title, Vec2 wPos = { 0 ,0 }, Vec2 wSize = { 0, 0 }) {
+	void CreateGraphicsWindow(std::string title, Vec2 wSize = { 0 ,0 }, Vec2 wPos = { 0, 0 }) {
 		CreateGuiWindow(title, wPos, wSize);
 
 		::ShowWindow(hwnd, SW_SHOWDEFAULT);

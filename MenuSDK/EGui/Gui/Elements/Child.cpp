@@ -14,7 +14,7 @@ bool EGuiMain::Child(const char* title, Vec2 size) {
 	renderer.FilledRectangle(NextDrawPos, size, EGuiColors.ChildBgColor, EGuiStyle.ChildRounding);
 	renderer.Rectangle(NextDrawPos, size, EGuiColors.ElementBorderColor, EGuiStyle.ChildRounding);
 
-	renderer.Text(title, NextDrawPos + Vec2{ 5, 4 }, LEFT, renderer.Verdana, false, EGuiColors.TextColor);
+	renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2{ 5, 4 }, EGuiColors.TextColor, LEFT);
 
 	renderer.FilledRectangle(NextDrawPos + Vec2{ 1, 20 }, { size.x - 2, 1 }, EGuiColors.MenuTheme);
 

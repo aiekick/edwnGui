@@ -4,113 +4,109 @@
 ERenderer renderer;
 
 void ERenderer::CreateObjects() {
-    D3DXCreateSprite(EGui.Device, &EGui.Sprite);
+	D3DXCreateSprite(EGui.Device, &EGui.Sprite);
 
-    D3DPRESENT_PARAMETERS pp = {};
-    DWORD nFonts = 0;
+	D3DPRESENT_PARAMETERS pp = {};
+	DWORD nFonts = 0;
 
-    Verdana = NewFont("Verdana", FW_NORMAL, CLEARTYPE_NATURAL_QUALITY, 12);
-    Tahombd = NewFont("Verdana", FW_BOLD, CLEARTYPE_NATURAL_QUALITY, 12);
-    SmallFont = NewFont("Small Fonts", FW_NORMAL, CLEARTYPE_NATURAL_QUALITY, 8);
-    TabIcon = NewFont("Verdana", FW_NORMAL, CLEARTYPE_NATURAL_QUALITY, 16);
-    TitleFont = NewFont("Verdana", FW_NORMAL, CLEARTYPE_NATURAL_QUALITY, 16);
+	Verdana = AddFont("Verdana", FW_NORMAL, 12);
+	Tahombd = AddFont("Verdana", FW_BOLD, 12);
+	SmallFont = AddFont("Small Fonts", FW_NORMAL, 8);
+	TabIcon = AddFont("Verdana", FW_NORMAL, 16);
+	TitleFont = AddFont("Verdana", FW_NORMAL, 16);
 
-    D3DXCreateTextureFromFileInMemoryEx(EGui.Device, BgTexture, 424852, 4096, 4096, D3DX_DEFAULT, NULL, pp.BackBufferFormat, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, NULL, NULL, NULL, &this->BackgroundTexture);
-    D3DXCreateTextureFromFileInMemoryEx(EGui.Device, TransparencyTexture, 2419, 50, 50, D3DX_DEFAULT, NULL, pp.BackBufferFormat, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, NULL, NULL, NULL, &this->AlphaTexture);
-    D3DXCreateTextureFromFileInMemoryEx(EGui.Device, CursorTexture, 550, 10, 15, D3DX_DEFAULT, NULL, pp.BackBufferFormat, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, NULL, NULL, NULL, &this->MouseTexture);
+	D3DXCreateTextureFromFileInMemoryEx(EGui.Device, BgTexture, 424852, 4096, 4096, D3DX_DEFAULT, NULL, pp.BackBufferFormat, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, NULL, NULL, NULL, &this->BackgroundTexture);
+	D3DXCreateTextureFromFileInMemoryEx(EGui.Device, TransparencyTexture, 2419, 50, 50, D3DX_DEFAULT, NULL, pp.BackBufferFormat, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, NULL, NULL, NULL, &this->AlphaTexture);
+	D3DXCreateTextureFromFileInMemoryEx(EGui.Device, CursorTexture, 550, 10, 15, D3DX_DEFAULT, NULL, pp.BackBufferFormat, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, NULL, NULL, NULL, &this->MouseTexture);
 }
 
 void ERenderer::ReleaseObjects() {
-    if (Verdana.D3DXFont)
-        Verdana.D3DXFont->Release();
-    if (Tahombd.D3DXFont)
-        Tahombd.D3DXFont->Release();
-    if (SmallFont.D3DXFont)
-        SmallFont.D3DXFont->Release();
-    if (TabIcon.D3DXFont)
-        TabIcon.D3DXFont->Release();
-    if (TitleFont.D3DXFont)
-        TitleFont.D3DXFont->Release();
+	if (Verdana.Font)
+		Verdana.Font->Release();
+	if (Tahombd.Font)
+		Tahombd.Font->Release();
+	if (SmallFont.Font)
+		SmallFont.Font->Release();
+	if (TabIcon.Font)
+		TabIcon.Font->Release();
+	if (TitleFont.Font)
+		TitleFont.Font->Release();
 }
 
 void ERenderer::Reset()
 {
-    D3DVIEWPORT9 screen;
-    EGui.Device->GetViewport(&screen);
+	D3DVIEWPORT9 screen;
+	EGui.Device->GetViewport(&screen);
 }
 
-FontData ERenderer::NewFont(std::string name, int weight, int quality, int size) {
-    FontData CpyFont;
+FontData ERenderer::AddFont(std::string name, int weight, int size, bool dropshadow, bool outline) {
+	FontData Temp_font;
 
-    D3DXCreateFontA(EGui.Device, size, 0, weight, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, quality, DEFAULT_PITCH, name.c_str(), &CpyFont.D3DXFont);
-    CpyFont.name = name;
-    CpyFont.weight = weight;
-    CpyFont.quality = quality;
-    CpyFont.size = size;
+	D3DXCreateFontA(EGui.Device, size, 0, weight, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, DEFAULT_PITCH, name.c_str(), &Temp_font.Font);
+	Temp_font.drop_shadow = dropshadow;
+	Temp_font.outline = outline;
 
-    return CpyFont;
+	return Temp_font;
 }
 
 void ERenderer::PushFont(FontData font) {
 	if (!PushingFont) {
-        PushingFont = true;
-        OverrideFont.D3DXFont = font.D3DXFont;
-        OverrideFont.name = font.name;
-        OverrideFont.quality = font.quality;
-        OverrideFont.size = font.size;
-        OverrideFont.weight = font.weight;
+		PushingFont = true;
+		OverrideFont = font;
 	}
 }
 
 void ERenderer::PopFont() {
-    if (PushingFont)
-        PushingFont = false;
+	if (PushingFont) {
+		PushingFont = false;
+		OverrideFont = {};
+	}
 }
 
 void ERenderer::PushClip(Rect rectangle) {
-    RECT protectedRect{ (int)rectangle.x, (int)rectangle.y, (int)(rectangle.x + rectangle.w), (int)(rectangle.y + rectangle.h) };
+	RECT protectedRect{ (int)rectangle.x, (int)rectangle.y, (int)(rectangle.x + rectangle.w), (int)(rectangle.y + rectangle.h) };
 
-    EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
-    EGui.Device->SetScissorRect(&protectedRect);
+	EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+	EGui.Device->SetScissorRect(&protectedRect);
 }
 
 void ERenderer::PushClip(Vec2 Pos, Vec2 Size) {
-    RECT protectedRect{ (int)Pos.x, (int)Pos.y, (int)(Pos.x + Size.x), (int)(Pos.y + Size.y)};
+	RECT protectedRect{ (int)Pos.x, (int)Pos.y, (int)(Pos.x + Size.x), (int)(Pos.y + Size.y) };
 
-    EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
-    EGui.Device->SetScissorRect(&protectedRect);
+	EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+	EGui.Device->SetScissorRect(&protectedRect);
 }
 
 void ERenderer::PopClip() {
-    EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+	EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 void ERenderer::PushAlpha(int alpha) {
-    PushingAlphaAmount = alpha;
-    PushingAlpha = true;
+	PushingAlphaAmount = alpha;
+	PushingAlpha = true;
 }
 
 void ERenderer::PopAlpha() {
-    if (PushingAlphaAmount == -1)
-        return;
+	if (PushingAlphaAmount == -1)
+		return;
 
-    PushingAlphaAmount = -1;
-    PushingAlpha = false;
+	PushingAlphaAmount = -1;
+	PushingAlpha = false;
 }
 
 void ERenderer::Line(Vec2 Pos, Vec2 Pos2, Color clr)
 {
-    if (PushingAlpha)
-        clr = Color(clr.r(), clr.g(), clr.b(), PushingAlphaAmount);
+	if (PushingAlpha)
+		clr = Color(clr.r(), clr.g(), clr.b(), PushingAlphaAmount);
 
-    D3DCOLOR d3dclr = ColorToD3DColor(clr);
+	D3DCOLOR d3dclr = TranslateColor(clr);
 
-    vertex vertices[2] = {
-        { round(Pos.x), round(Pos.y), 0.0f, 1.0f, d3dclr },
-        { round(Pos2.x), round(Pos2.y), 0.0f, 1.0f, d3dclr },
-    };
+	vertex vertices[2] = {
+		{ round(Pos.x), round(Pos.y), 0.0f, 1.0f, d3dclr },
+		{ round(Pos2.x), round(Pos2.y), 0.0f, 1.0f, d3dclr },
+	};
 
-    EGui.Device->DrawPrimitiveUP(D3DPT_LINELIST, 1, vertices, sizeof(vertex));
+	EGui.Device->DrawPrimitiveUP(D3DPT_LINELIST, 1, vertices, sizeof(vertex));
 }
 
 auto toRadians = PI / 180;
@@ -118,379 +114,436 @@ auto toDegrees = 180 / PI;
 
 void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding)
 {
-    if (PushingAlpha)
-        clr = Color(clr.r(), clr.g(), clr.b(), PushingAlphaAmount);
+	D3DCOLOR d3dclr = TranslateColor(clr);
 
-    D3DCOLOR d3dclr = ColorToD3DColor(clr);
+	if (rounding > 0) {
+		const int num_segments = rounding;
+		const int num_vertices = (num_segments * 4) + 2;
 
-    if (rounding) {
-        const int segments = rounding;
-        vertex* verts = new vertex[(segments * 4) + 2];
-        int cur_vert = 0;
+		vertex* vertices = new vertex[num_vertices];
 
-        for (int i = 0; i < 4; i++)
-        {
-            Vec2 point = { Pos.x + ((i < 2) ? (Size.x - rounding) : rounding), Pos.y + ((i % 3) ? (Size.y - rounding) : rounding) };
-            float angle_start = 90.f * (i - 1);
-            float angle_end = angle_start + 90.f;
+		// Generate the vertex data
+		int current_vertex = 0;
 
-            for (int j = 0; j < segments; j++)
-            {
-                float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(segments)) * static_cast<float>(j);
-                angle *= toRadians;
+		for (int i = 0; i < 4; i++)
+		{
+			Vec2 corner_point = { Pos.x + ((i < 2) ? (Size.x - rounding) : rounding), Pos.y + ((i % 3) ? (Size.y - rounding) : rounding) };
+			float angle_start = 90.f * (i - 1);
+			float angle_end = angle_start + 90.f;
 
-                verts[cur_vert].x = point.x + rounding * std::cos(angle);
-                verts[cur_vert].y = point.y + rounding * std::sin(angle);
-                verts[cur_vert].z = 0.0f;
-                verts[cur_vert].rhw = 1.0f;
-                verts[cur_vert].color = d3dclr;
+			for (int j = 0; j < num_segments; j++)
+			{
+				float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(num_segments)) * static_cast<float>(j);
+				angle *= toRadians;
 
-                cur_vert++;
-            }
-        }
+				vertices[current_vertex].x = corner_point.x + rounding * std::cos(angle);
+				vertices[current_vertex].y = corner_point.y + rounding * std::sin(angle);
+				vertices[current_vertex].z = 0.0f;
+				vertices[current_vertex].rhw = 1.0f;
+				vertices[current_vertex].color = d3dclr;
 
-        // Manually add another vertex at the end to close the loop
-        verts[cur_vert] = verts[0];
-        cur_vert++;
+				current_vertex++;
+			}
+		}
 
-        EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, cur_vert - 1, verts, sizeof(vertex));
-        delete[] verts;
-        return;
-    }
+		// Manually add another vertex at the end to close the loop
+		vertices[current_vertex] = vertices[0];
+		current_vertex++;
 
-    vertex vertices[5] = {
-        { Pos.x, Pos.y, 0.0f, 1.0f, d3dclr },
-        { Pos.x + Size.x, Pos.y, 0.0f, 1.0f, d3dclr },
-        { Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
-        { Pos.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
-        { Pos.x, Pos.y, 0.0f, 1.0f, d3dclr }
-    };
+		// Create a vertex buffer and fill it with the vertex data
+		IDirect3DVertexBuffer9* vb;
+		const int vertex_size = sizeof(vertex);
+		EGui.Device->CreateVertexBuffer(num_vertices * vertex_size, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &vb, nullptr);
+		void* vb_data;
+		vb->Lock(0, num_vertices * vertex_size, &vb_data, D3DLOCK_DISCARD);
+		memcpy(vb_data, vertices, num_vertices * vertex_size);
+		vb->Unlock();
 
-    EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, vertices, sizeof(vertex));
+		// Draw the vertex buffer
+		EGui.Device->SetStreamSource(0, vb, 0, vertex_size);
+		EGui.Device->DrawPrimitive(D3DPT_LINESTRIP, 0, current_vertex - 1);
+
+		// Release the vertex buffer
+		vb->Release();
+
+		//dealloc the memory for vertices
+		delete[] vertices;
+
+		//we are done
+		return;
+	}
+
+	vertex vertices[4] = {
+		{ Pos.x, Pos.y, 0.0f, 1.0f, d3dclr },
+		{ Pos.x + Size.x, Pos.y, 0.0f, 1.0f, d3dclr },
+		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
+		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr }
+	};
+
+	// Create a vertex buffer
+	IDirect3DVertexBuffer9* vertexBuffer;
+	EGui.Device->CreateVertexBuffer(4 * sizeof(vertex), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &vertexBuffer, NULL);
+
+	// Update the vertex data
+	void* pVertices;
+	vertexBuffer->Lock(0, 0, &pVertices, 0);
+	memcpy(pVertices, vertices, 4 * sizeof(vertex));
+	vertexBuffer->Unlock();
+
+	// Create an index buffer
+	IDirect3DIndexBuffer9* indexBuffer;
+	EGui.Device->CreateIndexBuffer(5 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &indexBuffer, NULL);
+
+	// Set the index data
+	WORD indices[] = { 0, 1, 2, 3, 0 };
+	void* pIndices;
+	indexBuffer->Lock(0, 0, &pIndices, 0);
+	memcpy(pIndices, indices, 5 * sizeof(WORD));
+	indexBuffer->Unlock();
+
+	// Set the vertex buffer
+	EGui.Device->SetStreamSource(0, vertexBuffer, 0, sizeof(vertex));
+
+	// Set the index buffer
+	EGui.Device->SetIndices(indexBuffer);
+
+	// Draw the rectangle
+	EGui.Device->DrawIndexedPrimitive(D3DPT_LINESTRIP, 0, 0, 4, 0, 4);
 }
 
 void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiFlags flags)
 {
-    if (PushingAlpha)
-        clr = Color(clr.r(), clr.g(), clr.b(), PushingAlphaAmount);
+	D3DCOLOR d3dclr = TranslateColor(clr);
 
-    D3DCOLOR d3dclr = ColorToD3DColor(clr);
+	if (rounding > 0) {
+		const int num_segments = rounding;
+		const int num_vertices = (num_segments * 4) + 2;
 
-    if (rounding) {
-        const int segments = rounding;
-        vertex* verts = new vertex[(segments * 4) + 2];
-        int cur_vert = 0;
+		vertex* vertices = new vertex[num_vertices];
 
-        for (int i = 0; i < 4; i++)
-        {
-            Vec2 point = { Pos.x + ((i < 2) ? (Size.x - rounding) : rounding), Pos.y + ((i % 3) ? (Size.y - rounding) : rounding) };
-            float angle_start = 90.f * (i - 1);
-            float angle_end = angle_start + 90.f;
+		// Generate the vertex data
+		int current_vertex = 0;
 
-            for (int j = 0; j < segments; j++)
-            {
-                float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(segments)) * static_cast<float>(j);
-                angle *= toRadians;
+		for (int i = 0; i < 4; i++)
+		{
+			Vec2 corner_point = { Pos.x + ((i < 2) ? (Size.x - rounding) : rounding), Pos.y + ((i % 3) ? (Size.y - rounding) : rounding) };
+			float angle_start = 90.f * (i - 1);
+			float angle_end = angle_start + 90.f;
 
-                verts[cur_vert].x = point.x + rounding * std::cos(angle);
-                verts[cur_vert].y = point.y + rounding * std::sin(angle);
-                verts[cur_vert].z = 0.0f;
-                verts[cur_vert].rhw = 1.0f;
-                verts[cur_vert].color = d3dclr;
+			for (int j = 0; j < num_segments; j++)
+			{
+				float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(num_segments)) * static_cast<float>(j);
+				angle *= toRadians;
 
-                cur_vert++;
-            }
-        }
+				vertices[current_vertex].x = corner_point.x + rounding * std::cos(angle);
+				vertices[current_vertex].y = corner_point.y + rounding * std::sin(angle);
+				vertices[current_vertex].z = 0.0f;
+				vertices[current_vertex].rhw = 1.0f;
+				vertices[current_vertex].color = d3dclr;
 
-        // Manually add another vertex at the end to close the loop
-        verts[cur_vert] = verts[0];
-        cur_vert++;
+				current_vertex++;
+			}
+		}
 
-        EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, cur_vert - 1, verts, sizeof(vertex));
-        delete[] verts;
-        return;
-    }
+		// Manually add another vertex at the end to close the loop
+		vertices[current_vertex] = vertices[0];
+		current_vertex++;
 
-    vertex vertices[4] = {
-        { Pos.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
-        { Pos.x, Pos.y, 0.0f, 1.0f, d3dclr },
-        { Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
-        { Pos.x + Size.x, Pos.y, 0.0f, 1.0f, d3dclr }
-    };
+		// Create a vertex buffer and fill it with the vertex data
+		IDirect3DVertexBuffer9* vb;
+		const int vertex_size = sizeof(vertex);
+		EGui.Device->CreateVertexBuffer(num_vertices * vertex_size, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &vb, nullptr);
+		void* vb_data;
+		vb->Lock(0, num_vertices * vertex_size, &vb_data, D3DLOCK_DISCARD);
+		memcpy(vb_data, vertices, num_vertices * vertex_size);
+		vb->Unlock();
 
-    EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertex));
+		// Draw the vertex buffer
+		EGui.Device->SetStreamSource(0, vb, 0, vertex_size);
+		EGui.Device->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, current_vertex - 1);
+
+		// Release the vertex buffer
+		vb->Release();
+
+		//dealloc the memory for vertices
+		delete[] vertices;
+
+		//we are done
+		return;
+	}
+
+	vertex vertices[6] = {
+		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
+		{ Pos.x, Pos.y, 0.0f, 1.0f, d3dclr },
+		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
+		{ Pos.x, Pos.y, 0.0f, 1.0f, d3dclr },
+		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
+		{ Pos.x + Size.x, Pos.y, 0.0f, 1.0f, d3dclr }
+	};
+
+	// Create a vertex buffer
+	IDirect3DVertexBuffer9* vertexBuffer;
+	EGui.Device->CreateVertexBuffer(6 * sizeof(vertex), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &vertexBuffer, NULL);
+
+	// Update the vertex data
+	void* pVertices;
+	vertexBuffer->Lock(0, 0, &pVertices, 0);
+	memcpy(pVertices, vertices, 6 * sizeof(vertex));
+	vertexBuffer->Unlock();
+
+	// Create an index buffer
+	IDirect3DIndexBuffer9* indexBuffer;
+	EGui.Device->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &indexBuffer, NULL);
+
+	// Set the index data
+	WORD indices[] = { 0, 1, 2, 3, 4, 5 };
+	void* pIndices;
+	indexBuffer->Lock(0, 0, &pIndices, 0);
+	memcpy(pIndices, indices, 6 * sizeof(WORD));
+	indexBuffer->Unlock();
+
+	// Set the vertex buffer
+	EGui.Device->SetStreamSource(0, vertexBuffer, 0, sizeof(vertex));
+
+	// Set the index buffer
+	EGui.Device->SetIndices(indexBuffer);
+
+	// Draw the rectangle
+	EGui.Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 6, 0, 2);
 }
 
 void ERenderer::BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding) {
-    FilledRectangle(Pos, Size, clr, rounding);
-    Rectangle(Pos, Size, BorderColor, rounding);
+	FilledRectangle(Pos, Size, clr, rounding);
+	Rectangle(Pos, Size, BorderColor, rounding);
 }
 
 void ERenderer::Gradient(Vec2 Pos, Vec2 Size, Color LColor, Color ROtherColor, bool Vertical)
 {
-    if (PushingAlpha) {
-        LColor = Color(LColor.r(), LColor.g(), LColor.b(), PushingAlphaAmount);
-        ROtherColor = Color(ROtherColor.r(), ROtherColor.g(), ROtherColor.b(), PushingAlphaAmount);
-    }
+	D3DCOLOR Color_Left = TranslateColor(LColor);
+	D3DCOLOR Color_Right = TranslateColor(ROtherColor);
 
-    D3DCOLOR Ld3dclr = ColorToD3DColor(LColor);
-    D3DCOLOR Rd3dclr = ColorToD3DColor(ROtherColor);
+	vertex vertices[4] = {
+		{ Pos.x, Pos.y, 0.0f, 1.0f, Color_Left },
+		{ Pos.x + Size.x, Pos.y, 0.0f, 1.0f, Vertical ? Color_Left : Color_Right },
+		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, Vertical ? Color_Right : Color_Left },
+		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, Color_Right }
+	};
 
-    vertex vertices[4] = {
-        { Pos.x, Pos.y, 0.0f, 1.0f, Ld3dclr },
-        { Pos.x + Size.x, Pos.y, 0.0f, 1.0f, Vertical ? Ld3dclr : Rd3dclr },
-        { Pos.x, Pos.y + Size.y, 0.0f, 1.0f, Vertical ? Rd3dclr : Ld3dclr },
-        { Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, Rd3dclr }
-    };
-
-    EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertex));
+	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertex));
 }
 
-void ERenderer::Gradient4(Vec2 Pos, Vec2 Size, Color TopLColor, Color TopRColor, Color BomLColor, Color BomRColor)
-{
-    if (PushingAlpha) {
-        TopLColor = Color(TopLColor.r(), TopLColor.g(), TopLColor.b(), PushingAlphaAmount);
-        TopRColor = Color(TopRColor.r(), TopRColor.g(), TopRColor.b(), PushingAlphaAmount);
-        BomLColor = Color(BomLColor.r(), BomLColor.g(), BomLColor.b(), PushingAlphaAmount);
-        BomRColor = Color(BomRColor.r(), BomRColor.g(), BomRColor.b(), PushingAlphaAmount);
-    }
+void ERenderer::Gradient4(Vec2 Pos, Vec2 Size, Color TopLColor, Color TopRColor, Color BomLColor, Color BomRColor) {
+	D3DCOLOR Color_TL = TranslateColor(TopLColor);
+	D3DCOLOR Color_TR = TranslateColor(TopRColor);
+	D3DCOLOR Color_BL = TranslateColor(BomLColor);
+	D3DCOLOR Color_BR = TranslateColor(BomRColor);
 
-    D3DCOLOR TopLd3dclr = ColorToD3DColor(TopLColor);
-    D3DCOLOR TopRd3dclr = ColorToD3DColor(TopRColor);
-    D3DCOLOR BomLd3dclr = ColorToD3DColor(BomLColor);
-    D3DCOLOR BomRd3dclr = ColorToD3DColor(BomRColor);
+	vertex vertices[4] = {
+		{ Pos.x, Pos.y, 0.0f, 1.0f, Color_TL },
+		{ Pos.x + Size.x, Pos.y, 0.0f, 1.0f, Color_TR },
+		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, Color_BL },
+		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, Color_BR }
+	};
 
-    vertex vertices[4] = {
-        { Pos.x, Pos.y, 0.0f, 1.0f, TopLd3dclr },
-        { Pos.x + Size.x, Pos.y, 0.0f, 1.0f, TopRd3dclr },
-        { Pos.x, Pos.y + Size.y, 0.0f, 1.0f, BomLd3dclr },
-        { Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, BomRd3dclr }
-    };
-
-    EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertex));
+	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertex));
 }
 
-void ERenderer::Text(const char* text, Vec2 Pos, int Orientation, FontData Font, bool Bordered, Color clr, Vec2 TextClipSize)
-{
-    if (PushingAlpha)
-        clr = Color(clr.r(), clr.g(), clr.b(), PushingAlphaAmount);
+void ERenderer::Text(FontData Font, const char* text, Vec2 Pos, Color clr, int Orientation) {
+	auto font = PushingFont ? OverrideFont : Font;
 
-    auto font = PushingFont ? OverrideFont.D3DXFont : Font.D3DXFont;
+	D3DCOLOR d3dclr = TranslateColor(clr);
 
-    D3DCOLOR d3dclr = ColorToD3DColor(clr);
+	//temperary variables.
+	DWORD TextFlags = 0x0;
+	RECT clip_rect;
 
-    int x((int)Pos.x), y((int)Pos.y);
+	switch (Orientation) {
+	case LEFT:
+		TextFlags = DT_LEFT | DT_NOCLIP;
+		break;
+	case CENTER:
+		TextFlags = DT_CENTER | DT_NOCLIP;
+		break;
+	case CENTER_XY:
+		TextFlags = (DT_CENTER | DT_VCENTER) | DT_NOCLIP;
+		break;
+	case RIGHT:
+		TextFlags = DT_RIGHT | DT_NOCLIP;
+		break;
+	}
 
-    bool NoClipRect = (TextClipSize.x == 0 && TextClipSize.y == 0) ? true : false;
-    DWORD TextFlags = 0x0;
+	if (font.outline) {
+		SetRect(&clip_rect, Pos.x - 1, Pos.y - 1, 0, 0);
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		SetRect(&clip_rect, Pos.x + 1, Pos.y + 1, Pos.x, Pos.y);
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		SetRect(&clip_rect, Pos.x, Pos.y + 1, Pos.x, Pos.y);
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		SetRect(&clip_rect, Pos.x + 1, Pos.y, Pos.x, Pos.y);
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		SetRect(&clip_rect, Pos.x, Pos.y - 1, Pos.x, Pos.y);
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		SetRect(&clip_rect, Pos.x - 1, Pos.y, Pos.x, Pos.y);
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		SetRect(&clip_rect, Pos.x + 1, Pos.y - 1, Pos.x, Pos.y);
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		SetRect(&clip_rect, Pos.x - 1, Pos.y, Pos.x + 1, Pos.y);
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+	}
 
-    RECT rect;
-    switch (Orientation) {
-    case LEFT:
-        TextFlags = NoClipRect ? DT_LEFT | DT_NOCLIP : DT_LEFT;
-        break;
-    case CENTER:
-        TextFlags = NoClipRect ? DT_CENTER | DT_NOCLIP : DT_CENTER;
-        break;
-    case CENTER_XY:
-        TextFlags = NoClipRect ? (DT_CENTER | DT_VCENTER) | DT_NOCLIP : DT_CENTER;
-        break;
-    case RIGHT:
-        TextFlags = NoClipRect ? DT_RIGHT | DT_NOCLIP : DT_RIGHT;
-        break;
-    }
-
-    if (Bordered) {
-        NoClipRect ? SetRect(&rect, x - 1, y, x - 1, y) : SetRect(&rect, x - 1, y, (int)TextClipSize.x - 1, (int)TextClipSize.y);
-        font->DrawTextA(NULL, text, -1, &rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
-        NoClipRect ? SetRect(&rect, x + 1, y, x + 1, y) : SetRect(&rect, x + 1, (int)TextClipSize.y, (int)TextClipSize.x + 1, (int)TextClipSize.y);
-        font->DrawTextA(NULL, text, -1, &rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
-        NoClipRect ? SetRect(&rect, x, y - 1, x, y - 1) : SetRect(&rect, x, y - 1, (int)TextClipSize.x, (int)TextClipSize.y - 1);
-        font->DrawTextA(NULL, text, -1, &rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
-        NoClipRect ? SetRect(&rect, x, y + 1, x, y + 1) : SetRect(&rect, x, y + 1, (int)TextClipSize.x, (int)TextClipSize.y + 1);
-        font->DrawTextA(NULL, text, -1, &rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
-
-        NoClipRect ? SetRect(&rect, x - 1, y - 1, x - 1, y - 1) : SetRect(&rect, x - 1, y, (int)TextClipSize.x - 1, (int)TextClipSize.y);
-        font->DrawTextA(NULL, text, -1, &rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
-        NoClipRect ? SetRect(&rect, x + 1, y + 1, x + 1, y + 1) : SetRect(&rect, x + 1, (int)TextClipSize.y, (int)TextClipSize.x + 1, (int)TextClipSize.y);
-        font->DrawTextA(NULL, text, -1, &rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
-        NoClipRect ? SetRect(&rect, x - 1, y + 1, x - 1, y + 1) : SetRect(&rect, x, y - 1, (int)TextClipSize.x, (int)TextClipSize.y - 1);
-        font->DrawTextA(NULL, text, -1, &rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
-        NoClipRect ? SetRect(&rect, x + 1, y - 1, x + 1, y - 1) : SetRect(&rect, x, y + 1, (int)TextClipSize.x, (int)TextClipSize.y + 1);
-        font->DrawTextA(NULL, text, -1, &rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
-    }
-
-    NoClipRect ? SetRect(&rect, x, y, x, y) : SetRect(&rect, x, y, (int)TextClipSize.x, (int)TextClipSize.y);
-    font->DrawTextA(NULL, text, -1, &rect, TextFlags, d3dclr);
+	SetRect(&clip_rect, Pos.x, Pos.y, Pos.x, Pos.y);
+	font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, d3dclr);
 }
 
-void ERenderer::Triangle(Vec2 Top, Vec2 Left, Vec2 Right, Color clr)
-{
-    if (PushingAlpha)
-        clr = Color(clr.r(), clr.g(), clr.b(), PushingAlphaAmount);
+Vec2 ERenderer::GetTextSize(FontData Font, const char* Text) {
+	//temp
+	RECT rect;
 
-    D3DCOLOR d3dclr = ColorToD3DColor(clr);
+	//calc
+	Font.Font->DrawTextA(0, Text, strlen(Text), &rect, DT_CALCRECT, D3DCOLOR_ARGB(0, 0, 0, 0));
 
-    vertex vertices[3] = {
-        {
-            Top.x, Top.y, 0.0f, 1.0f, d3dclr,
-        },
-        {
-            Right.x, Right.y, 0.0f, 1.0f, d3dclr,
-        },
-        {
-            Left.x, Left.y, 0.0f, 1.0f, d3dclr,
-        },
-    };
+	return Vec2(float(rect.right - rect.left), float(rect.bottom - rect.top));
+}
 
-    EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertices, sizeof(vertex));
+void ERenderer::Triangle(Vec2 Top, Vec2 Left, Vec2 Right, Color clr) {
+	D3DCOLOR Color = TranslateColor(clr);
+
+	vertex vertices[3] = {
+		{ Top.x, Top.y, 0.0f, 1.0f, Color },
+		{ Right.x, Right.y, 0.0f, 1.0f, Color },
+		{ Left.x, Left.y, 0.0f, 1.0f, Color }
+	};
+
+	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertices, sizeof(vertex));
 }
 
 void ERenderer::Circle(Vec2 Pos, float radius, Color clr, int e_completion, float rotation) {
-    if (PushingAlpha)
-        clr = Color(clr.r(), clr.g(), clr.b(), PushingAlphaAmount);
+	D3DCOLOR Color = TranslateColor(clr);
+	Pos = Pos + Vec2(radius, radius);
 
-    D3DCOLOR d3dclr = ColorToD3DColor(clr);
-    Pos = Pos + Vec2(radius, radius);
+	const int NUM_VERTICES = clamp((int)radius, 32, 100); // more will look smoother, 72 looks great. there is no reason to go any higher unless you are drawing a huge circle.
 
-    const int NUM_VERTICES = clamp((int)radius, 32, 100); // more will look smoother, 72 looks great. there is no reason to go any higher unless you are drawing a huge circle.
+	std::vector<vertex> circle(NUM_VERTICES + 1);
+	float angle = rotation * D3DX_PI / 180;
+	float pi;
 
-    std::vector<vertex> circle(NUM_VERTICES + 1);
-    float angle = rotation * D3DX_PI / 180;
-    float pi;
+	// this is for how much of the circle is shown, FULL = full circle, HALF = half of a circle, Quarter = 1/4 of the circle.
+	if (e_completion == FULL) pi = D3DX_PI;
+	if (e_completion == HALF) pi = D3DX_PI / 2;
+	if (e_completion == QUARTER) pi = D3DX_PI / 3.91;
 
-    // this is for how much of the circle is shown, FULL = full circle, HALF = half of a circle, Quarter = 1/4 of the circle.
-    if (e_completion == FULL) pi = D3DX_PI;
-    if (e_completion == HALF) pi = D3DX_PI / 2;
-    if (e_completion == QUARTER) pi = D3DX_PI / 3.91;
+	// Use a Bezier curve to generate the circle
+	for (int i = 0; i < NUM_VERTICES + 1; i++) {
+		float t = (float)i / (float)NUM_VERTICES;
+		float x = Pos.x + radius * cos(2 * pi * t + angle);
+		float y = Pos.y + radius * sin(2 * pi * t + angle);
+		circle[NUM_VERTICES - i].x = x;  // <-- Reverse the vertex order here
+		circle[NUM_VERTICES - i].y = y;
+		circle[NUM_VERTICES - i].z = 0;
+		circle[NUM_VERTICES - i].rhw = 1;
+		circle[NUM_VERTICES - i].color = Color;
+	}
 
-    // Use a Bezier curve to generate the circle
-    for (int i = 0; i < NUM_VERTICES + 1; i++) {
-        float t = (float)i / (float)NUM_VERTICES;
-        float x = Pos.x + radius * cos(2 * pi * t + angle);
-        float y = Pos.y + radius * sin(2 * pi * t + angle);
-        circle[NUM_VERTICES - i].x = x;  // <-- Reverse the vertex order here
-        circle[NUM_VERTICES - i].y = y;
-        circle[NUM_VERTICES - i].z = 0;
-        circle[NUM_VERTICES - i].rhw = 1;
-        circle[NUM_VERTICES - i].color = d3dclr;
-    }
+	// create the vertex buffer
+	EGui.Device->CreateVertexBuffer((NUM_VERTICES + 1) * sizeof(vertex), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE, D3DPOOL_DEFAULT, &EGui.VertexBuffer, NULL);
 
-    // create the vertex buffer
-    EGui.Device->CreateVertexBuffer((NUM_VERTICES + 1) * sizeof(vertex), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE, D3DPOOL_DEFAULT, &EGui.VertexBuffer, NULL);
+	// allocate memory for the vertex buffer
+	VOID* pVertices;
+	EGui.VertexBuffer->Lock(0, (NUM_VERTICES + 1) * sizeof(vertex), (void**)&pVertices, 0);
+	memcpy(pVertices, &circle[0], (NUM_VERTICES + 1) * sizeof(vertex));
+	EGui.VertexBuffer->Unlock();
 
-    // allocate memory for the vertex buffer
-    VOID* pVertices;
-    EGui.VertexBuffer->Lock(0, (NUM_VERTICES + 1) * sizeof(vertex), (void**)&pVertices, 0);
-    memcpy(pVertices, &circle[0], (NUM_VERTICES + 1) * sizeof(vertex));
-    EGui.VertexBuffer->Unlock();
+	// prepare primitive
+	EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
+	EGui.Device->SetStreamSource(0, EGui.VertexBuffer, 0, sizeof(vertex));
 
-    // prepare primitive
-    EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
-    EGui.Device->SetStreamSource(0, EGui.VertexBuffer, 0, sizeof(vertex));
+	// render primitive
+	EGui.Device->DrawPrimitive(D3DPT_LINESTRIP, 0, NUM_VERTICES);
 
-    // render primitive
-    EGui.Device->DrawPrimitive(D3DPT_LINESTRIP, 0, NUM_VERTICES);
+	// restore primitive
+	EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, FALSE);
 
-    // restore primitive
-    EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, FALSE);
-
-    // release vertex buffer
-    EGui.VertexBuffer->Release();
+	// release vertex buffer
+	EGui.VertexBuffer->Release();
 }
 
 void ERenderer::FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion, float rotation) {
-    if (PushingAlpha)
-        clr = Color(clr.r(), clr.g(), clr.b(), PushingAlphaAmount);
+	D3DCOLOR Color = TranslateColor(clr);
+	Pos = Pos + Vec2(radius, radius);
 
-    D3DCOLOR d3dclr = ColorToD3DColor(clr);
-    Pos = Pos + Vec2(radius, radius);
+	const int NUM_VERTICES = clamp((int)radius, 32, 100); // more will look smoother, 72 looks great. there is no reason to go any higher unless you are drawing a huge circle.
 
-    const int NUM_VERTICES = clamp((int)radius, 32, 100); // more will look smoother, 72 looks great. there is no reason to go any higher unless you are drawing a huge circle.
+	std::vector<vertex> circle(NUM_VERTICES + 1);
+	float angle = rotation * PI / 180;
+	float completion;
 
-    std::vector<vertex> circle(NUM_VERTICES + 1);
-    float angle = rotation * D3DX_PI / 180;
-    float pi;
+	// this is for how much of the circle is shown, FULL = full circle, HALF = half of a circle, Quarter = 1/4 of the circle.
+	if (e_completion == FULL) completion = PI;
+	if (e_completion == HALF) completion = PI_2;
+	if (e_completion == QUARTER) completion = PI / 4;
 
-    // this is for how much of the circle is shown, FULL = full circle, HALF = half of a circle, Quarter = 1/4 of the circle.
-    if (e_completion == FULL) pi = D3DX_PI;
-    if (e_completion == HALF) pi = D3DX_PI / 2;
-    if (e_completion == QUARTER) pi = D3DX_PI / 3.91;
+	// Use a Bezier curve to generate the circle
+	for (int i = 0; i < NUM_VERTICES + 1; i++) {
+		float t = (float)i / (float)NUM_VERTICES;
+		float x = Pos.x + radius * cos(2 * completion * t + angle);
+		float y = Pos.y + radius * sin(2 * completion * t + angle);
+		circle[NUM_VERTICES - i].x = x;  // <-- Reverse the vertex order here
+		circle[NUM_VERTICES - i].y = y;
+		circle[NUM_VERTICES - i].z = 0;
+		circle[NUM_VERTICES - i].rhw = 1;
+		circle[NUM_VERTICES - i].color = Color;
+	}
 
-    // Use a Bezier curve to generate the circle
-    for (int i = 0; i < NUM_VERTICES + 1; i++) {
-        float t = (float)i / (float)NUM_VERTICES;
-        float x = Pos.x + radius * cos(2 * pi * t + angle);
-        float y = Pos.y + radius * sin(2 * pi * t + angle);
-        circle[NUM_VERTICES - i].x = x;  // <-- Reverse the vertex order here
-        circle[NUM_VERTICES - i].y = y;
-        circle[NUM_VERTICES - i].z = 0;
-        circle[NUM_VERTICES - i].rhw = 1;
-        circle[NUM_VERTICES - i].color = d3dclr;
-    }
+	// create the vertex buffer
+	EGui.Device->CreateVertexBuffer((NUM_VERTICES + 1) * sizeof(vertex), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE, D3DPOOL_DEFAULT, &EGui.VertexBuffer, NULL);
 
-    // create the vertex buffer
-    EGui.Device->CreateVertexBuffer((NUM_VERTICES + 1) * sizeof(vertex), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE, D3DPOOL_DEFAULT, &EGui.VertexBuffer, NULL);
+	// allocate memory for the vertex buffer
+	VOID* pVertices;
+	EGui.VertexBuffer->Lock(0, (NUM_VERTICES + 1) * sizeof(vertex), (void**)&pVertices, 0);
+	memcpy(pVertices, &circle[0], (NUM_VERTICES + 1) * sizeof(vertex));
+	EGui.VertexBuffer->Unlock();
 
-    // allocate memory for the vertex buffer
-    VOID* pVertices;
-    EGui.VertexBuffer->Lock(0, (NUM_VERTICES + 1) * sizeof(vertex), (void**)&pVertices, 0);
-    memcpy(pVertices, &circle[0], (NUM_VERTICES + 1) * sizeof(vertex));
-    EGui.VertexBuffer->Unlock();
+	// prepare primitive
+	EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
+	EGui.Device->SetStreamSource(0, EGui.VertexBuffer, 0, sizeof(vertex));
 
-    // prepare primitive
-    EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
-    EGui.Device->SetStreamSource(0, EGui.VertexBuffer, 0, sizeof(vertex));
+	// render primitive
+	EGui.Device->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, NUM_VERTICES);
 
-    // render primitive
-    EGui.Device->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, NUM_VERTICES);
+	// restore primitive
+	EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, FALSE);
 
-    // restore primitive
-    EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, FALSE);
-
-    // release vertex buffer
-    EGui.VertexBuffer->Release();
+	// release vertex buffer
+	EGui.VertexBuffer->Release();
 }
 
 void ERenderer::BorderedCircle(Vec2 Pos, float radius, Color clr, Color borderClr, int e_completion, float rotation) {
-    FilledCircle(Pos, radius, clr, e_completion, rotation);
-    Circle(Pos, radius, borderClr, e_completion, rotation);
+	FilledCircle(Pos, radius, clr, e_completion, rotation);
+	Circle(Pos, radius, borderClr, e_completion, rotation);
 }
 
-Vec2 ERenderer::GetTextSize(FontData Font, const char* Text)
-{
-    auto rect = RECT();
-    Font.D3DXFont->DrawTextA(0, Text, strlen(Text), &rect, DT_CALCRECT, D3DCOLOR_ARGB(0, 0, 0, 0));
+void ERenderer::Sprite(LPDIRECT3DTEXTURE9 Texture, Vec2 Pos, Vec2 Size, Color clr) {
+	D3DCOLOR Color = TranslateColor(clr);
 
-    return Vec2(float(rect.right - rect.left), float(rect.bottom - rect.top));
-}
+	D3DXVECTOR3 pos = D3DXVECTOR3(Pos.x, Pos.y, 0.0f);
 
-void ERenderer::Sprite(LPDIRECT3DTEXTURE9 Texture, Vec2 Pos, Vec2 Size, Color clr)
-{
-    if (PushingAlpha)
-        clr = Color(clr.r(), clr.g(), clr.b(), PushingAlphaAmount);
+	// Calculate the destination rectangle based on the desired size
+	RECT DestRect;
+	DestRect.left = (LONG)Pos.x;
+	DestRect.top = (LONG)Pos.y;
+	DestRect.right = (LONG)(Pos.x + Size.x);
+	DestRect.bottom = (LONG)(Pos.y + Size.y);
 
-    D3DCOLOR d3dclr = ColorToD3DColor(clr);
+	// Calculate the source rectangle based on the actual texture size
+	D3DSURFACE_DESC desc;
+	Texture->GetLevelDesc(0, &desc);
+	RECT SrcRect;
+	SrcRect.left = 0;
+	SrcRect.top = 0;
+	SrcRect.right = desc.Width;
+	SrcRect.bottom = desc.Height;
 
-    D3DXVECTOR3 pos = D3DXVECTOR3(Pos.x, Pos.y, 0.0f);
-
-    // Calculate the destination rectangle based on the desired size
-    RECT DestRect;
-    DestRect.left = (LONG)Pos.x;
-    DestRect.top = (LONG)Pos.y;
-    DestRect.right = (LONG)(Pos.x + Size.x);
-    DestRect.bottom = (LONG)(Pos.y + Size.y);
-
-    // Calculate the source rectangle based on the actual texture size
-    D3DSURFACE_DESC desc;
-    Texture->GetLevelDesc(0, &desc);
-    RECT SrcRect;
-    SrcRect.left = 0;
-    SrcRect.top = 0;
-    SrcRect.right = desc.Width;
-    SrcRect.bottom = desc.Height;
-
-    EGui.Sprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_DONOTMODIFY_RENDERSTATE);
-    EGui.Sprite->Draw(Texture, &SrcRect, NULL, &pos, d3dclr);
-    EGui.Sprite->End();
+	EGui.Sprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_DONOTMODIFY_RENDERSTATE);
+	EGui.Sprite->Draw(Texture, &SrcRect, NULL, &pos, Color);
+	EGui.Sprite->End();
 }

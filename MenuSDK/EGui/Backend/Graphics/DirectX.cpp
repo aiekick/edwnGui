@@ -60,6 +60,8 @@ void Graphics::Create() {
     HRESULT result = EGui.D3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, EGui.hwnd,
         D3DCREATE_SOFTWARE_VERTEXPROCESSING, &EGui.d3dparams, &EGui.Device);
 
+    // use D3DCREATE_HARDWARE_VERTEXPROCESSING for hardware acceleration.
+
     // set device render states.
     SetupRenderStates(EGui.Device);
 }

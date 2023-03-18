@@ -41,10 +41,10 @@ bool EGuiMain::Slider(const char* title, int min, int max, int* currentValue, co
 	slider_x[GetItemIdentifier()] = clamp(Animations.lerp(slider_x[GetItemIdentifier()], Math.Map(*currentValue, min, max, 0, (int)slider_size.x), timing.getDeltaTime() * 8), 0.f, slider_size.x);
 
 	renderer.FilledRectangle(NextDrawPos + Vec2(0, text_size.y), slider_size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
-	renderer.Text(title, NextDrawPos, LEFT, renderer.Verdana, false, EGuiColors.TextColor);
+	renderer.Text(renderer.Verdana, title, NextDrawPos, EGuiColors.TextColor, LEFT);
 
-	renderer.Text("-", NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), LEFT, renderer.Verdana, false, EGuiColors.TextColor);
-	renderer.Text("+", NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), LEFT, renderer.Verdana, false, EGuiColors.TextColor);
+	renderer.Text(renderer.Verdana, "-", NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), EGuiColors.TextColor, LEFT);
+	renderer.Text(renderer.Verdana, "+", NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), EGuiColors.TextColor, LEFT);
 
 	renderer.FilledRectangle(NextDrawPos + Vec2(0, text_size.y), Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), slider_size.y), EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
 	renderer.Rectangle(NextDrawPos + Vec2(0, text_size.y), slider_size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
@@ -52,7 +52,7 @@ bool EGuiMain::Slider(const char* title, int min, int max, int* currentValue, co
 	renderer.FilledCircle(NextDrawPos + Vec2(-7, text_size.y - 2) + Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), 0), 7, EGuiColors.MenuTheme);
 	renderer.Circle(NextDrawPos + Vec2(-7, text_size.y - 2) + Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), 0), 7, EGuiColors.ElementBorderColor);
 
-	renderer.Text(Value.c_str(), NextDrawPos + Vec2(slider_size.x, 0), RIGHT, renderer.Verdana, false, EGuiColors.TextColor);
+	renderer.Text(renderer.Verdana, Value.c_str(), NextDrawPos + Vec2(slider_size.x, 0), EGuiColors.TextColor, RIGHT);
 
 	SetNextDrawPos(OriginalPos);
 	SetNextDrawPosEx({ 0, text_size.y + slider_size.y + EGuiStyle.Padding });
@@ -79,6 +79,9 @@ bool EGuiMain::Slider(const char* title, float min, float max, float* currentVal
 
 	bool hovering = Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size);
 
+	if (hovering)
+		Popup("Hovering slider!", Input.GetMousePos(), EGuiColors.TextColor);
+
 	if ((hovering && Input.IsKeyPressed(VK_LEFT)) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), button_size, PRESS))
 		*currentValue = *currentValue - 1.f;
 	else if ((hovering && Input.IsKeyPressed(VK_RIGHT)) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), button_size, PRESS))
@@ -97,10 +100,10 @@ bool EGuiMain::Slider(const char* title, float min, float max, float* currentVal
 	slider_x[GetItemIdentifier()] = clamp(Animations.lerp(slider_x[GetItemIdentifier()], Math.Map((int)*currentValue, (int)min, (int)max, 0, (int)slider_size.x), timing.getDeltaTime() * 8), 0.f, slider_size.x);
 
 	renderer.FilledRectangle(NextDrawPos + Vec2(0, text_size.y), slider_size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
-	renderer.Text(title, NextDrawPos, LEFT, renderer.Verdana, false, EGuiColors.TextColor);
+	renderer.Text(renderer.Verdana, title, NextDrawPos, EGuiColors.TextColor, LEFT);
 
-	renderer.Text("-", NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), LEFT, renderer.Verdana, false, EGuiColors.TextColor);
-	renderer.Text("+", NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), LEFT, renderer.Verdana, false, EGuiColors.TextColor);
+	renderer.Text(renderer.Verdana, "-", NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), EGuiColors.TextColor, LEFT);
+	renderer.Text(renderer.Verdana, "+", NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), EGuiColors.TextColor, LEFT);
 
 	renderer.FilledRectangle(NextDrawPos + Vec2(0, text_size.y), Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), slider_size.y), EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
 	renderer.Rectangle(NextDrawPos + Vec2(0, text_size.y), slider_size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
@@ -108,7 +111,7 @@ bool EGuiMain::Slider(const char* title, float min, float max, float* currentVal
 	renderer.FilledCircle(NextDrawPos + Vec2(-7, text_size.y - 2) + Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), 0), 7, EGuiColors.MenuTheme);
 	renderer.Circle(NextDrawPos + Vec2(-7, text_size.y - 2) + Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), 0), 7, EGuiColors.ElementBorderColor);
 
-	renderer.Text(Value.c_str(), NextDrawPos + Vec2(slider_size.x, 0), RIGHT, renderer.Verdana, false, EGuiColors.TextColor);
+	renderer.Text(renderer.Verdana, Value.c_str(), NextDrawPos + Vec2(slider_size.x, 0), EGuiColors.TextColor, RIGHT);
 
 	SetNextDrawPos(OriginalPos);
 	SetNextDrawPosEx({ 0, text_size.y + slider_size.y + EGuiStyle.Padding });

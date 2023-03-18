@@ -29,7 +29,7 @@ bool EGuiMain::Combobox(const char* title, int* selected, const char* items[]) {
     // Draw dropdown button.
     renderer.Sprite(renderer.BackgroundTexture, NextDrawPos, Size);
     renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor);
-    renderer.Text(title, NextDrawPos + Vec2(Size.x / 2, 2), CENTER, renderer.Verdana, false, EGuiColors.TextColor);
+    renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
 
     // If dropdown menu is open, draw menu items.
     if (this_state[GetItemIdentifier()]) {
@@ -46,7 +46,7 @@ bool EGuiMain::Combobox(const char* title, int* selected, const char* items[]) {
             }
 
             // Draw menu item.
-            renderer.Text(items[i], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * i)), CENTER, renderer.Verdana, false, *selected == i ? EGuiColors.MenuTheme : Color(255, 255, 255, 255));
+            renderer.Text(renderer.Verdana, items[i], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * i)), *selected == i ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
         }
 
         //Correction for background elements.

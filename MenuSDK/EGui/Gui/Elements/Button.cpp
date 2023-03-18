@@ -1,6 +1,6 @@
 #include "../../EGui.hpp"
 
-static std::unordered_map<int, int> button_press_alpha;
+static std::unordered_map<int, float> button_press_alpha;
 
 bool EGuiMain::Button(const char* title, Vec2 Size) {
 	SetItemIdentifier(GetItemIdentifier() + 1);
@@ -30,7 +30,7 @@ bool EGuiMain::Button(const char* title, Vec2 Size) {
 	renderer.Rectangle(NextDrawPos, Size, EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
 	renderer.PopAlpha();
 
-	renderer.Text(title, NextDrawPos + Vec2(Size.x / 2, 2), CENTER, renderer.Verdana, false, EGuiColors.TextColor);
+	renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
 
 	SetNextDrawPos(OriginalPos);
 	SetNextDrawPosEx({0, Size.y + EGuiStyle.Padding });

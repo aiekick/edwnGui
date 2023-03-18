@@ -15,7 +15,6 @@ void EGuiMain::Begin() {
 void EGuiMain::PreRender() {
     //we need to do this in order to maintain animations.
     timing.updateDeltaTime();
-    timing.updateFrameRate();
     graphics.Begin();
 }
 
@@ -117,8 +116,18 @@ void EGuiMain::DemoWindow() {
         case 0:
             Child("Settings", Size);
             {
+                static bool test_checkbox = false;
+                Checkbox("Enable", &test_checkbox);
+
+                static Color test_color = { 255, 0, 0, 255 };
+                ColorPicker("Test color picker", &test_color, true);
+
                 static float test_float_slider = 50.f;
                 Slider("Test slider", 0.f, 100.f, &test_float_slider, " splatzys");
+
+                static std::string test_textbox = "monkey balls 420";
+
+                Textbox("Example text_box", test_textbox);
             }
             EndChild();
 

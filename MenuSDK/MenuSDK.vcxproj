@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClCompile Include="EGui\Backend\Animation\Animation.cpp" />
     <ClCompile Include="EGui\Backend\Animation\Timing.cpp" />
+    <ClCompile Include="EGui\Backend\Camera\Camera.cpp" />
     <ClCompile Include="EGui\Backend\Render\Wrapper.cpp" />
     <ClCompile Include="EGui\Backend\Utility\Math.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Child.cpp" />
@@ -200,6 +201,7 @@
   <ItemGroup>
     <ClInclude Include="EGui\Backend\Animation\Animation.hpp" />
     <ClInclude Include="EGui\Backend\Animation\Timing.hpp" />
+    <ClInclude Include="EGui\Backend\Camera\Camera.hpp" />
     <ClInclude Include="EGui\Backend\Render\Fonts\Fonts.hpp" />
     <ClInclude Include="EGui\Backend\Render\Renderer.hpp" />
     <ClInclude Include="EGui\Backend\Render\Textures\Textures.hpp" />

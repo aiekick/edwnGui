@@ -2,10 +2,12 @@
 #include "../../EGui.hpp"
 
 struct Timing {
+	int FrameRate_Max = 0;
+
 	float getFrameTime();
 	float getDeltaTime();
 	int getFrameRate();
-	void updateFrameRate();
+	int getFrameRateMax();
 	void updateDeltaTime();
 };
 
