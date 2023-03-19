@@ -177,6 +177,7 @@
     <ClCompile Include="EGui\Backend\Utility\Math.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Child.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Keybind.cpp" />
+    <ClCompile Include="EGui\Gui\Elements\Label.cpp" />
     <ClCompile Include="EGui\Gui\Elements\SubTabs.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Textbox.cpp" />
     <ClCompile Include="EGui\EGui.cpp" />

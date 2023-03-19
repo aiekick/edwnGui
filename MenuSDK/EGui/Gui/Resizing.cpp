@@ -1,43 +1,49 @@
 #include "../EGui.hpp"
 
-static std::unordered_map<int, bool> ResizingState;
-static std::unordered_map<int, bool> TriedResizeOutside;
-static std::unordered_map<int, Vec2> Difference;
-Vec2 EGuiMain::Resizing(int id, Vec2 pos, Vec2 size) {
+struct ResizingInfo {
+	Rect ResizingArea;
+	bool Resizing;
+	bool OutOfBounds;
+	Vec2 Difference;
+};
+
+static std::unordered_map <int, ResizingInfo> resizing_info;
+
+Vec2 EGuiMain::Resizing(int id, Vec2 size) {
 	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), wnd.GetWindowSize()))
 		return size;
 
 	Vec2 NewSize = size;
 
-	for (auto const& [thisid, IsResize] : ResizingState) {
-		if (IsResize && thisid != id) {
+	for (auto const& [thisid, IsResize] : resizing_info) {
+		if (IsResize.Resizing && thisid != id) {
 			return size;
 			break;
 		}
 	}
 
-	auto ResizeArea = Rect(GetWindowPos().x + GetWindowSize().x - 10, GetWindowPos().y + GetWindowSize().y - 10, 10, 10);
+	auto ResizeArea = GetResizingArea(id);
 
-	if (!ResizingState[id] && Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(Vec2(ResizeArea.x, ResizeArea.y), Vec2(ResizeArea.w, ResizeArea.h)))
-		TriedResizeOutside[id] = true;
-	else if (!ResizingState[id] && !Input.IsKeyDown(VK_LBUTTON))
-		TriedResizeOutside[id] = false;
+	if (!resizing_info[id].Resizing && Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(Vec2(ResizeArea.x, ResizeArea.y), Vec2(ResizeArea.w, ResizeArea.h)))
+		resizing_info[id].OutOfBounds = true;
+	else if (!resizing_info[id].Resizing && !Input.IsKeyDown(VK_LBUTTON))
+		resizing_info[id].OutOfBounds = false;
 
 	//Set cursor style
-	if (Input.IsMouseHoveringRect(Vec2(ResizeArea.x, ResizeArea.y), Vec2(ResizeArea.w, ResizeArea.h)) || ResizingState[id])
-		SetCursorStyle(cursorSizeNWSE);
+	if (Input.IsMouseHoveringRect(Vec2(ResizeArea.x, ResizeArea.y), Vec2(ResizeArea.w, ResizeArea.h)) || resizing_info[id].Resizing)
+		SetCursorStyle(CursorSizeNWSE);
 
 	//Check if we should start DraggingState.
-	if (!ResizingState[id] && !TriedResizeOutside[id] && Input.IsKeyDown(VK_LBUTTON) && Input.IsMouseHoveringRect(Vec2(ResizeArea.x, ResizeArea.y), Vec2(ResizeArea.w, ResizeArea.h))) {
-		ResizingState[id] = true;
-		Difference[id] = Input.GetMousePos() - NewSize;
+	if (!resizing_info[id].Resizing && !resizing_info[id].OutOfBounds && Input.IsKeyDown(VK_LBUTTON) && Input.IsMouseHoveringRect(Vec2(ResizeArea.x, ResizeArea.y), Vec2(ResizeArea.w, ResizeArea.h))) {
+		resizing_info[id].Resizing = true;
+		resizing_info[id].Difference = Input.GetMousePos() - NewSize;
 	}
 
 	//Check for if we are not DraggingState anymore.
-	if (ResizingState[id] && !Input.IsKeyDown(VK_LBUTTON))
-		ResizingState[id] = false;
+	if (resizing_info[id].Resizing && !Input.IsKeyDown(VK_LBUTTON))
+		resizing_info[id].Resizing = false;
 
-	if (ResizingState[id]) {
+	if (resizing_info[id].Resizing) {
 		NewSize = Input.GetMousePos() - MenuPos[id];
 	}
 
@@ -47,11 +53,18 @@ Vec2 EGuiMain::Resizing(int id, Vec2 pos, Vec2 size) {
 	return NewSize;
 }
 
-bool EGuiMain::InResizingArea() {
-	auto ResizeArea = Rect(GetWindowPos().x + GetWindowSize().x - 10, GetWindowPos().y + GetWindowSize().y - 10, 10, 10);
-	return Input.IsMouseHoveringRect(Vec2(ResizeArea.x, ResizeArea.y), Vec2(ResizeArea.w, ResizeArea.h));
+void EGuiMain::SetResizingArea(int id, Vec2 pos, Vec2 size) {
+	resizing_info[id].ResizingArea = {pos.x, pos.y, size.x, size.y};
+}
+
+Rect EGuiMain::GetResizingArea(int id) {
+	return resizing_info[id].ResizingArea;
+}
+
+bool EGuiMain::InResizingArea(int id) {
+	return Input.IsMouseHoveringRect( { resizing_info[id].ResizingArea.x, resizing_info[id].ResizingArea.y}, {resizing_info[id].ResizingArea.w, resizing_info[id].ResizingArea.h});
 }
 
 bool EGuiMain::IsResizing(int id) {
-	return ResizingState[id];
+	return resizing_info[id].Resizing;
 }

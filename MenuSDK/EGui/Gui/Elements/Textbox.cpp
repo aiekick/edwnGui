@@ -2,8 +2,17 @@
 
 #include "../../EGui.hpp"
 
-static std::unordered_map<int, bool> typing;
-static std::unordered_map<int, float> textbox_alpha;
+struct Textbox_info {
+    bool typing;
+    float outline_alpha;
+
+    //typing bar near the end of the text.
+    bool bar;
+    float bar_time;
+    float bar_x;
+};
+
+static std::unordered_map<int, Textbox_info> textbox_info;
 
 bool EGuiMain::Textbox(const char* title, std::string &str) {
     SetItemIdentifier(GetItemIdentifier() + 1);
@@ -22,58 +31,92 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
 
     // Handle the typing bool
     if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS))
-        typing[GetItemIdentifier()] = !typing[GetItemIdentifier()];
+        textbox_info[GetItemIdentifier()].typing = !textbox_info[GetItemIdentifier()].typing;
 
     if (Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(NextDrawPos, Size))
-        typing[GetItemIdentifier()] = false;
+        textbox_info[GetItemIdentifier()].typing = false;
 
-    if (typing[GetItemIdentifier()]) {
+    if (textbox_info[GetItemIdentifier()].typing) {
         for (int i = 32; i <= 222; i++) {
             if ((i > 32 && i < 48) || (i > 57 && i < 65) || (i > 90 && i < 186))
                 continue;
 
             if (i > 57 && i <= 90) {
-                if (Input.IsKeyPressed(i))
+                if (Input.IsKeyPressed(i)) {
                     str += (Input.IsKeyDown(VK_SHIFT) || GetKeyState(VK_CAPITAL)) ? static_cast<char>(i) : static_cast<char>(i + 32);
+                    value_changed = true;
+                }
             }
             else {
                 if (Input.IsKeyPressed(i)) {
                     for (int j = 0; j < sizeof(special_characters); j++) {
-                        if (special_characters[j].vk_key == i)
+                        if (special_characters[j].vk_key == i) {
                             str += (Input.IsKeyDown(VK_SHIFT) || GetKeyState(VK_CAPITAL)) ? special_characters[j].upper : special_characters[j].regular;
+                            value_changed = true;
+                        }
                     }
                 }
             }
         }
 
 		if (Input.IsKeyPressed(VK_BACK) && !str.empty()) {
+            value_changed = true;
 			str.pop_back();
 		}
 
         if (Input.IsKeyPressed(VK_ESCAPE) || Input.IsKeyPressed(VK_RETURN))
-            typing[GetItemIdentifier()] = !typing[GetItemIdentifier()];
+            textbox_info[GetItemIdentifier()].typing = !textbox_info[GetItemIdentifier()].typing;
     }
 
     float delta_time = timing.getDeltaTime();
 
-    if (typing[GetItemIdentifier()])
-        textbox_alpha[GetItemIdentifier()] = clamp(Animations.lerp(textbox_alpha[GetItemIdentifier()], 255.f, delta_time * 8), 0.f, 255.f);
+    if (textbox_info[GetItemIdentifier()].typing)
+        textbox_info[GetItemIdentifier()].outline_alpha = clamp(Animations.lerp(textbox_info[GetItemIdentifier()].outline_alpha, 255.f, delta_time * 8), 0.f, 255.f);
     else
-        textbox_alpha[GetItemIdentifier()] = clamp(Animations.lerp(textbox_alpha[GetItemIdentifier()], 0.f, delta_time * 8), 0.f, 255.f);
+        textbox_info[GetItemIdentifier()].outline_alpha = clamp(Animations.lerp(textbox_info[GetItemIdentifier()].outline_alpha, 0.f, delta_time * 8), 0.f, 255.f);
 
     // Draw dropdown button.
     renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
     renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
 
-    renderer.PushAlpha(textbox_alpha[GetItemIdentifier()]);
+    renderer.PushAlpha(textbox_info[GetItemIdentifier()].outline_alpha);
     renderer.Rectangle(NextDrawPos, Size, EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
     renderer.PopAlpha();
 
+    //change this because it needs to work with custom menu sizes and is just shit lol. @zoiak shit code bro.
     std::string temp = str;
-    if (str.length() > 50U) //This can vary depending on your textbox size, make this dynamic in the future.
-        temp = str.substr(0U, 50U).append(("..."));
+    if (str.length() > 53U) //This can vary depending on your textbox size, make this dynamic in the future.
+        temp = str.substr(0U, 53U).append(("..."));
 
-    renderer.Text(renderer.Verdana, (str.empty() && !typing[GetItemIdentifier()]) ? title : temp.c_str(), NextDrawPos + Vec2(4, 2), EGuiColors.TextColor, LEFT);
+    Vec2 TextSize = renderer.GetTextSize(renderer.Verdana, temp.c_str());
+
+    //Typing bar
+    if (textbox_info[GetItemIdentifier()].typing) {
+        if (textbox_info[GetItemIdentifier()].bar_x == NULL)
+            textbox_info[GetItemIdentifier()].bar_x = TextSize.x;
+
+        textbox_info[GetItemIdentifier()].bar_x = Animations.lerp(textbox_info[GetItemIdentifier()].bar_x, TextSize.x, timing.getDeltaTime() * 8);
+
+        if (timing.getRealTime() >= textbox_info[GetItemIdentifier()].bar_time + 0.5f) {
+            textbox_info[GetItemIdentifier()].bar_time = timing.getRealTime();
+            textbox_info[GetItemIdentifier()].bar = !textbox_info[GetItemIdentifier()].bar;
+        }
+
+        if (value_changed) {
+            textbox_info[GetItemIdentifier()].bar_time = timing.getRealTime();
+            textbox_info[GetItemIdentifier()].bar = true;
+        }
+
+        if (textbox_info[GetItemIdentifier()].bar)
+            renderer.Line(NextDrawPos + Vec2(4 + textbox_info[GetItemIdentifier()].bar_x, 4), NextDrawPos + Vec2(4 + textbox_info[GetItemIdentifier()].bar_x, 4 + TextSize.y), EGuiColors.TextColor);
+    
+        //same as the else statement but when you type or delete text its animated using clipping.
+        renderer.PushClip(NextDrawPos + Vec2(5, 4), Vec2(textbox_info[GetItemIdentifier()].bar_x, TextSize.y));
+        renderer.Text(renderer.Verdana, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
+        renderer.PopClip();
+    }
+    else
+        renderer.Text(renderer.Verdana, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
 
     // Restore original draw position.
     SetNextDrawPos(OriginalPos);

@@ -63,13 +63,6 @@ void ERenderer::PopFont() {
 	}
 }
 
-void ERenderer::PushClip(Rect rectangle) {
-	RECT protectedRect{ (int)rectangle.x, (int)rectangle.y, (int)(rectangle.x + rectangle.w), (int)(rectangle.y + rectangle.h) };
-
-	EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
-	EGui.Device->SetScissorRect(&protectedRect);
-}
-
 void ERenderer::PushClip(Vec2 Pos, Vec2 Size) {
 	RECT protectedRect{ (int)Pos.x, (int)Pos.y, (int)(Pos.x + Size.x), (int)(Pos.y + Size.y) };
 
@@ -173,42 +166,15 @@ void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding)
 		return;
 	}
 
-	vertex vertices[4] = {
+	vertex vertices[5] = {
 		{ Pos.x, Pos.y, 0.0f, 1.0f, d3dclr },
 		{ Pos.x + Size.x, Pos.y, 0.0f, 1.0f, d3dclr },
 		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
-		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr }
+		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
+		{ Pos.x, Pos.y, 0.0f, 1.0f, d3dclr }
 	};
 
-	// Create a vertex buffer
-	IDirect3DVertexBuffer9* vertexBuffer;
-	EGui.Device->CreateVertexBuffer(4 * sizeof(vertex), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &vertexBuffer, NULL);
-
-	// Update the vertex data
-	void* pVertices;
-	vertexBuffer->Lock(0, 0, &pVertices, 0);
-	memcpy(pVertices, vertices, 4 * sizeof(vertex));
-	vertexBuffer->Unlock();
-
-	// Create an index buffer
-	IDirect3DIndexBuffer9* indexBuffer;
-	EGui.Device->CreateIndexBuffer(5 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &indexBuffer, NULL);
-
-	// Set the index data
-	WORD indices[] = { 0, 1, 2, 3, 0 };
-	void* pIndices;
-	indexBuffer->Lock(0, 0, &pIndices, 0);
-	memcpy(pIndices, indices, 5 * sizeof(WORD));
-	indexBuffer->Unlock();
-
-	// Set the vertex buffer
-	EGui.Device->SetStreamSource(0, vertexBuffer, 0, sizeof(vertex));
-
-	// Set the index buffer
-	EGui.Device->SetIndices(indexBuffer);
-
-	// Draw the rectangle
-	EGui.Device->DrawIndexedPrimitive(D3DPT_LINESTRIP, 0, 0, 4, 0, 4);
+	EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, vertices, sizeof(vertex));
 }
 
 void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiFlags flags)
@@ -272,44 +238,14 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
 		return;
 	}
 
-	vertex vertices[6] = {
+	vertex vertices[4] = {
 		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
-		{ Pos.x, Pos.y, 0.0f, 1.0f, d3dclr },
-		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
 		{ Pos.x, Pos.y, 0.0f, 1.0f, d3dclr },
 		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, d3dclr },
 		{ Pos.x + Size.x, Pos.y, 0.0f, 1.0f, d3dclr }
 	};
 
-	// Create a vertex buffer
-	IDirect3DVertexBuffer9* vertexBuffer;
-	EGui.Device->CreateVertexBuffer(6 * sizeof(vertex), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &vertexBuffer, NULL);
-
-	// Update the vertex data
-	void* pVertices;
-	vertexBuffer->Lock(0, 0, &pVertices, 0);
-	memcpy(pVertices, vertices, 6 * sizeof(vertex));
-	vertexBuffer->Unlock();
-
-	// Create an index buffer
-	IDirect3DIndexBuffer9* indexBuffer;
-	EGui.Device->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &indexBuffer, NULL);
-
-	// Set the index data
-	WORD indices[] = { 0, 1, 2, 3, 4, 5 };
-	void* pIndices;
-	indexBuffer->Lock(0, 0, &pIndices, 0);
-	memcpy(pIndices, indices, 6 * sizeof(WORD));
-	indexBuffer->Unlock();
-
-	// Set the vertex buffer
-	EGui.Device->SetStreamSource(0, vertexBuffer, 0, sizeof(vertex));
-
-	// Set the index buffer
-	EGui.Device->SetIndices(indexBuffer);
-
-	// Draw the rectangle
-	EGui.Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 6, 0, 2);
+	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertex));
 }
 
 void ERenderer::BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding) {
@@ -527,23 +463,16 @@ void ERenderer::Sprite(LPDIRECT3DTEXTURE9 Texture, Vec2 Pos, Vec2 Size, Color cl
 
 	D3DXVECTOR3 pos = D3DXVECTOR3(Pos.x, Pos.y, 0.0f);
 
-	// Calculate the destination rectangle based on the desired size
-	RECT DestRect;
-	DestRect.left = (LONG)Pos.x;
-	DestRect.top = (LONG)Pos.y;
-	DestRect.right = (LONG)(Pos.x + Size.x);
-	DestRect.bottom = (LONG)(Pos.y + Size.y);
-
-	// Calculate the source rectangle based on the actual texture size
 	D3DSURFACE_DESC desc;
 	Texture->GetLevelDesc(0, &desc);
+
 	RECT SrcRect;
 	SrcRect.left = 0;
 	SrcRect.top = 0;
 	SrcRect.right = desc.Width;
 	SrcRect.bottom = desc.Height;
 
-	EGui.Sprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_DONOTMODIFY_RENDERSTATE);
+	EGui.Sprite->Begin(D3DXSPRITE_ALPHABLEND);
 	EGui.Sprite->Draw(Texture, &SrcRect, NULL, &pos, Color);
 	EGui.Sprite->End();
 }

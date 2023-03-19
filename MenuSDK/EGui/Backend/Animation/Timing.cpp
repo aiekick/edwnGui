@@ -68,3 +68,8 @@ int Timing::getFrameRate() {
 int Timing::getFrameRateMax() {
     return FrameRate_Max;
 }
+
+float Timing::getRealTime() {
+    auto current_time = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration_cast<std::chrono::duration<double>>(current_time.time_since_epoch()).count();
+}

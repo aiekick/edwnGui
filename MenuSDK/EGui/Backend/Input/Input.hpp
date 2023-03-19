@@ -10,7 +10,7 @@ enum input_type
 struct EInput
 {
 	bool IsMouseHoveringRect(Vec2 pos, Vec2 size);
-	bool ButtonBehaviour(Vec2 pos, Vec2 size, int button_type);
+	bool ButtonBehaviour(Vec2 pos, Vec2 size, int button_type, char key = VK_LBUTTON);
 	bool IsKeyDown(int key);
 	bool IsKeyPressed(int key);
 	Vec2 GetMousePos();

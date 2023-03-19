@@ -9,6 +9,7 @@ struct Timing {
 	int getFrameRate();
 	int getFrameRateMax();
 	void updateDeltaTime();
+	float getRealTime();
 };
 
 extern Timing timing;

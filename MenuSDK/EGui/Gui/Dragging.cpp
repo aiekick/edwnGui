@@ -1,38 +1,46 @@
 #include "../EGui.hpp"
 
-static std::unordered_map<int, bool> DraggingState;
-static std::unordered_map<int, bool> TriedDragOutside;
-static std::unordered_map<int, Vec2> Difference;
+struct DraggingInfo {
+	bool Dragging;
+	bool OutOfBounds;
+	Vec2 Difference;
+};
+
+static std::unordered_map<int, Rect> DraggingArea;
+static std::unordered_map<int, DraggingInfo> dragging_info;
+
 Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool Child, Vec2 SnapPos) {
-	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), wnd.GetWindowSize()) || InResizingArea())
+	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), wnd.GetWindowSize()) || IsResizing(GetWindowId()))
 		return pos;
 
 	Vec2 NewPos = pos;
 
-	for (auto const& [thisid, isDragged] : DraggingState) {
-		if (isDragged && thisid != id) {
+	for (auto const& [thisid, isDragged] : dragging_info) {
+		if (isDragged.Dragging && thisid != id) {
 			return pos;
 			break;
 		}
 	}
 
-	if (!GetWindowDragability() || (!DraggingState[id] && Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(pos, size)))
-		TriedDragOutside[id] = true;
-	else if (!DraggingState[id] && !Input.IsKeyDown(VK_LBUTTON))
-		TriedDragOutside[id] = false;
+	if (!GetWindowDragability() || (!dragging_info[id].Dragging && Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(pos, size)))
+		dragging_info[id].OutOfBounds = true;
+	else if (!dragging_info[id].Dragging && !Input.IsKeyDown(VK_LBUTTON))
+		dragging_info[id].OutOfBounds = false;
 
 	//Check if we should start DraggingState.
-	if (!DraggingState[id] && !TriedDragOutside[id] && Input.IsKeyDown(VK_LBUTTON) && Input.IsMouseHoveringRect(pos, size)) {
-		DraggingState[id] = true;
-		Difference[id] = Input.GetMousePos() - NewPos;
+	if (!dragging_info[id].Dragging && !dragging_info[id].OutOfBounds && Input.IsKeyDown(VK_LBUTTON) && Input.IsMouseHoveringRect(pos, size)) {
+		dragging_info[id].Dragging = true;
+		dragging_info[id].Difference = Input.GetMousePos() - NewPos;
 	}
 
 	//Check for if we are not DraggingState anymore.
-	if (DraggingState[id] && !Input.IsKeyDown(VK_LBUTTON))
-		DraggingState[id] = false;
+	if (dragging_info[id].Dragging && !Input.IsKeyDown(VK_LBUTTON))
+		dragging_info[id].Dragging = false;
 
-	if (DraggingState[id])
-		NewPos = Input.GetMousePos() - Difference[id];
+	if (dragging_info[id].Dragging) {
+		NewPos = Input.GetMousePos() - dragging_info[id].Difference;
+		SetCursorStyle(CursorSizeALL);
+	}
 
 	if (SnapPos.x != -1 && NewPos.x > SnapPos.x - 10 && NewPos.x < SnapPos.x + 10 && NewPos.y > SnapPos.y - 10 && NewPos.y < SnapPos.y + 10)
 		NewPos = SnapPos;
@@ -44,7 +52,19 @@ Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool
 	return NewPos;
 }
 
+void EGuiMain::SetDraggingArea(int id, Vec2 pos, Vec2 size) {
+	DraggingArea[id] = { pos.x, pos.y, size.x, size.y };
+}
+
+Rect EGuiMain::GetDraggingArea(int id) {
+	return DraggingArea[id];
+}
+
+bool EGuiMain::InDraggingArea(int id) {
+	return Input.IsMouseHoveringRect({ DraggingArea[id].x, DraggingArea[id].y }, { DraggingArea[id].w, DraggingArea[id].h });
+}
+
 bool EGuiMain::IsDragging(int id)
 {
-	return DraggingState[id];
+	return dragging_info[id].Dragging;
 }

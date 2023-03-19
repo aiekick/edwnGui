@@ -23,38 +23,37 @@ bool EInput::IsMouseHoveringRect(Vec2 pos, Vec2 size)
 	return false;
 }
 
-bool EInput::ButtonBehaviour(Vec2 pos, Vec2 size, int button_type) {
+static std::unordered_map<int, bool> clicked;
+bool EInput::ButtonBehaviour(Vec2 pos, Vec2 size, int button_type, char key) {
 	if (!wnd.IsWindowParent())
 		return false;
 
 	// Generate a unique ID for the button based on its position, size, and type. This is fucking retarded - edwn change it, will cause high memory usage.
-	int id = pos.x + pos.y + button_type;
+	int id = pos.x + pos.y + button_type + key;
 
 	bool pressed = false;
 	bool hovered = IsMouseHoveringRect(pos, size);
-
-	static std::unordered_map<int, bool> clicked;
 
 	// Only process button press if the user is not currently dragging.
 	if (!EGui.IsDragging(EGui.GetWindowId())) {
 		if (hovered) {
 			if (button_type == HOLD) {
 				// Button press type 0: the button is pressed as long as the mouse is hovering over it.
-				pressed = (GetKeyState(VK_LBUTTON) & 0x80) != 0;
+				pressed = (GetKeyState(key) & 0x80) != 0;
 			}
 			else if (button_type == PRESS) {
 				// Button press type 1: the button is only pressed when the mouse is first clicked while hovering over it.
-				if ((GetKeyState(VK_LBUTTON) & 0x80) != 0 && !clicked[id])
+				if ((GetKeyState(key) & 0x80) != 0 && !clicked[id])
 					pressed = true;
 			}
 		}
 	}
 
 	// Update the clicked state of the button.
-	if ((GetKeyState(VK_LBUTTON) & 0x80) != 0 && !clicked[id]) {
+	if ((GetKeyState(key) & 0x80) != 0 && !clicked[id]) {
 		clicked[id] = true;
 	}
-	else if ((GetKeyState(VK_LBUTTON) & 0x80) == 0 && clicked[id]) {
+	else if ((GetKeyState(key) & 0x80) == 0 && clicked[id]) {
 		clicked[id] = false;
 	}
 

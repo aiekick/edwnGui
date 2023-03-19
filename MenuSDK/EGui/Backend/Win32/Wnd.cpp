@@ -16,7 +16,7 @@ LRESULT WINAPI EGui_ImplWin32_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			EGui.SettingCursor = false;
 		}
 		else
-			SetCursor(EGui.cursorArrow);
+			SetCursor(EGui.CursorArrow);
 
 		break;
 	case WM_EXITSIZEMOVE:

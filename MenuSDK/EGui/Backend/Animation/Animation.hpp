@@ -51,6 +51,10 @@ struct Anims {
 
 		return EaseIn(Flip (t) / .5f);
 	}
+
+	Color ColorLerp(Color clr_in, Color clr_out, float time) {
+		return Color(lerp(clr_in.r(), clr_out.r(), time), lerp(clr_in.g(), clr_out.g(), time), lerp(clr_in.b(), clr_out.b(), time), lerp(clr_in.a(), clr_out.a(), time));
+	}
 };
 
 extern Anims Animations;

@@ -15,7 +15,6 @@
 // External dependencies
 #include <d3d9.h>
 #include <d3dx9.h>
-#include <d2d1.h>
 #include <D3dx9tex.h>
 #include <Windows.h>
 #include <dInput.h>
@@ -47,7 +46,7 @@
 #include "Backend/Camera/Camera.hpp"
 #include "Backend/Graphics/DirectX.hpp"
 #include "Backend/Render/renderer.hpp"
-//#include "Backend/Render/Wrapper.hpp"
+#include "Backend/Render/Wrapper.hpp"
 
 // Pragma comments
 #pragma comment (lib, "d3d9.lib")
@@ -121,36 +120,41 @@ struct EGuiMain {
 	void Render();
 
 	// Resizing ---------------------------------------------------------------------------------------------------
-	Vec2 Resizing(int id, Vec2 pos, Vec2 size);
-	bool InResizingArea();
+	Vec2 Resizing(int id, Vec2 size);
+	void SetResizingArea(int id, Vec2 pos, Vec2 size);
+	Rect GetResizingArea(int id);
+	bool InResizingArea(int id);
 	bool IsResizing(int id);
 
 	// Dragging ---------------------------------------------------------------------------------------------------
 	Vec2 Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen = true, bool Child = false, Vec2 SnapPos = { -1, -1 });
+	void SetDraggingArea(int id, Vec2 pos, Vec2 size);
+	Rect GetDraggingArea(int id);
+	bool InDraggingArea(int id);
 	bool IsDragging(int id);
 
 	// Cursor -----------------------------------------------------------------------------------------------------
 	bool SettingCursor = false;
 	void SetCursorStyle(HCURSOR style) { SettingCursor = true; CurrentCursor = style; }
 	HCURSOR CurrentCursor = NULL;
-	HCURSOR cursorArrow = LoadCursor(NULL, IDC_ARROW);
-	HCURSOR cursorBeam = LoadCursor(NULL, IDC_IBEAM);
-	HCURSOR cursorWait = LoadCursor(NULL, IDC_WAIT);
-	HCURSOR cursorCross = LoadCursor(NULL, IDC_CROSS);
-	HCURSOR cursorUpArrow = LoadCursor(NULL, IDC_UPARROW);
-	HCURSOR cursorSize = LoadCursor(NULL, IDC_SIZE);
-	HCURSOR cursorIcon = LoadCursor(NULL, IDC_ICON);
-	HCURSOR cursorSizeNWSE = LoadCursor(NULL, IDC_SIZENWSE);
-	HCURSOR cursorSizeNESW = LoadCursor(NULL, IDC_SIZENESW);
-	HCURSOR cursorSizeEWE = LoadCursor(NULL, IDC_SIZEWE);
-	HCURSOR cursorSizeENS = LoadCursor(NULL, IDC_SIZENS);
-	HCURSOR cursorSizeALL = LoadCursor(NULL, IDC_SIZEALL);
-	HCURSOR cursorNo = LoadCursor(NULL, IDC_NO);
-	HCURSOR cursorHand = LoadCursor(NULL, IDC_HAND);
-	HCURSOR cursorAppStarting = LoadCursor(NULL, IDC_APPSTARTING);
-	HCURSOR cursorHelp = LoadCursor(NULL, IDC_HELP);
-	HCURSOR cursorPin = LoadCursor(NULL, IDC_PIN);
-	HCURSOR cursorPerson = LoadCursor(NULL, IDC_PERSON);
+	HCURSOR CursorArrow = LoadCursor(NULL, IDC_ARROW);
+	HCURSOR CursorBeam = LoadCursor(NULL, IDC_IBEAM);
+	HCURSOR CursorWait = LoadCursor(NULL, IDC_WAIT);
+	HCURSOR CursorCross = LoadCursor(NULL, IDC_CROSS);
+	HCURSOR CursorUpArrow = LoadCursor(NULL, IDC_UPARROW);
+	HCURSOR CursorSize = LoadCursor(NULL, IDC_SIZE);
+	HCURSOR CursorIcon = LoadCursor(NULL, IDC_ICON);
+	HCURSOR CursorSizeNWSE = LoadCursor(NULL, IDC_SIZENWSE);
+	HCURSOR CursorSizeNESW = LoadCursor(NULL, IDC_SIZENESW);
+	HCURSOR CursorSizeEWE = LoadCursor(NULL, IDC_SIZEWE);
+	HCURSOR CursorSizeENS = LoadCursor(NULL, IDC_SIZENS);
+	HCURSOR CursorSizeALL = LoadCursor(NULL, IDC_SIZEALL);
+	HCURSOR CursorNo = LoadCursor(NULL, IDC_NO);
+	HCURSOR CursorHand = LoadCursor(NULL, IDC_HAND);
+	HCURSOR CursorAppStarting = LoadCursor(NULL, IDC_APPSTARTING);
+	HCURSOR CursorHelp = LoadCursor(NULL, IDC_HELP);
+	HCURSOR CursorPin = LoadCursor(NULL, IDC_PIN);
+	HCURSOR CursorPerson = LoadCursor(NULL, IDC_PERSON);
 
 	// NextDrawPos ------------------------------------------------------------------------------------------------
 	Vec2 NextDrawPos = { 0, 0 };
@@ -209,11 +213,13 @@ struct EGuiMain {
 	bool Slider(const char* title, float min, float max, float* currentValue, const char* format = "");
 	bool Button(const char* title, Vec2 Size = { 0, 0 });
 	bool Textbox(const char* title, std::string &str);
-	bool Keybind(const char* id, int& key);
+	bool Keybind(const char* title, bool* key_state);
 	bool ColorPicker(const char* title, Color* selected, bool alpha_bar = true);
 	bool Popup(const char* text, Vec2 position, Color clr);
+	bool Label(const char* str, Color custom_color = {255, 255, 255, 255});
 
 	void RenderColorPickers();
+	void RenderKeybinds();
 	void RenderPopups();
 
 	bool InputAreaDisabled();

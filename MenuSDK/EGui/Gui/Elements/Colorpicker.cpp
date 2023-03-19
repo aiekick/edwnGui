@@ -9,7 +9,6 @@ struct ColorData {
 
 static std::unordered_map<int, ColorData> color_data;
 static std::unordered_map<int, bool> color_open;
-static std::unordered_map<int, bool> color_alpha;
 
 bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
     SetItemIdentifier(GetItemIdentifier() + 1);

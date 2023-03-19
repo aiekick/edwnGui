@@ -28,6 +28,7 @@
     <ClCompile Include="EGui\Backend\Render\Wrapper.cpp" />
     <ClCompile Include="EGui\Backend\Utility\Math.cpp" />
     <ClCompile Include="EGui\Backend\Camera\Camera.cpp" />
+    <ClCompile Include="EGui\Gui\Elements\Label.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.hpp" />

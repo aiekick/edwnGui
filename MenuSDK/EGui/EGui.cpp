@@ -77,8 +77,9 @@ void EGuiMain::DemoShapes() {
 }
 
 void EGuiMain::DemoWindow() {
-    SetNextWindowPos({ 100, 100 });
-    SetNextWindowSize({ 650, 390 }, { 750, 490 });
+    Vec2 Menu_Size = { 750, 490 };
+    SetNextWindowPos({ wnd.GetWindowSize().x / 2 - Menu_Size.x / 2, wnd.GetWindowSize().y / 2 - Menu_Size.y / 2 });
+    SetNextWindowSize({ 650, 390 }, Menu_Size);
 
     static int tab = 0;
 
@@ -119,15 +120,32 @@ void EGuiMain::DemoWindow() {
                 static bool test_checkbox = false;
                 Checkbox("Enable", &test_checkbox);
 
-                static Color test_color = { 255, 0, 0, 255 };
-                ColorPicker("Test color picker", &test_color, true);
+                static bool test_keybind = false;
+                Keybind("test bind", &test_keybind);
+
+                if (test_keybind)
+                    renderer.Text(renderer.Verdana, "Key on", { 2, 2 }, {255, 255, 255, 255}, LEFT);
+
+                /*static Color test_color = { 255, 0, 0, 255 };
+                ColorPicker("Test color picker", &test_color, true);*/
 
                 static float test_float_slider = 50.f;
                 Slider("Test slider", 0.f, 100.f, &test_float_slider, " splatzys");
 
                 static std::string test_textbox = "monkey balls 420";
-
                 Textbox("Example text_box", test_textbox);
+
+                static int button_press_count = 0;
+                if (Button("test button"))
+                    button_press_count++;
+
+                Label((std::string("Button press count: ") + std::to_string(button_press_count)).c_str());
+
+                static int combo_selected = 0;
+                static const char* items[] = { "test", "test 1" };
+                //Combobox("Test combo", &combo_selected, items);
+
+
             }
             EndChild();
 

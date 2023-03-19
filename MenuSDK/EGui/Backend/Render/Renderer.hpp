@@ -22,6 +22,8 @@ enum EGuiFlags {
 };
 
 struct FontData {
+    FontData() { Font = NULL; drop_shadow = false; outline = false; };
+
     LPD3DXFONT Font;
     bool drop_shadow;
     bool outline;
@@ -58,7 +60,6 @@ struct ERenderer {
     void PopFont();
 
     void PushClip(Vec2 Pos, Vec2 Size);
-    void PushClip(Rect Rectangle);
     void PopClip();
 
     void PushAlpha(int alpha);
