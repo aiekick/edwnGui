@@ -208,7 +208,7 @@ struct EGuiMain {
 	bool Checkbox(const char* title, bool* state);
 	//bool Combobox(const char* title, int* selected, const char* items[]);
 	bool Combobox(const char* title, int* selected, std::vector<std::string> options);
-	bool MultiCombobox(const char* title, std::vector<bool>& selected, const char* items[]);
+	bool MultiCombobox(const char* title, std::vector<bool>& selected, std::vector<std::string> options);
 	bool Listbox(const char* title, int* selected, const char* items[]);
 	bool Slider(const char* title, int min, int max, int* currentValue, const char* format = "");
 	bool Slider(const char* title, float min, float max, float* currentValue, const char* format = "");
