@@ -34,7 +34,7 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 	std::string keystr = keybind_info[GetItemIdentifier()].key == NULL ? "..." : keys_list[keybind_info[GetItemIdentifier()].key].data();
 
 	Vec2 Area = renderer.GetTextSize(renderer.Verdana, ("[" + keystr + "]").c_str());
-	Vec2 Pos = { (GetChildPos().x + GetChildSize().x - EGuiStyle.Padding * 4) - Area.x, PreviousDrawPos.y};
+	Vec2 Pos = { (GetChildPos().x + GetChildSize().x - EGuiStyle.Padding * 2 - 12) - Area.x, PreviousDrawPos.y};
 	static Vec2 Size = { 60, 60 };
 
 	if (Input.ButtonBehaviour(Pos, Area, PRESS))
@@ -75,7 +75,7 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 
 		for (int u = 0; u <= KeyMode::ALWAYS; u++)
 		{
-			//renderer.FilledRectangle(Pos + Vec2(Area.x + 10, 3 + ((TextSize.y + 2) * u)), { Size.x, TextSize.y }, { 25, 25, 25, 255 });
+			renderer.FilledRectangle(Pos + Vec2(Area.x + 10, 3 + ((TextSize.y + 2) * u)), { Size.x, TextSize.y }, { 50 * u, 50 * u, 50 * u, 255 });
 			if (Input.ButtonBehaviour(Pos + Vec2(Area.x + 10, 3 + ((TextSize.y + 2) * u)), { Size.x, TextSize.y }, PRESS)) {
 				keybind_info[GetItemIdentifier()].key_mode = u;
 				keybind_info[GetItemIdentifier()].open = false;
@@ -136,7 +136,7 @@ void EGuiMain::RenderKeybinds() {
 		Vec2 Size = keybind_menu[i].size;
 		Vec2 TextSize = renderer.GetTextSize(renderer.Verdana, "HOLD OFF");
 
-		renderer.BorderedRectangle(keybind_menu[i].pos, Size, EGuiColors.ChildBgColor, EGuiColors.FrameBorderColor, EGuiStyle.ElementRounding);
+		//renderer.BorderedRectangle(keybind_menu[i].pos, Size, EGuiColors.ChildBgColor, EGuiColors.FrameBorderColor, EGuiStyle.ElementRounding);
 
 		for (int u = 0; u <= KeyMode::ALWAYS; u++)
 			renderer.Text(renderer.Verdana, GetKeyModeState(u), keybind_menu[i].pos + Vec2(Size.x / 2, 2 + ((TextSize.y + 2) * u)), (keybind_menu[i].key_mode == u ? EGuiColors.MenuTheme : EGuiColors.TextColor), CENTER);
