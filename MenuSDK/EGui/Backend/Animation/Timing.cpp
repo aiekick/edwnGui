@@ -63,7 +63,7 @@ void Timing::updateFrameRateAbs() {
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
 
     if (elapsedTime >= 1000.0f) {
-        FramesPerSecond = (float)FramesPerSecond / (elapsedTime / 1000.0f);
+        FramesPerSecond = (float)FrameCount / (elapsedTime / 1000.0f);
         FrameCount = 0;
         startTime = currentTime;
     }
