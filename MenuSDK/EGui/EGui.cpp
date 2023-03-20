@@ -15,6 +15,7 @@ void EGuiMain::Begin() {
 void EGuiMain::PreRender() {
     //we need to do this in order to maintain animations.
     timing.updateDeltaTime();
+    timing.updateFrameRateAbs();
     graphics.Begin();
 }
 

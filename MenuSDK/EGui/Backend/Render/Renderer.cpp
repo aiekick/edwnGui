@@ -177,7 +177,7 @@ void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding)
 	EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, vertices, sizeof(vertex));
 }
 
-void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiFlags flags)
+void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiRoundingFlags flags)
 {
 	D3DCOLOR d3dclr = TranslateColor(clr);
 

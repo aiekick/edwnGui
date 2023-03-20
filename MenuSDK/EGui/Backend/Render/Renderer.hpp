@@ -8,17 +8,20 @@ enum text_alignment { LEFT, CENTER, CENTER_XY, RIGHT };
 template<typename T> static inline T Min(T lhs, T rhs) { return lhs < rhs ? lhs : rhs; }
 template<typename T> static inline T Max(T lhs, T rhs) { return lhs >= rhs ? lhs : rhs; }
 
-enum EGuiFlags {
-    RoundCornersTopLeft = 1 << 4,
-    RoundCornersTopRight = 1 << 5,
-    RoundCornersBottomLeft = 1 << 6,
-    RoundCornersBottomRight = 1 << 7,
-    RoundCornersNone = 1 << 8,
-    RoundCornersTop = RoundCornersTopLeft | RoundCornersTopRight,
-    RoundCornersBottom = RoundCornersBottomLeft | RoundCornersBottomRight,
-    RoundCornersLeft = RoundCornersBottomLeft | RoundCornersTopLeft,
-    RoundCornersRight = RoundCornersBottomRight | RoundCornersTopRight,
-    RoundCornersAll = RoundCornersTopLeft | RoundCornersTopRight | RoundCornersBottomLeft | RoundCornersBottomRight
+enum EGuiRoundingFlags {
+    CORNER_NONE = 0,
+
+    CORNER_TOP_LEFT = 1 << 0,
+    CORNER_TOP_RIGHT = 1 << 1,
+    CORNER_BOTTOM_LEFT = 1 << 2,
+    CORNER_BOTTOM_RIGHT = 1 << 3,
+
+    CORNER_TOP = CORNER_TOP_LEFT | CORNER_TOP_RIGHT,
+    CORNER_RIGHT = CORNER_TOP_RIGHT | CORNER_BOTTOM_RIGHT,
+    CORNER_BOTTOM = CORNER_BOTTOM_LEFT | CORNER_BOTTOM_RIGHT,
+    CORNER_LEFT = CORNER_TOP_LEFT | CORNER_BOTTOM_LEFT,
+
+    CORNER_ALL = CORNER_TOP | CORNER_RIGHT | CORNER_BOTTOM | CORNER_LEFT
 };
 
 struct FontData {
@@ -68,7 +71,7 @@ struct ERenderer {
     void Line(Vec2 Pos, Vec2 Pos2, Color clr);
 
     void Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding = 0.f);
-    void FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding = 0.f, EGuiFlags flags = RoundCornersNone);
+    void FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding = 0.f, EGuiRoundingFlags flags = CORNER_NONE);
     void BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding = 0.f);
     void Gradient(Vec2 Pos, Vec2 Size, Color LColor, Color RColor, bool Vertical = false);
     void Gradient4(Vec2 Pos, Vec2 Size, Color TopLColor, Color TopRColor, Color BomLColor, Color BomRColor);

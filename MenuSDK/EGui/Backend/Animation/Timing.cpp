@@ -52,6 +52,35 @@ void Timing::updateDeltaTime() {
     return;
 }
 
+void Timing::updateFrameRateAbs() {
+    static int FrameCount = 0;
+    static auto startTime = std::chrono::high_resolution_clock::now();
+
+    static float FramesPerSecond = 0.0f;
+    FrameCount++;
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
+
+    if (elapsedTime >= 1000.0f) {
+        FramesPerSecond = (float)FramesPerSecond / (elapsedTime / 1000.0f);
+        FrameCount = 0;
+        startTime = currentTime;
+    }
+    FrameRate_Abs = FramesPerSecond;
+
+    if (FrameRate_Abs > FrameRate_Abs_Max)
+        FrameRate_Abs_Max = FrameRate_Abs;
+}
+
+int Timing::getFrameRateAbs() {
+    return FrameRate_Abs;
+}
+
+int Timing::getFrameRateAbsMax() {
+    return FrameRate_Abs_Max;
+}
+
 float Timing::getDeltaTime() {
     return deltaTime;
 }
