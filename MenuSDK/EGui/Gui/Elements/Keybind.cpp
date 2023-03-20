@@ -76,8 +76,10 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 		for (int u = 0; u <= KeyMode::ALWAYS; u++)
 		{
 			//renderer.FilledRectangle(Pos + Vec2(Area.x + 10, 3 + ((TextSize.y + 2) * u)), { Size.x, TextSize.y }, { 25, 25, 25, 255 });
-			if (Input.ButtonBehaviour(Pos + Vec2(Area.x + 10, 3 + ((TextSize.y + 2) * u)), { Size.x, TextSize.y }, PRESS))
+			if (Input.ButtonBehaviour(Pos + Vec2(Area.x + 10, 3 + ((TextSize.y + 2) * u)), { Size.x, TextSize.y }, PRESS)) {
 				keybind_info[GetItemIdentifier()].key_mode = u;
+				keybind_info[GetItemIdentifier()].open = false;
+			}
 		}
 	}
 
