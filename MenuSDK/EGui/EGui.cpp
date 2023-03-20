@@ -140,7 +140,8 @@ void EGuiMain::DemoWindow() {
                 static int combo_selected = 0;
                 Combobox("Test combo", &combo_selected, { "test 1", "test 2", "test 3", "test 4", "test 5", "test 6", "test 21", "test 2565" });
 
-
+                static std::vector<bool> multi_selected = { false, false, false };
+                MultiCombobox("Test mutlicombo", multi_selected, { "test 1", "test 2", "test 3" });
             }
             EndChild();
 

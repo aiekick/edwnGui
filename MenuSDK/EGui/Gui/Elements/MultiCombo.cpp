@@ -1,6 +1,6 @@
 #include "../../EGui.hpp"
 
-bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& selected, const char* items[]) {
+bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& selected, std::vector<std::string> options) {
     SetItemIdentifier(GetItemIdentifier() + 1);
 
     static bool this_state[] = { false };
@@ -15,27 +15,27 @@ bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& selected, con
     if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS))
         this_state[GetItemIdentifier()] = !this_state[GetItemIdentifier()];
 
-    renderer.Sprite(renderer.BackgroundTexture, NextDrawPos, Size);
-
+    renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor);
     renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor);
-    renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
 
     if (this_state[GetItemIdentifier()]) {
-        renderer.FilledRectangle(NextDrawPos + Vec2(0, Size.y), Size + Vec2(0, Size.y * (sizeof(items) - 3)), EGuiColors.ElementBackColor);
-        renderer.Rectangle(NextDrawPos, Size + Vec2(0, Size.y * (sizeof(items) - 2)), EGuiColors.MenuTheme);
+        renderer.FilledRectangle(NextDrawPos, Size + Vec2(0, Size.y * options.size()), EGuiColors.ElementBackColor);
+        renderer.Rectangle(NextDrawPos, Size + Vec2(0, Size.y * options.size()), EGuiColors.MenuTheme);
         // Resize the selected vector to the correct size.
-        selected.resize(sizeof(items) - 2);
+        selected.resize(options.size());
 
-        for (size_t item_index = 0; item_index < sizeof(items) - 2; ++item_index) {
+        for (size_t item_index = 0; item_index < options.size(); ++item_index) {
             if (Input.ButtonBehaviour(NextDrawPos + Vec2(0, Size.y * (item_index + 1)), Size, PRESS))
                 selected[item_index] = !selected[item_index];
 
-            renderer.Text(renderer.Verdana, items[item_index], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * item_index)), selected[item_index] ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
+            renderer.Text(renderer.Verdana, options[item_index].c_str(), NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * item_index)), selected[item_index] ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
         }
     }
 
+    renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
+
     SetNextDrawPos(OriginalPos);
-    SetNextDrawPosEx({ 0, 18 + EGuiStyle.Padding + (this_state[GetItemIdentifier()] ? Size.y * (sizeof(items) - 2) : 0) });
+    SetNextDrawPosEx({ 0, 18 + EGuiStyle.Padding + (this_state[GetItemIdentifier()] ? Size.y * options.size() : 0) });
 
     return true;
 }
