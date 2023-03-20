@@ -42,7 +42,19 @@ struct RenderList {
     void Sprite(LPDIRECT3DTEXTURE9 Texture, Vec2 Pos, Vec2 Size, Color clr = Color(255, 255, 255, 255));
 
     void DrawRenderData() {
-        
+        static std::mutex functionTableMutex;
+        static std::condition_variable functionTableCV;
+
+        // lock the mutex and wait for the condition variable to be signaled
+        std::unique_lock<std::mutex> lock(functionTableMutex);
+        functionTableCV.wait(lock, [this] { return !functionTable.empty(); });
+
+        // @todo: make this multi-threaded
+        for (auto& function : functionTable) {
+            function();
+        }
+
+        functionTable.clear();  
     }
 };
 

@@ -60,8 +60,8 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
         }
 
 		if (Input.IsKeyPressed(VK_BACK) && !str.empty()) {
+            Input.IsKeyDown(VK_CONTROL) ? str.clear() : str.pop_back();
             value_changed = true;
-			str.pop_back();
 		}
 
         if (Input.IsKeyPressed(VK_ESCAPE) || Input.IsKeyPressed(VK_RETURN))

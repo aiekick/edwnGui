@@ -34,12 +34,10 @@ bool EGuiMain::InputAreaDisabled() {
 
 // for demo wnd.
 enum {
-    HOME = 0,
-    LEGIT,
-    RAGE,
-    DEFENSE,
+    RAGE = 0,
     VISUALS,
-    MISC
+    MISC,
+    LUA
 };
 
 float Grav = 9.81f;
@@ -77,29 +75,27 @@ void EGuiMain::DemoShapes() {
 }
 
 void EGuiMain::DemoWindow() {
-    Vec2 Menu_Size = { 750, 490 };
+    Vec2 Menu_Size = { 600, 390 };
     SetNextWindowPos({ wnd.GetWindowSize().x / 2 - Menu_Size.x / 2, wnd.GetWindowSize().y / 2 - Menu_Size.y / 2 });
-    SetNextWindowSize({ 650, 390 }, Menu_Size);
+    SetNextWindowSize({ 600, 390 }, Menu_Size);
 
     static int tab = 0;
 
-    if (Window(-1, "BotLucky", true)) {
+    if (Window(-1, "MenuSDK", true)) {
         auto MenuPos = GetWindowPos();
         auto MenuSize = GetWindowSize();
 
         /* fixes position for rendering & elements */
         SetNextDrawPos(MenuPos);
-        SetNextDrawPosEx({ 140, 1 });
+        SetNextDrawPosEx({ 292, 1 });
 
         Vec2 TabSize = {(MenuSize.x - 140) / 6, 29};
         
         /* draws and handles tabs */
-        if (Tab("HOME", tab == HOME, TabSize)) tab = HOME;
-        if (Tab("LEGIT", tab == LEGIT, TabSize)) tab = LEGIT;
-        if (Tab("RAGE", tab == RAGE, TabSize)) tab = RAGE;
-        if (Tab("DEFENSE", tab == DEFENSE, TabSize)) tab = DEFENSE;
-        if (Tab("VISUALS", tab == VISUALS, TabSize)) tab = VISUALS;
-        if (Tab("MISC", tab == MISC, TabSize)) tab = MISC;
+        if (Tab("Rage", tab == RAGE, TabSize)) tab = RAGE;
+        if (Tab("Visuals", tab == VISUALS, TabSize)) tab = VISUALS;
+        if (Tab("Misc", tab == MISC, TabSize)) tab = MISC;
+        if (Tab("Lua", tab == LUA, TabSize)) tab = LUA;
 
         /* sets position for left group */
         SetNextDrawPos(MenuPos);
@@ -114,7 +110,7 @@ void EGuiMain::DemoWindow() {
 
         /* handle children (NONONO not those type lol, your weird for thinking that) */
         switch (tab) {
-        case 0:
+        case RAGE:
             Child("Settings", Size);
             {
                 static bool test_checkbox = false;

@@ -16,9 +16,10 @@ int main() {
         {
             //fps, max fps, float time (up time)
             wnd.SetGraphicsWindowTitle("EGui, fps: " + std::to_string(timing.getFrameRate()) + " Highest fps: " + std::to_string(timing.getFrameRateMax()) + " Float Time: " + std::to_string(timing.getRealTime()));
-            //render_list.FilledRectangle({ 10, 10 }, { 100, 100 }, { 255, 255, 255, 255 }, 5);
-            //render_list.DrawRenderData();
-            EGui.DemoWindow();
+            render_list.FilledRectangle({ 10, 10 }, { 100, 100 }, { 255, 255, 255, 255 }, 5);
+
+            render_list.DrawRenderData();
+            //EGui.DemoWindow();
         }
         EGui.Render();
 

@@ -46,7 +46,7 @@ bool EGuiMain::Window(int id, const char* title, bool draggable) {
     renderer.PopAlpha();
 
     //Title
-    renderer.Text(renderer.TitleFont, title, MenuPos[WindowId] + Vec2(50, 6), EGuiColors.TextColor, LEFT);
+    renderer.Text(renderer.TitleFont, title, MenuPos[WindowId] + Vec2(20, 7), EGuiColors.TextColor, LEFT);
 
     //Resizing area.
     SetResizingArea(GetWindowId(), MenuPos[WindowId] + MenuSize[WindowId] - Vec2(12, 12), { 12, 12 });
