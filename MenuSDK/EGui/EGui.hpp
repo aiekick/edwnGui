@@ -206,7 +206,8 @@ struct EGuiMain {
 
 	// Elements ---------------------------------------------------------------------------------------------------
 	bool Checkbox(const char* title, bool* state);
-	bool Combobox(const char* title, int* selected, const char* items[]);
+	//bool Combobox(const char* title, int* selected, const char* items[]);
+	bool Combobox(const char* title, int* selected, std::vector<std::string> options);
 	bool MultiCombobox(const char* title, std::vector<bool>& selected, const char* items[]);
 	bool Listbox(const char* title, int* selected, const char* items[]);
 	bool Slider(const char* title, int min, int max, int* currentValue, const char* format = "");

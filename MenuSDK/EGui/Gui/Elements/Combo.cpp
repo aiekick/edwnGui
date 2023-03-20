@@ -1,6 +1,6 @@
 #include "../../EGui.hpp"
 
-bool EGuiMain::Combobox(const char* title, int* selected, const char* items[]) {
+bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::string> options) {
     SetItemIdentifier(GetItemIdentifier() + 1);
 
     // this_state is an array of booleans that will store the open/closed state of the dropdown for each instance.
@@ -27,18 +27,17 @@ bool EGuiMain::Combobox(const char* title, int* selected, const char* items[]) {
         this_state[GetItemIdentifier()] = !this_state[GetItemIdentifier()];
 
     // Draw dropdown button.
-    renderer.Sprite(renderer.BackgroundTexture, NextDrawPos, Size);
+    renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor);
     renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor);
-    renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
 
     // If dropdown menu is open, draw menu items.
     if (this_state[GetItemIdentifier()]) {
         // Calculate size of menu and draw menu background.
-        renderer.FilledRectangle(NextDrawPos + Vec2(0, Size.y), Size + Vec2(0, Size.y * (sizeof(items) - 3)), EGuiColors.ElementBackColor);
-        renderer.Rectangle(NextDrawPos, Size + Vec2(0, Size.y * (sizeof(items) - 2)), EGuiColors.MenuTheme);
+        renderer.FilledRectangle(NextDrawPos, Size + Vec2(0, Size.y * options.size()), EGuiColors.ElementBackColor);
+        renderer.Rectangle(NextDrawPos, Size + Vec2(0, Size.y * options.size()), EGuiColors.MenuTheme);
 
         // Iterate over menu items.
-        for (size_t i = 0; i < sizeof(items) - 2; ++i) {
+        for (size_t i = 0; i < options.size(); ++i) {
             // Update selected value when menu item is pressed.
             if (Input.ButtonBehaviour(NextDrawPos + Vec2(0, Size.y * (i + 1)), Size, PRESS)) {
                 *selected = i;
@@ -46,18 +45,21 @@ bool EGuiMain::Combobox(const char* title, int* selected, const char* items[]) {
             }
 
             // Draw menu item.
-            renderer.Text(renderer.Verdana, items[i], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * i)), *selected == i ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
+            renderer.Text(renderer.Verdana, options[i].c_str(), NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * i)), *selected == i ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
         }
 
         //Correction for background elements.
-        DisableInputArea = Rect(NextDrawPos.x, NextDrawPos.y + Size.y, Size.x, Size.y + Size.y * (sizeof(items) - 3));
+        DisableInputArea = Rect(NextDrawPos.x, NextDrawPos.y + Size.y, Size.x, Size.y + Size.y * options.size());
     }
+
+    // Draw text
+    renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
 
     // Restore original draw position.
     SetNextDrawPos(OriginalPos);
 
     // Set next draw position below dropdown menu.
-    SetNextDrawPosEx({ 0, 18 + EGuiStyle.Padding + (this_state[GetItemIdentifier()] ? Size.y * (sizeof(items) - 2) : 0) });
+    SetNextDrawPosEx({ 0, 18 + EGuiStyle.Padding + (this_state[GetItemIdentifier()] ? Size.y * options.size() : 0) });
 
     // If the selected value has changed, toggle the open state of the dropdown menu.
     if (value_changed)

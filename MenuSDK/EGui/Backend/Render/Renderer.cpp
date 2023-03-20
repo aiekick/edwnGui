@@ -472,7 +472,8 @@ void ERenderer::Sprite(LPDIRECT3DTEXTURE9 Texture, Vec2 Pos, Vec2 Size, Color cl
 	SrcRect.right = desc.Width;
 	SrcRect.bottom = desc.Height;
 
-	EGui.Sprite->Begin(D3DXSPRITE_ALPHABLEND);
-	EGui.Sprite->Draw(Texture, &SrcRect, NULL, &pos, Color);
-	EGui.Sprite->End();
+	if (SUCCEEDED(EGui.Sprite->Begin(D3DXSPRITE_ALPHABLEND))) {
+		EGui.Sprite->Draw(Texture, &SrcRect, NULL, &pos, Color);
+		EGui.Sprite->End();
+	}
 }

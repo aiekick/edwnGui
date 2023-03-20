@@ -34,7 +34,7 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 	std::string keystr = keybind_info[GetItemIdentifier()].key == NULL ? "..." : keys_list[keybind_info[GetItemIdentifier()].key].data();
 
 	Vec2 Area = renderer.GetTextSize(renderer.Verdana, ("[" + keystr + "]").c_str());
-	Vec2 Pos = { (GetChildPos().x + GetChildSize().x - EGuiStyle.Padding * 2) - Area.x, PreviousDrawPos.y};
+	Vec2 Pos = { (GetChildPos().x + GetChildSize().x - EGuiStyle.Padding * 4) - Area.x, PreviousDrawPos.y};
 	static Vec2 Size = { 60, 60 };
 
 	if (Input.ButtonBehaviour(Pos, Area, PRESS))

@@ -138,8 +138,7 @@ void EGuiMain::DemoWindow() {
                 Label((std::string("Button press count: ") + std::to_string(button_press_count)).c_str());
 
                 static int combo_selected = 0;
-                static const char* items[] = { "test", "test 1" };
-                //Combobox("Test combo", &combo_selected, items);
+                Combobox("Test combo", &combo_selected, { "test 1", "test 2", "test 3", "test 4", "test 5", "test 6", "test 21", "test 2565" });
 
 
             }
