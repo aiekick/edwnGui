@@ -19,8 +19,8 @@ int main() {
             //renderer.FilledRectangle({ 10, 10 }, { 100, 100 }, { 255, 255, 255, 255 }, 5);
             //render_list.FilledRectangle({ 10, 10 }, { 100, 100 }, { 255, 255, 255, 255 }, 5);
             //render_list.DrawRenderData();
-            renderer.FilledRectangle({ 10, 10 }, { 100, 100 }, { 255, 255, 255, 255 }, 5);
-            //EGui.DemoWindow();
+            //renderer.Rectangle({ 10, 10 }, { 100, 100 }, { 255, 0, 0, 255 }, 25, EGuiRoundingFlags::CORNER_ALL);
+            EGui.DemoWindow();
         }
         EGui.Render();
 

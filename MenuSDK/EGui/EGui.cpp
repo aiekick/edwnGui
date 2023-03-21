@@ -123,9 +123,6 @@ void EGuiMain::DemoWindow() {
                 if (test_keybind)
                     renderer.Text(renderer.Verdana, "Key on", { 2, 2 }, {255, 255, 255, 255}, LEFT);
 
-                /*static Color test_color = { 255, 0, 0, 255 };
-                ColorPicker("Test color picker", &test_color, true);*/
-
                 static float test_float_slider = 50.f;
                 Slider("Test slider", 0.f, 100.f, &test_float_slider, " splatzys");
 
@@ -138,10 +135,12 @@ void EGuiMain::DemoWindow() {
 
                 Label((std::string("Button press count: ") + std::to_string(button_press_count)).c_str());
 
+                ColorPicker("Lol picker", &EGuiColors.MenuTheme);
+
                 static int combo_selected = 0;
                 Combobox("Test combo", &combo_selected, { "test 1", "test 2", "test 3", "test 4", "test 5", "test 6", "test 21", "test 2565" });
 
-                static std::vector<bool> multi_selected = { false, false, false };
+                static std::vector<bool> multi_selected = {};
                 MultiCombobox("Test mutlicombo", multi_selected, { "test 1", "test 2", "test 3" });
             }
             EndChild();

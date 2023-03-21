@@ -1,20 +1,19 @@
 #include "../../EGui.hpp"
 
+struct ComboInfo {
+    bool open;
+};
+
+std::map<int, ComboInfo> combo_info;
+
 bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::string> options) {
     SetItemIdentifier(GetItemIdentifier() + 1);
-
-    // this_state is an array of booleans that will store the open/closed state of the dropdown for each instance.
-    static bool this_state[] = { false };
 
     // Keep track of whether the selected value has changed.
     bool value_changed = false;
 
     // Calculate size of dropdown button.
     auto Size = Vec2({ GetChildSize().x - ((12 + EGuiStyle.Padding) * 2 + EGuiStyle.Padding), 18 });
-
-    // Ensure open state is either true or false.
-    if (this_state[GetItemIdentifier()] != (true || false))
-        this_state[GetItemIdentifier()] = false;
 
     // Save current draw position.
     auto OriginalPos = GetNextDrawPos();
@@ -24,14 +23,14 @@ bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::strin
 
     // Toggle open state of dropdown menu when button is pressed.
     if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS))
-        this_state[GetItemIdentifier()] = !this_state[GetItemIdentifier()];
+        combo_info[GetItemIdentifier()].open = !combo_info[GetItemIdentifier()].open;
 
     // Draw dropdown button.
     renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor);
     renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor);
 
     // If dropdown menu is open, draw menu items.
-    if (this_state[GetItemIdentifier()]) {
+    if (combo_info[GetItemIdentifier()].open) {
         // Calculate size of menu and draw menu background.
         renderer.FilledRectangle(NextDrawPos, Size + Vec2(0, Size.y * options.size()), EGuiColors.ElementBackColor);
         renderer.Rectangle(NextDrawPos, Size + Vec2(0, Size.y * options.size()), EGuiColors.MenuTheme);
@@ -59,11 +58,11 @@ bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::strin
     SetNextDrawPos(OriginalPos);
 
     // Set next draw position below dropdown menu.
-    SetNextDrawPosEx({ 0, 18 + EGuiStyle.Padding + (this_state[GetItemIdentifier()] ? Size.y * options.size() : 0) });
+    SetNextDrawPosEx({ 0, 18 + EGuiStyle.Padding + (combo_info[GetItemIdentifier()].open ? Size.y * options.size() : 0) });
 
     // If the selected value has changed, toggle the open state of the dropdown menu.
     if (value_changed)
-        this_state[GetItemIdentifier()] = !this_state[GetItemIdentifier()];
+        combo_info[GetItemIdentifier()].open = !combo_info[GetItemIdentifier()].open;
 
     // Return whether the selected value has changed.
     return value_changed;

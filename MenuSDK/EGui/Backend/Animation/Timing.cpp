@@ -67,6 +67,7 @@ void Timing::updateFrameRateAbs() {
         FrameCount = 0;
         startTime = currentTime;
     }
+
     FrameRate_Abs = FramesPerSecond;
 
     if (FrameRate_Abs > FrameRate_Abs_Max)

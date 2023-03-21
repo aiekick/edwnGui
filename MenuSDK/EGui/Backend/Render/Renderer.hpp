@@ -70,8 +70,8 @@ struct ERenderer {
 
     void Line(Vec2 Pos, Vec2 Pos2, Color clr);
 
-    void Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding = 0.f);
-    void FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding = 0.f, EGuiRoundingFlags flags = CORNER_NONE);
+    void Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, EGuiRoundingFlags flags = CORNER_ALL);
+    void FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, EGuiRoundingFlags flags = CORNER_ALL);
     void BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding = 0.f);
     void Gradient(Vec2 Pos, Vec2 Size, Color LColor, Color RColor, bool Vertical = false);
     void Gradient4(Vec2 Pos, Vec2 Size, Color TopLColor, Color TopRColor, Color BomLColor, Color BomRColor);

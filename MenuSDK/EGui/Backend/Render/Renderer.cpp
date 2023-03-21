@@ -99,13 +99,13 @@ void ERenderer::Line(Vec2 Pos, Vec2 Pos2, Color clr)
 		{ round(Pos2.x), round(Pos2.y), 0.0f, 1.0f, d3dclr },
 	};
 
-	EGui.Device->DrawPrimitiveUP(D3DPT_LINELIST, 1, vertices, sizeof(vertex));
+	EGui.Device->DrawPrimitiveUP(D3DPT_LINELIST, 1, vertices, 20);
 }
 
 auto toRadians = PI / 180;
 auto toDegrees = 180 / PI;
 
-void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding)
+void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiRoundingFlags flags)
 {
 	D3DCOLOR d3dclr = TranslateColor(clr);
 

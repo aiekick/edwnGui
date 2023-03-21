@@ -18,12 +18,16 @@ bool EGuiMain::Child(const char* title, Vec2 size) {
 
 	renderer.FilledRectangle(NextDrawPos + Vec2{ 1, 20 }, { size.x - 2, 1 }, EGuiColors.MenuTheme);
 
+	renderer.PushClip(NextDrawPos, size);
+
 	SetNextDrawPosEx({ 5, 25 });
 
 	return true;
 }
 
 bool EGuiMain::EndChild() {
+	renderer.PopClip();
+
 	SetNextDrawPos(PreviousPos);
 	return true;
 }
