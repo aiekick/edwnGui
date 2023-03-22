@@ -37,13 +37,16 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 		float Saturation = Color::RGBtoHSV(*selected).Saturation;
 		float Value = Color::RGBtoHSV(*selected).Value;
 		float Hue = Color::RGBtoHSV(*selected).Hue;
-		float Alpha = 0;
+		float Alpha = selected->a();
 
 		//Primary picker
 		if (Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0) + Vec2(5, text_size.y + 10), PickerSize - Vec2(25, 40)) && Input.IsKeyDown(VK_LBUTTON)) {
+			//Saturation
 			Saturation = (Input.GetMousePos().x - (pos.x + size.x + 14)) / (PickerSize.x - 25);
 			Saturation = Math.Clamp(Saturation, 0.f, 1.f);
-			Value = (Input.GetMousePos().y - (pos.y + size.y + 14)) / (PickerSize.y - 40);
+
+			//Value
+			Value = 1.f - ((Input.GetMousePos().y - (pos.y + size.y + 14)) / (PickerSize.y - 40));
 			Value = Math.Clamp(Value, 0.f, 1.f);
 		}
 
@@ -57,11 +60,12 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 		//Alpha bar
 		if (Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0) + Vec2(5, PickerSize.y - 15), { PickerSize.x - 25, 10 }) && Input.IsKeyDown(VK_LBUTTON)) {
 			Alpha = Input.GetMousePos().x - (pos.x + size.x + 14);
-			*selected = Color(selected->r(), selected->g(), selected->b(), Math.GetPercent(Alpha, PickerSize.x - 25) * 2.55);
+			Alpha = Math.GetPercent(Alpha, PickerSize.x - 25) * 2.55;
 		}
 
 		//todo: fix math for saturation and value, there like opposite. run it and drag to bottom right you will see what I mean lol. I will clean up code dont worry.
 		*selected = Color::HSVtoRGB(Hue, Saturation, Value);
+		*selected = Color(selected->r(), selected->g(), selected->b(), Alpha);
 
 		if (Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0), PickerSize))
 			SetWindowDragability(false);
@@ -90,13 +94,14 @@ void EGuiMain::RenderColorPickers() {
 		Color clr = color_data[i].clr;
 
 		//frame
+		Color clr_hue = Color::HSVtoRGB(color_data[i].hue, 1.f, 1.f);
 		renderer.BorderedRectangle(color_data[i].pos, size, EGuiColors.ChildBgColor, EGuiColors.ElementBorderColor);
 		renderer.BorderedRectangle(color_data[i].pos, {size.x, text_size.y + 5}, EGuiColors.ChildHeaderColor, EGuiColors.ElementBorderColor);
 
 		//color gradient
-		renderer.Gradient(color_data[i].pos + Vec2(5, text_size.y + 10), size - Vec2(25, 40), Color(255, 255, 255, 255), Color(clr.r(), clr.g(), clr.b(), 255));
+		renderer.Gradient(color_data[i].pos + Vec2(5, text_size.y + 10), size - Vec2(25, 40), Color(255, 255, 255, 255), Color(clr_hue.r(), clr_hue.g(), clr_hue.b(), 255));
 		renderer.Gradient(color_data[i].pos + Vec2(5, text_size.y + 10), size - Vec2(25, 40), Color(0, 0, 0, 0), Color(0, 0, 0, 255), true);
-		renderer.Rectangle(color_data[i].pos + Vec2(5, text_size.y + 10) + Vec2(color_data[i].saturation * (size.x - 25), color_data[i].value * (size.y - 40)), { 5, 5 }, Color(255, 255, 0, 255));
+		renderer.Rectangle(color_data[i].pos + Vec2(5, text_size.y + 10) + Vec2(color_data[i].saturation * (size.x - 25), ((size.y - 40) - (color_data[i].value * (size.y - 40)))), { 5, 5 }, Color(255, 255, 0, 255));
 
 		//color bar
 		for (int j = 0; j < size.y - 40; j++) {
@@ -111,9 +116,9 @@ void EGuiMain::RenderColorPickers() {
 
 		//alpha bar
 		float alpha_amount = (clr.a() / 2.55) * (size.x - 25) / 100;
-		renderer.Gradient(color_data[i].pos + Vec2(5, size.y - 15), { size.x - 25, 10 }, Color(0, 0, 0, 255), Color(clr.r(), clr.g(), clr.b(), 255));
+		renderer.Gradient(color_data[i].pos + Vec2(5, size.y - 15), { size.x - 25, 10 }, Color(0, 0, 0, 255), Color(clr_hue.r(), clr_hue.g(), clr_hue.b(), 255));
 		renderer.Rectangle(color_data[i].pos + Vec2(5, size.y - 15), { size.x - 25, 10 }, Color(0, 0, 0, 255));
-		renderer.Rectangle(color_data[i].pos + Vec2(5 + alpha_amount, size.y - 15), Vec2(5, 10), Color(255, 255, 0, 255));
+		renderer.Rectangle(color_data[i].pos + Vec2(5 + alpha_amount - 2.5f, size.y - 15), Vec2(5, 10), Color(255, 255, 0, 255));
 
 		//title
 		renderer.Text(renderer.Verdana, color_data[i].title, { color_data[i].pos.x + 4, color_data[i].pos.y + 2 }, EGuiColors.TextColor, LEFT);

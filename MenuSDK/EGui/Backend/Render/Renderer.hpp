@@ -28,6 +28,7 @@ struct FontData {
     FontData() { Font = NULL; drop_shadow = false; outline = false; };
 
     LPD3DXFONT Font;
+    bool anti_alias;
     bool drop_shadow;
     bool outline;
 };
@@ -53,7 +54,7 @@ struct ERenderer {
     void CreateObjects();
     void ReleaseObjects();
     void Reset();
-    FontData AddFont(std::string name, int weight, int size, bool dropshadow = false, bool outline = false);
+    FontData AddFont(std::string name, int weight, int size, bool anti_alias = true, bool dropshadow = false, bool outline = false);
 
     D3DCOLOR TranslateColor(Color clr) {
 	    return D3DCOLOR_RGBA((int)clr.r(), (int)clr.g(), (int)clr.b(), PushingAlpha ? PushingAlphaAmount : (int)clr.a());

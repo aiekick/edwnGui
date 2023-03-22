@@ -15,6 +15,22 @@ struct vertex
     {}
 };
 
+struct Vertex_t {
+	Vec2 m_Position;
+	Vec2 m_TexCoord;
+	DWORD color;
+
+	Vertex_t() { 
+		m_Position = { 0, 0 }; m_TexCoord = { 0, 0 };
+	}
+
+	Vertex_t(const Vec2& pos, DWORD clr, const Vec2& coord = Vec2(0, 0)) {
+		m_Position = pos;
+		m_TexCoord = coord;
+		color = clr;
+	}
+};
+
 struct D3DTLVERTEX
 {
 	float fX;

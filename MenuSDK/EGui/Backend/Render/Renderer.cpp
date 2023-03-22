@@ -39,10 +39,11 @@ void ERenderer::Reset()
 	EGui.Device->GetViewport(&screen);
 }
 
-FontData ERenderer::AddFont(std::string name, int weight, int size, bool dropshadow, bool outline) {
+FontData ERenderer::AddFont(std::string name, int weight, int size, bool anti_alias, bool dropshadow, bool outline) {
 	FontData Temp_font;
 
 	D3DXCreateFontA(EGui.Device, size, 0, weight, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, DEFAULT_PITCH, name.c_str(), &Temp_font.Font);
+	Temp_font.anti_alias = anti_alias;
 	Temp_font.drop_shadow = dropshadow;
 	Temp_font.outline = outline;
 
@@ -110,17 +111,17 @@ void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiRo
 	D3DCOLOR d3dclr = TranslateColor(clr);
 
 	if (rounding > 0) {
-		const int num_segments = rounding;
+		const int num_segments = rounding * 4;
 		const int num_vertices = (num_segments * 4) + 2;
 
-		vertex* vertices = new vertex[num_vertices];
+		std::vector<Vertex_t> vertices(num_vertices);
 
 		// Generate the vertex data
 		int current_vertex = 0;
 
 		for (int i = 0; i < 4; i++)
 		{
-			Vec2 corner_point = { Pos.x + ((i < 2) ? (Size.x - rounding) : rounding), Pos.y + ((i % 3) ? (Size.y - rounding) : rounding) };
+			Vec2 corner_point = { std::round(Pos.x + ((i < 2) ? (Size.x - rounding) : rounding)), std::round(Pos.y + ((i % 3) ? (Size.y - rounding) : rounding)) };
 			float angle_start = 90.f * (i - 1);
 			float angle_end = angle_start + 90.f;
 
@@ -129,11 +130,9 @@ void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiRo
 				float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(num_segments)) * static_cast<float>(j);
 				angle *= toRadians;
 
-				vertices[current_vertex].x = corner_point.x + rounding * std::cos(angle);
-				vertices[current_vertex].y = corner_point.y + rounding * std::sin(angle);
-				vertices[current_vertex].z = 0.0f;
-				vertices[current_vertex].rhw = 1.0f;
-				vertices[current_vertex].color = d3dclr;
+				vertices[current_vertex] = Vertex_t(
+					{ std::round(corner_point.x + rounding * std::cos(angle)), std::round(corner_point.y + rounding * std::sin(angle)) }, d3dclr
+				);
 
 				current_vertex++;
 			}
@@ -145,11 +144,11 @@ void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiRo
 
 		// Create a vertex buffer and fill it with the vertex data
 		IDirect3DVertexBuffer9* vb;
-		const int vertex_size = sizeof(vertex);
+		const int vertex_size = sizeof(Vertex_t);
 		EGui.Device->CreateVertexBuffer(num_vertices * vertex_size, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &vb, nullptr);
 		void* vb_data;
 		vb->Lock(0, num_vertices * vertex_size, &vb_data, D3DLOCK_DISCARD);
-		memcpy(vb_data, vertices, num_vertices * vertex_size);
+		memcpy(vb_data, vertices.data(), num_vertices * vertex_size);
 		vb->Unlock();
 
 		// Draw the vertex buffer
@@ -158,9 +157,6 @@ void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiRo
 
 		// Release the vertex buffer
 		vb->Release();
-
-		//dealloc the memory for vertices
-		delete[] vertices;
 
 		//we are done
 		return;
@@ -185,14 +181,14 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
 		const int num_segments = rounding;
 		const int num_vertices = (num_segments * 4) + 2;
 
-		vertex* vertices = new vertex[num_vertices];
+		std::vector<Vertex_t> vertices(num_vertices);
 
 		// Generate the vertex data
 		int current_vertex = 0;
 
 		for (int i = 0; i < 4; i++)
 		{
-			Vec2 corner_point = { Pos.x + ((i < 2) ? (Size.x - rounding) : rounding), Pos.y + ((i % 3) ? (Size.y - rounding) : rounding) };
+			Vec2 corner_point = { std::round(Pos.x + ((i < 2) ? (Size.x - rounding) : rounding)), std::round(Pos.y + ((i % 3) ? (Size.y - rounding) : rounding)) };
 			float angle_start = 90.f * (i - 1);
 			float angle_end = angle_start + 90.f;
 
@@ -201,11 +197,9 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
 				float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(num_segments)) * static_cast<float>(j);
 				angle *= toRadians;
 
-				vertices[current_vertex].x = corner_point.x + rounding * std::cos(angle);
-				vertices[current_vertex].y = corner_point.y + rounding * std::sin(angle);
-				vertices[current_vertex].z = 0.0f;
-				vertices[current_vertex].rhw = 1.0f;
-				vertices[current_vertex].color = d3dclr;
+				vertices[current_vertex] = Vertex_t(
+					{ std::round(corner_point.x + rounding * std::cos(angle)), std::round(corner_point.y + rounding * std::sin(angle)) }, d3dclr
+				);
 
 				current_vertex++;
 			}
@@ -217,11 +211,11 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
 
 		// Create a vertex buffer and fill it with the vertex data
 		IDirect3DVertexBuffer9* vb;
-		const int vertex_size = sizeof(vertex);
+		const int vertex_size = sizeof(Vertex_t);
 		EGui.Device->CreateVertexBuffer(num_vertices * vertex_size, D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &vb, nullptr);
 		void* vb_data;
 		vb->Lock(0, num_vertices * vertex_size, &vb_data, D3DLOCK_DISCARD);
-		memcpy(vb_data, vertices, num_vertices * vertex_size);
+		memcpy(vb_data, vertices.data(), num_vertices * vertex_size);
 		vb->Unlock();
 
 		// Draw the vertex buffer
@@ -230,9 +224,6 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
 
 		// Release the vertex buffer
 		vb->Release();
-
-		//dealloc the memory for vertices
-		delete[] vertices;
 
 		//we are done
 		return;
@@ -310,25 +301,35 @@ void ERenderer::Text(FontData Font, const char* text, Vec2 Pos, Color clr, int O
 
 	if (font.outline) {
 		SetRect(&clip_rect, Pos.x - 1, Pos.y - 1, 0, 0);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x + 1, Pos.y + 1, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x, Pos.y + 1, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x + 1, Pos.y, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x, Pos.y - 1, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x - 1, Pos.y, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x + 1, Pos.y - 1, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x - 1, Pos.y, Pos.x + 1, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(15, 15, 15, clr.a()));
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
+	}
+	else if (font.drop_shadow) {
+		SetRect(&clip_rect, Pos.x + 1, Pos.y, Pos.x + 1, Pos.y);
+		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 	}
 
+
 	SetRect(&clip_rect, Pos.x, Pos.y, Pos.x, Pos.y);
+
+	EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, font.anti_alias ? TRUE : FALSE);
+
 	font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, d3dclr);
+
+	EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, FALSE);
 }
 
 Vec2 ERenderer::GetTextSize(FontData Font, const char* Text) {
