@@ -32,6 +32,7 @@ int main() {
     return 0;
 }
 ```
+The code provided above creates a window and sets up a directx9 device, then it begins setting up edwnGui to work with this enviornment. It calls PreRender, PreRender is where it clears our scene and prepares for next render. DemoWindow is our testing window. Render is the present and endscene, this renders everything we gave the renderer earlie 
 
 ## How do I use this in a dynamic link library?
 First, your gonna need to call
