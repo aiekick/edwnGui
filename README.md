@@ -32,3 +32,34 @@ int main() {
     return 0;
 }
 ```
+
+## How do I use this in a dynamic link library?
+First, your gonna need to call
+```cpp
+SetWindowHandle(HWND) -> located in EGui struct. Example: EGui.SetWindowHandle(HWND);
+```
+
+Second, your gonna need to call
+```cpp
+SetDevice(Device) -> located in EGui struct. Example: EGui.SetDevice(pDevice);
+```
+
+Third, your gonna need to call (this will fix colors looking off from what you want)
+```cpp
+SetupRenderStates(Device) -> located in Graphics struct. Example: Graphics.SetupRenderStates(pDevice);
+```
+
+Fourth, your gonna need to call
+```cpp
+Update() -> located in EGui struct. Example: EGui.Update();
+```
+
+Fifth, your gonna need to call (once)
+```cpp
+CreateObjects() -> located in renderer struct. Example: renderer.CreateObjects();
+```
+
+Finally, <optional> you can call
+```cpp
+DemoWindow() -> located in EGui struct. Example: EGui.DemoWindow();
+```

@@ -4,6 +4,7 @@
 struct EWindow {
 	bool CreateGuiWindow(std::string title, Vec2 wPos = { 0 ,0 }, Vec2 wSize = { 0, 0 });
 	bool IsWindowParent();
+	bool IsWindowed(HWND hWnd);
 	Vec2 GetWindowPos();
 	Vec2 GetWindowSize();
 

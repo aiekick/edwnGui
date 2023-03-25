@@ -111,9 +111,10 @@ struct EGuiMain {
 	// EGui -------------------------------------------------------------------------------------------------------
 	void Begin();
 	void End();
-	void DemoPhysics(Object* object);
 	void DemoWindow();
-	void DemoShapes();
+
+	/* for window hijacking */
+	void Update();
 
 	// Render -----------------------------------------------------------------------------------------------------
 	void PreRender();

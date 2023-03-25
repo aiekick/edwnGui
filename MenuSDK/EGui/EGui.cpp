@@ -8,7 +8,7 @@ std::unordered_map<int, Vec2> EGuiMain::MenuPos;
 std::unordered_map<int, Vec2> EGuiMain::MenuSize;
 
 void EGuiMain::Begin() {
-    graphics.Create();
+    Graphics.Create();
     renderer.CreateObjects();
 }
 
@@ -16,15 +16,22 @@ void EGuiMain::PreRender() {
     //we need to do this in order to maintain animations.
     timing.updateDeltaTime();
     timing.updateFrameRateAbs();
-    graphics.Begin();
+    Graphics.Begin();
 }
 
 void EGuiMain::Render() {
-    graphics.End();
+    Graphics.End();
+}
+
+/* this should ONLY be called if we are not using an external window for testing, as in we are making it render into another processes window. */
+void EGuiMain::Update() {
+    //we need to do this in order to maintain animations.
+    timing.updateDeltaTime();
+    timing.updateFrameRateAbs();
 }
 
 void EGuiMain::End() {
-    graphics.Cleanup();
+    Graphics.Cleanup();
     ::DestroyWindow(hwnd);
     ::UnregisterClass(wnd.wc.lpszClassName, wnd.wc.hInstance);
 }
@@ -40,40 +47,6 @@ enum {
     MISC,
     LUA
 };
-
-float Grav = 9.81f;
-void EGuiMain::DemoPhysics(Object* object) {
-    float Gravity = Grav * object->Size * object->Weight;
-
-    // apply gravity to the block
-    object->Velocity.y += Gravity * timing.getDeltaTime();
-
-    // apply friction to the block
-    float friction = object->Friction * object->Velocity.x;
-    object->Velocity.x -= friction * timing.getDeltaTime();
-
-    object->Position.x += object->Velocity.x * timing.getDeltaTime();
-    object->Position.y += object->Velocity.y * timing.getDeltaTime();
-
-    object->Position.x = std::clamp(object->Position.x, 0.f, wnd.GetWindowSize().x - object->Size * 2);
-    object->Position.y = std::clamp(object->Position.y, 0.f, wnd.GetWindowSize().y - object->Size * 2);
-
-    if (object->Position.y >= wnd.GetWindowSize().y - object->Size * 2 - 1 && object->Velocity.y <= 0.5f)
-        object->Velocity.x -= object->Friction * object->Velocity.x;
-
-    if (object->Position.x >= wnd.GetWindowSize().x - object->Size * 2 || object->Position.x <= 0)
-        object->Velocity.x = -object->Velocity.x * object->BounceFactor;
-
-    if (object->Position.y >= wnd.GetWindowSize().y - object->Size * 2 || object->Position.y <= 0)
-        object->Velocity.y = -object->Velocity.y * object->BounceFactor;
-
-    renderer.FilledCircle(object->Position, object->Size, object->Color);
-}
-
-void EGuiMain::DemoShapes() {
-    renderer.FilledCircle({ 10, 10 }, 50, { 255, 255, 255, 255 });
-    //renderer.FilledRectangle({ 10, 10 }, { 100, 100 }, { 255, 255, 255, 255 }, 25);
-}
 
 void EGuiMain::DemoWindow() {
     Vec2 Menu_Size = { 600, 390 };

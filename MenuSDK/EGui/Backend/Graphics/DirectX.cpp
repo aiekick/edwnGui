@@ -4,9 +4,9 @@
 #include "DirectX.hpp"
 
 // Define the Graphics struct.
-Graphics graphics;
+graphics Graphics;
 
-void Graphics::SetupRenderStates(IDirect3DDevice9 *Device) {
+void graphics::SetupRenderStates(IDirect3DDevice9 *Device) {
     Device->SetPixelShader(nullptr);
     Device->SetVertexShader(nullptr);
     Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
@@ -44,7 +44,7 @@ void Graphics::SetupRenderStates(IDirect3DDevice9 *Device) {
     Device->SetPixelShader(nullptr);
 }
 
-void Graphics::Create() {
+void graphics::Create() {
     EGui.D3D = Direct3DCreate9(D3D_SDK_VERSION);
 
     EGui.d3dparams.Windowed = true;
@@ -67,7 +67,7 @@ void Graphics::Create() {
 }
 
 // Begin a scene for rendering.
-void Graphics::Begin()
+void graphics::Begin()
 {
     // clear our scene for next draw.
     EGui.Device->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_RGBA(15, 15, 15, NULL), 1.f, 0);
@@ -75,7 +75,7 @@ void Graphics::Begin()
 }
 
 // End the current scene.
-void Graphics::End()
+void graphics::End()
 {
     /* custom cursor example */
     //renderer.Sprite(renderer.MouseTexture, Input.GetMousePos(), Vec2(10, 15));
@@ -84,7 +84,7 @@ void Graphics::End()
 }
 
 // Used or WndProc for window updates.
-void Graphics::OnDeviceLost(LPARAM lParam) {
+void graphics::OnDeviceLost(LPARAM lParam) {
     EGui.d3dparams.BackBufferWidth = LOWORD(lParam);
     EGui.d3dparams.BackBufferHeight = HIWORD(lParam);
     ResetDevice();
@@ -94,13 +94,13 @@ void Graphics::OnDeviceLost(LPARAM lParam) {
 }
 
 // Reset the Direct3D device.
-void Graphics::ResetDevice() {
+void graphics::ResetDevice() {
     EGui.Device->Reset(&EGui.d3dparams);
     Create();
 }
 
 // Clean up the Direct3D context.
-void Graphics::Cleanup() {
+void graphics::Cleanup() {
     renderer.ReleaseObjects();
     EGui.Device->Release();
     EGui.D3D->Release();

@@ -1,7 +1,7 @@
 #pragma once
 #include "../../EGui.hpp"
 
-struct Graphics {
+struct graphics {
 	void SetupRenderStates(IDirect3DDevice9 *Device);
 	void Create();
 
@@ -13,4 +13,4 @@ struct Graphics {
 	void Cleanup();
 };
 
-extern Graphics graphics;
+extern graphics Graphics;

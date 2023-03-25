@@ -34,9 +34,9 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 		if (!Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0), PickerSize) && Input.IsKeyPressed(VK_LBUTTON))
 			color_open[GetItemIdentifier()] = false;
 
+		float Hue = Color::RGBtoHSV(*selected).Hue;
 		float Saturation = Color::RGBtoHSV(*selected).Saturation;
 		float Value = Color::RGBtoHSV(*selected).Value;
-		float Hue = Color::RGBtoHSV(*selected).Hue;
 		float Alpha = selected->a();
 
 		//Primary picker

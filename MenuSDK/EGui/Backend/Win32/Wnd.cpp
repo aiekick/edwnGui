@@ -21,18 +21,18 @@ LRESULT WINAPI EGui_ImplWin32_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		break;
 	case WM_EXITSIZEMOVE:
 		if (EGui.Device != NULL && wParam != SIZE_MINIMIZED)
-			graphics.OnDeviceLost(lParam);
+			Graphics.OnDeviceLost(lParam);
 		break;
 	case WM_SIZE:
 		if (DeviceLost) {
 			DeviceLost = false;
 
-			graphics.OnDeviceLost(lParam);
+			Graphics.OnDeviceLost(lParam);
 		}
 		if (wParam == SIZE_MAXIMIZED && EGui.Device != NULL) {
 			DeviceLost = true;
 
-			graphics.OnDeviceLost(lParam);
+			Graphics.OnDeviceLost(lParam);
 		}
 		break;
 	case WM_SYSCOMMAND:
@@ -82,4 +82,14 @@ bool EWindow::IsWindowParent() {
 		return true;
 
 	return false;
+}
+
+bool EWindow::IsWindowed(HWND hWnd) {
+	RECT a, b;
+	GetWindowRect(hWnd, &a);
+	GetWindowRect(GetDesktopWindow(), &b);
+	return !(a.left == b.left &&
+		a.top == b.top &&
+		a.right == b.right &&
+		a.bottom == b.bottom);
 }

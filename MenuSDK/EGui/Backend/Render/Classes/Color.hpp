@@ -137,43 +137,6 @@ struct Color
 		return Brightness(*this);
 	}
 
-	static Color FromHSB(float hue /* 0.f - 1.f*/,
-		float saturation /* 0.f - 1.f */,
-		float brightness /* 0.f - 1.f */,
-		int alpha = 255)
-	{
-		hue = clamp(hue, 0.f, 1.f);
-		saturation = clamp(saturation, 0.f, 1.f);
-		brightness = clamp(brightness, 0.f, 1.f);
-		float h = (hue == 1.f) ? 0.f : (hue * 6.f);
-		float f = h - static_cast<int>(h);
-		float p = brightness * (1.f - saturation);
-		float q = brightness * (1.f - saturation * f);
-		float t = brightness * (1.f - (saturation * (1.f - f)));
-
-		if (h < 1.f)
-			return Color(brightness * 255, t * 255, p * 255, alpha);
-
-		else
-			if (h < 2.f)
-				return Color(q * 255, brightness * 255, p * 255, alpha);
-
-			else
-				if (h < 3.f)
-					return Color(p * 255, brightness * 255, t * 255, alpha);
-
-				else
-					if (h < 4)
-						return Color(p * 255, q * 255, brightness * 255, alpha);
-
-					else
-						if (h < 5)
-							return Color(t * 255, p * 255, brightness * 255, alpha);
-
-						else
-							return Color(brightness * 255, p * 255, q * 255, alpha);
-	}
-
 	static Color HSVtoRGB(float hue, float sat, float val) {
 		float red, grn, blu;
 		float i, f, p, q, t;
@@ -259,15 +222,3 @@ struct Color
 		return result;
 	}
 };
-
-namespace colors {
-	static Color white{ 255, 255, 255, 255 };
-	static Color black{ 0, 0, 0, 255 };
-	static Color red{ 255, 0, 0, 255 };
-	static Color burgundy{ 180, 0, 45, 255 };
-	static Color light_blue{ 95, 174, 227, 255 };
-	static Color orange{ 243, 156, 18, 255 };
-	static Color transparent_green{ 0, 255, 0, 200 };
-	static Color transparent_yellow{ 255, 255, 0, 200 };
-	static Color transparent_red{ 255, 0, 0, 200 };
-}

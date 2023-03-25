@@ -1,4 +1,5 @@
 #pragma once
+#include "../../EGui.hpp"
 
 struct EMath {
 	int Clamp(int x, int min, int max);
@@ -13,6 +14,18 @@ struct EMath {
 
 	float GetPercent(float x, float max) {
 		return (x / max) * 100;
+	}
+
+	int RandomInt(int min, int max) {
+		return rand() % max + min;
+	}
+
+	float RandomFloat(float min, float max) {
+		float random = ((float)rand()) / (float)RAND_MAX;
+		float diff = max - min;
+		float r = random * diff;
+
+		return min + r;
 	}
 };
 
