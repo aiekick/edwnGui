@@ -59,7 +59,7 @@ Fifth, your gonna need to call (once)
 CreateObjects() -> located in renderer struct. Example: renderer.CreateObjects();
 ```
 
-Finally, <optional> you can call
+Finally, <optional> you can call <optional>
 ```cpp
 DemoWindow() -> located in EGui struct. Example: EGui.DemoWindow();
 ```
