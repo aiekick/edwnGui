@@ -55,7 +55,7 @@ void EGuiMain::DemoWindow() {
 
     static int tab = 0;
 
-    if (Window(-1, "MenuSDK", true)) {
+    if (Window(-1, "edwnGui", true)) {
         auto MenuPos = GetWindowPos();
         auto MenuSize = GetWindowSize();
 

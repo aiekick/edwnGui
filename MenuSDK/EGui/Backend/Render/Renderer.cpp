@@ -64,14 +64,29 @@ void ERenderer::PopFont() {
 	}
 }
 
+//lol
+struct Clip_info {
+	bool OldPushingClip = false;
+	bool PushingClip = false;
+	RECT Clip = { -1, -1, -1, -1 };
+	RECT OldClip = { -1, -1, -1, -1 };
+};
+
+Clip_info clip_info;
+
 void ERenderer::PushClip(Vec2 Pos, Vec2 Size) {
-	RECT protectedRect{ (int)Pos.x, (int)Pos.y, (int)(Pos.x + Size.x), (int)(Pos.y + Size.y) };
+	clip_info.PushingClip = true;
+	clip_info.OldClip = clip_info.Clip;
+	clip_info.Clip = { (int)Pos.x, (int)Pos.y, (int)(Pos.x + Size.x), (int)(Pos.y + Size.y) };
 
 	EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
-	EGui.Device->SetScissorRect(&protectedRect);
+	EGui.Device->SetScissorRect(&clip_info.Clip);
 }
 
 void ERenderer::PopClip() {
+	clip_info.PushingClip = clip_info.OldPushingClip;
+	clip_info.Clip = clip_info.OldClip;
+
 	EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
@@ -103,37 +118,63 @@ void ERenderer::Line(Vec2 Pos, Vec2 Pos2, Color clr)
 	EGui.Device->DrawPrimitiveUP(D3DPT_LINELIST, 1, vertices, 20);
 }
 
-auto toRadians = PI / 180;
-auto toDegrees = 180 / PI;
+auto toRadians = D3DX_PI / 180;
+auto toDegrees = 180 / D3DX_PI;
 
-void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiRoundingFlags flags)
+void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, RoundingFlags flags)
 {
 	D3DCOLOR d3dclr = TranslateColor(clr);
 
-	if (rounding > 0) {
+	//perform a rounded filled rectangle instead of a normal non rounded filled rectangle.
+	if (rounding > 0 && flags != CORNER_NONE) {
+		//Corner flags
+		const auto round_top_left = (flags & CORNER_TOP_LEFT) != 0;
+		const auto round_top_right = (flags & CORNER_TOP_RIGHT) != 0;
+		const auto round_bottom_left = (flags & CORNER_BOTTOM_LEFT) != 0;
+		const auto round_bottom_right = (flags & CORNER_BOTTOM_RIGHT) != 0;
+
+		//rounding corner segment calculations
 		const int num_segments = rounding * 4;
 		const int num_vertices = (num_segments * 4) + 2;
 
+		//vertex
 		std::vector<Vertex_t> vertices(num_vertices);
-
-		// Generate the vertex data
 		int current_vertex = 0;
 
-		for (int i = 0; i < 4; i++)
-		{
-			Vec2 corner_point = { std::round(Pos.x + ((i < 2) ? (Size.x - rounding) : rounding)), std::round(Pos.y + ((i % 3) ? (Size.y - rounding) : rounding)) };
-			float angle_start = 90.f * (i - 1);
-			float angle_end = angle_start + 90.f;
+		//get vertexes.
+		for (int i = 0; i < 4; i++) {
+			//shoud round conrner?
+			bool round_corner = false;
 
-			for (int j = 0; j < num_segments; j++)
-			{
-				float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(num_segments)) * static_cast<float>(j);
-				angle *= toRadians;
+			//set round corner.
+			if (i == 0)
+				round_corner = round_top_right;
+			else if (i == 1)
+				round_corner = round_bottom_right;
+			else if (i == 2)
+				round_corner = round_bottom_left;
+			else if (i == 3)
+				round_corner = round_top_left;
 
-				vertices[current_vertex] = Vertex_t(
-					{ std::round(corner_point.x + rounding * std::cos(angle)), std::round(corner_point.y + rounding * std::sin(angle)) }, d3dclr
-				);
+			Vec2 corner_point = { Pos.x + ((i < 2 /*on left side*/) ? (Size.x - (round_corner ? rounding : 0)) : round_corner ? rounding : 0), Pos.y + ((i % 3) ? (Size.y - (round_corner ? rounding : 0)) : round_corner ? rounding : 0) };
 
+			if (round_corner) {
+				float angle_start = 90.f * (i - 1);
+				float angle_end = angle_start + 90.f;
+
+				for (int j = 0; j < num_segments; j++) {
+					float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(num_segments)) * static_cast<float>(j);
+					angle *= toRadians;
+
+					vertices[current_vertex] = Vertex_t(
+						{ std::round(corner_point.x + rounding * std::cos(angle)), std::round(corner_point.y + rounding * std::sin(angle)) }, d3dclr
+					);
+
+					current_vertex++;
+				}
+			}
+			else {
+				vertices[current_vertex] = Vertex_t(Vec2(std::round(corner_point.x), std::round(corner_point.y)), d3dclr);
 				current_vertex++;
 			}
 		}
@@ -173,34 +214,60 @@ void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiRo
 	EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, vertices, sizeof(vertex));
 }
 
-void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, EGuiRoundingFlags flags)
-{
+void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, RoundingFlags flags) {
+	//translate our color
 	D3DCOLOR d3dclr = TranslateColor(clr);
 
-	if (rounding > 0) {
-		const int num_segments = rounding;
+	//perform a rounded filled rectangle instead of a normal non rounded filled rectangle.
+	if (rounding > 0 && flags != 0) {
+		//Corner flags
+		const auto round_top_left = (flags & CORNER_TOP_LEFT) != 0;
+		const auto round_top_right = (flags & CORNER_TOP_RIGHT) != 0;
+		const auto round_bottom_left = (flags & CORNER_BOTTOM_LEFT) != 0;
+		const auto round_bottom_right = (flags & CORNER_BOTTOM_RIGHT) != 0;
+
+		//rounding corner segment calculations
+		const int num_segments = rounding * 4;
 		const int num_vertices = (num_segments * 4) + 2;
 
+		//vertex
 		std::vector<Vertex_t> vertices(num_vertices);
-
-		// Generate the vertex data
 		int current_vertex = 0;
 
-		for (int i = 0; i < 4; i++)
-		{
-			Vec2 corner_point = { std::round(Pos.x + ((i < 2) ? (Size.x - rounding) : rounding)), std::round(Pos.y + ((i % 3) ? (Size.y - rounding) : rounding)) };
-			float angle_start = 90.f * (i - 1);
-			float angle_end = angle_start + 90.f;
+		//get vertexes.
+		for (int i = 0; i < 4; i++) {
+			//shoud round conrner?
+			bool round_corner = false;
 
-			for (int j = 0; j < num_segments; j++)
-			{
-				float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(num_segments)) * static_cast<float>(j);
-				angle *= toRadians;
+			//set round corner.
+			if (i == 0)
+				round_corner = round_top_right;
+			else if (i == 1)
+				round_corner = round_bottom_right;
+			else if (i == 2)
+				round_corner = round_bottom_left;
+			else if (i == 3)
+				round_corner = round_top_left;
 
-				vertices[current_vertex] = Vertex_t(
-					{ std::round(corner_point.x + rounding * std::cos(angle)), std::round(corner_point.y + rounding * std::sin(angle)) }, d3dclr
-				);
+			Vec2 corner_point = { Pos.x + ((i < 2 /*on left side*/ ) ? (Size.x - (round_corner ? rounding : 0)) : round_corner ? rounding : 0), Pos.y + ((i % 3) ? (Size.y - (round_corner ? rounding : 0)) : round_corner ? rounding : 0)};
 
+			if (round_corner) {
+				float angle_start = 90.f * (i - 1);
+				float angle_end = angle_start + 90.f;
+
+				for (int j = 0; j < num_segments; j++) {
+					float angle = angle_start + ((angle_end - angle_start) / static_cast<float>(num_segments)) * static_cast<float>(j);
+					angle *= toRadians;
+
+					vertices[current_vertex] = Vertex_t(
+						{ std::round(corner_point.x + rounding * std::cos(angle)), std::round(corner_point.y + rounding * std::sin(angle)) }, d3dclr
+					);
+
+					current_vertex++;
+				}
+			}
+			else {
+				vertices[current_vertex] = Vertex_t(Vec2(std::round(corner_point.x), std::round(corner_point.y)), d3dclr);
 				current_vertex++;
 			}
 		}
@@ -239,9 +306,9 @@ void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
 	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertex));
 }
 
-void ERenderer::BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding) {
-	FilledRectangle(Pos, Size, clr, rounding);
-	Rectangle(Pos, Size, BorderColor, rounding);
+void ERenderer::BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding, RoundingFlags flags) {
+	FilledRectangle(Pos, Size, clr, rounding, flags);
+	Rectangle(Pos, Size, BorderColor, rounding, flags);
 }
 
 void ERenderer::Gradient(Vec2 Pos, Vec2 Size, Color LColor, Color ROtherColor, bool Vertical)
@@ -411,13 +478,13 @@ void ERenderer::FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion
 	const int NUM_VERTICES = clamp((int)radius, 32, 100); // more will look smoother, 72 looks great. there is no reason to go any higher unless you are drawing a huge circle.
 
 	std::vector<vertex> circle(NUM_VERTICES + 1);
-	float angle = rotation * PI / 180;
+	float angle = rotation * D3DX_PI / 180;
 	float completion;
 
 	// this is for how much of the circle is shown, FULL = full circle, HALF = half of a circle, Quarter = 1/4 of the circle.
-	if (e_completion == FULL) completion = PI;
-	if (e_completion == HALF) completion = PI_2;
-	if (e_completion == QUARTER) completion = PI / 4;
+	if (e_completion == FULL) completion = D3DX_PI;
+	if (e_completion == HALF) completion = D3DX_PI / 2;
+	if (e_completion == QUARTER) completion = D3DX_PI / 4;
 
 	// Use a Bezier curve to generate the circle
 	for (int i = 0; i < NUM_VERTICES + 1; i++) {

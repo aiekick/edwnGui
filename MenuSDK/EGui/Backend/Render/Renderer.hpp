@@ -8,7 +8,7 @@ enum text_alignment { LEFT, CENTER, CENTER_XY, RIGHT };
 template<typename T> static inline T Min(T lhs, T rhs) { return lhs < rhs ? lhs : rhs; }
 template<typename T> static inline T Max(T lhs, T rhs) { return lhs >= rhs ? lhs : rhs; }
 
-enum EGuiRoundingFlags {
+enum RoundingFlags {
     CORNER_NONE = 0,
 
     CORNER_TOP_LEFT = 1 << 0,
@@ -71,9 +71,9 @@ struct ERenderer {
 
     void Line(Vec2 Pos, Vec2 Pos2, Color clr);
 
-    void Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, EGuiRoundingFlags flags = CORNER_ALL);
-    void FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, EGuiRoundingFlags flags = CORNER_ALL);
-    void BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding = 0.f);
+    void Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
+    void FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
+    void BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
     void Gradient(Vec2 Pos, Vec2 Size, Color LColor, Color RColor, bool Vertical = false);
     void Gradient4(Vec2 Pos, Vec2 Size, Color TopLColor, Color TopRColor, Color BomLColor, Color BomRColor);
 

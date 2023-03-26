@@ -223,6 +223,8 @@ struct EGuiMain {
 	void RenderColorPickers();
 	void RenderKeybinds();
 	void RenderPopups();
+	void RenderCombos();
+	void RenderMultiCombos();
 
 	bool InputAreaDisabled();
 	Rect DisableInputArea = {0, 0, 0, 0};

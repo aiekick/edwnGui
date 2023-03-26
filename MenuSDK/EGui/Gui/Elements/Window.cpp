@@ -59,6 +59,8 @@ bool EGuiMain::EndWindow() {
     RenderColorPickers();
     RenderKeybinds();
     RenderPopups();
+    RenderCombos();
+    RenderMultiCombos();
 
     MenuPos[WindowId] = Dragging(GetWindowId(), { GetDraggingBounds().x, GetDraggingBounds().y }, { GetWindowSize().x, GetWindowSize().y }, false);
     MenuSize[WindowId] = Resizing(GetWindowId(), MenuSize[WindowId]);

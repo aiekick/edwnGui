@@ -2,6 +2,16 @@
 #include "../../EGui.hpp"
 
 struct Anims {
+	float easeOutCubic(float t) {
+		t -= 1.0f;
+		return t * t * t + 1.0f;
+	}
+
+	float smoothLerp(float x, float goal, float time) {
+		float t = easeOutCubic(time);
+		return x + (goal - x) * t;
+	}
+
 	float lerp(float x, float goal, float time) {
 		return float(x + (goal - x) * time);
 	}
@@ -11,7 +21,7 @@ struct Anims {
 	}
 
 	float Flip(float x) {
-		return 1 - x;
+		return -x;
 	}
 
 	float Square(float value)
