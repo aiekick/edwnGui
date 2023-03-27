@@ -79,7 +79,7 @@ bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::strin
     }
 
     // Draw text
-    renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
+    renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
 
     // Restore original draw position.
     SetNextDrawPos(OriginalPos);
@@ -104,7 +104,7 @@ void EGuiMain::RenderCombos() {
         renderer.Rectangle(pos, size + Vec2(0, size.y * (options.size() - 1)), EGuiColors.MenuTheme, EGuiStyle.ElementRounding, CORNER_BOTTOM);
         
         for (int j = 0; j < options.size(); j++)
-            renderer.Text(renderer.Verdana, options[j].c_str(), pos + Vec2(size.x / 2, 2 + (size.y * (j))), selected == j ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
+            renderer.Text(Fonts.Primary, options[j].c_str(), pos + Vec2(size.x / 2, 2 + (size.y * (j))), selected == j ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
 
         renderer.PopClip();
         renderer.PopAlpha();

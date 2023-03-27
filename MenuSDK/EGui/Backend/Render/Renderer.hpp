@@ -24,26 +24,39 @@ enum RoundingFlags {
     CORNER_ALL = CORNER_TOP | CORNER_RIGHT | CORNER_BOTTOM | CORNER_LEFT
 };
 
-struct FontData {
-    FontData() { Font = NULL; drop_shadow = false; outline = false; };
+//Used for clipping.
+struct Clip_info {
+    bool OldPushingClip = false;
+    bool PushingClip = false;
+    RECT Clip = { -1, -1, -1, -1 };
+    RECT OldClip = { -1, -1, -1, -1 };
+};
 
+struct FontData {
     LPD3DXFONT Font;
     bool anti_alias;
     bool drop_shadow;
     bool outline;
 };
 
-struct ERenderer {
-    FontData OverrideFont;
-    FontData Verdana;
-    FontData Tahombd;
-    FontData SmallFont;
+struct EFonts {
+    FontData Override; /* used for push font and pop font */
+    FontData Primary;
     FontData TabIcon;
     FontData TitleFont;
+};
+
+extern EFonts Fonts;
+
+struct ETextures {
     IDirect3DTexture9* BackgroundTexture;
     IDirect3DTexture9* AlphaTexture;
     IDirect3DTexture9* MouseTexture;
+};
 
+extern ETextures Textures;
+
+struct ERenderer {
     bool NeedsUpdate = true;
     bool Initialized = false;
 
@@ -51,42 +64,43 @@ struct ERenderer {
     bool PushingAlpha = false;
     int PushingAlphaAmount = 0;
 
-    void CreateObjects();
-    void ReleaseObjects();
-    void Reset();
-    FontData AddFont(std::string name, int weight, int size, bool anti_alias = true, bool dropshadow = false, bool outline = false);
+    const void Create();
+    const void Release();
 
-    D3DCOLOR TranslateColor(Color clr) {
-	    return D3DCOLOR_RGBA((int)clr.r(), (int)clr.g(), (int)clr.b(), PushingAlpha ? PushingAlphaAmount : (int)clr.a());
-    }
+    const void SetAntiAliasing(bool state);
 
-    void PushFont(FontData font);
-    void PopFont();
+    const FontData AddFont(std::string name, int weight, int size, bool anti_alias = true, bool dropshadow = false, bool outline = false);
 
-    void PushClip(Vec2 Pos, Vec2 Size);
-    void PopClip();
+    const void PushFont(FontData font);
+    const void PopFont();
 
-    void PushAlpha(int alpha);
-    void PopAlpha();
+    const void PushClip(Vec2 Pos, Vec2 Size);
+    const void PopClip();
 
-    void Line(Vec2 Pos, Vec2 Pos2, Color clr);
+    const void PushAlpha(int alpha);
+    const void PopAlpha();
 
-    void Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
-    void FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
-    void BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
-    void Gradient(Vec2 Pos, Vec2 Size, Color LColor, Color RColor, bool Vertical = false);
-    void Gradient4(Vec2 Pos, Vec2 Size, Color TopLColor, Color TopRColor, Color BomLColor, Color BomRColor);
+    const void Line(Vec2 Pos, Vec2 Pos2, Color clr);
+    const void PolyLine(std::vector<Vec2> points, Color clr);
+    const void Polygon(std::vector<Vec2> points, Color clr);
 
-    void Triangle(Vec2 Top, Vec2 Left, Vec2 Right, Color clr);
+    const void Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
+    const void FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
+    const void BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
+    const void Gradient(Vec2 Pos, Vec2 Size, Color LColor, Color RColor, bool Vertical = false);
+    const void Gradient4(Vec2 Pos, Vec2 Size, Color TopLColor, Color TopRColor, Color BomLColor, Color BomRColor);
 
-    void Circle(Vec2 Pos, float radius, Color clr, int e_completion = FULL, float rotation = 0.f);
-    void FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion = FULL, float rotation = 0.f);
-    void BorderedCircle(Vec2 Pos, float radius, Color clr, Color borderClr, int e_completion = FULL, float rotation = 0.f);
+    const void Triangle(Vec2 Top, Vec2 Left, Vec2 Right, Color clr);
+    const void TriangleFilled(Vec2 Top, Vec2 Left, Vec2 Right, Color clr);
 
-    void Text(FontData Font, const char* text, Vec2 Pos, Color clr, int Orientation);
-    Vec2 GetTextSize(FontData Font, const char* Text);
+    const void Circle(Vec2 Pos, float radius, Color clr, int e_completion = FULL, float rotation = 0.f);
+    const void FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion = FULL, float rotation = 0.f);
+    const void BorderedCircle(Vec2 Pos, float radius, Color clr, Color borderClr, int e_completion = FULL, float rotation = 0.f);
 
-    void Sprite(LPDIRECT3DTEXTURE9 Texture, Vec2 Pos, Vec2 Size, Color clr = Color(255, 255, 255, 255));
+    const void Text(FontData Font, const char* text, Vec2 Pos, Color clr, int Orientation);
+    const Vec2 GetTextSize(FontData Font, const char* Text);
+
+    const void Sprite(LPDIRECT3DTEXTURE9 Texture, Vec2 Pos, Vec2 Size, Color clr = Color(255, 255, 255, 255));
 };
 
 extern ERenderer renderer;

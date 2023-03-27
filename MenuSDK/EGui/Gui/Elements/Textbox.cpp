@@ -88,7 +88,7 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
     if (str.length() > 53U) //This can vary depending on your textbox size, make this dynamic in the future.
         temp = str.substr(0U, 53U).append(("..."));
 
-    Vec2 TextSize = renderer.GetTextSize(renderer.Verdana, temp.c_str());
+    Vec2 TextSize = renderer.GetTextSize(Fonts.Primary, temp.c_str());
 
     //Typing bar
     if (textbox_info[GetItemIdentifier()].typing) {
@@ -112,11 +112,11 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
     
         //same as the else statement but when you type or delete text its animated using clipping.
         renderer.PushClip(NextDrawPos + Vec2(5, 4), Vec2(textbox_info[GetItemIdentifier()].bar_x, TextSize.y));
-        renderer.Text(renderer.Verdana, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
+        renderer.Text(Fonts.Primary, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
         renderer.PopClip();
     }
     else
-        renderer.Text(renderer.Verdana, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
+        renderer.Text(Fonts.Primary, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
 
     // Restore original draw position.
     SetNextDrawPos(OriginalPos);

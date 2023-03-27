@@ -22,12 +22,12 @@ bool EGuiMain::Popup(const char* text, Vec2 position, Color clr) {
 void EGuiMain::RenderPopups() {
 	//render
 	for (int i = 1; i <= popup_data.size(); i++) {
-		Vec2 text_size = renderer.GetTextSize(renderer.Verdana, popup_data[i].text);
+		Vec2 text_size = renderer.GetTextSize(Fonts.Primary, popup_data[i].text);
 
 		renderer.FilledRectangle(popup_data[i].pos, { text_size.x + 8, text_size.y + 4}, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
 		renderer.Rectangle(popup_data[i].pos, { text_size.x + 8, text_size.y + 4 }, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
 
-		renderer.Text(renderer.Verdana, popup_data[i].text, { popup_data[i].pos.x + 4, popup_data[i].pos.y + 2 }, popup_data[i].clr, LEFT);
+		renderer.Text(Fonts.Primary, popup_data[i].text, { popup_data[i].pos.x + 4, popup_data[i].pos.y + 2 }, popup_data[i].clr, LEFT);
 	}
 
 	//clear.

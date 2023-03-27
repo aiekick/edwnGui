@@ -41,7 +41,6 @@
     <ClInclude Include="EGui\Backend\Render\Classes\Rect.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Vertex.hpp" />
     <ClInclude Include="EGui\Backend\Render\Textures\Textures.hpp" />
-    <ClInclude Include="EGui\Backend\Render\Classes\Easings.hpp" />
     <ClInclude Include="EGui\Backend\Graphics\DirectX.hpp" />
     <ClInclude Include="EGui\Backend\Win32\Wnd.hpp" />
     <ClInclude Include="EGui\Backend\Render\Fonts\Fonts.hpp" />

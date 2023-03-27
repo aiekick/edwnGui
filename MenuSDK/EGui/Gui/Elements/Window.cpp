@@ -23,30 +23,13 @@ bool EGuiMain::Window(int id, const char* title, bool draggable) {
     renderer.FilledRectangle(MenuPos[WindowId], MenuSize[WindowId], EGuiColors.FrameBackColor, EGuiStyle.FrameRounding);
 
     //Top bar
-    renderer.FilledRectangle(MenuPos[WindowId], Vec2(MenuSize[WindowId].x, 25), EGuiColors.FrameHeaderColor, EGuiStyle.FrameRounding);
-    renderer.FilledRectangle(MenuPos[WindowId] + Vec2(0, 20), Vec2(MenuSize[WindowId].x, 10), EGuiColors.FrameHeaderColor);
-    
-    float delta_time = timing.getDeltaTime();
-
-    if (IsResizing(GetWindowId()) && outline_up[GetItemIdentifier()])
-        outline_alpha[GetWindowId()] = clamp(Animations.lerp(outline_alpha[GetWindowId()], 255.f, delta_time * 4), 0.f, 255.f);
-    else
-        outline_alpha[GetWindowId()] = clamp(Animations.lerp(outline_alpha[GetWindowId()], 0.f, delta_time * 4), 0.f, 255.f);
-
-    if (outline_alpha[GetWindowId()] <= 10.f) //min alpha
-        outline_up[GetWindowId()] = !outline_up[GetWindowId()];
-    else if (outline_alpha[GetWindowId()] >= 254.f) // max alpha
-        outline_up[GetWindowId()] = !outline_up[GetWindowId()];
+    renderer.FilledRectangle(MenuPos[WindowId], Vec2(MenuSize[WindowId].x, 30), EGuiColors.FrameHeaderColor, EGuiStyle.FrameRounding);
 
     //Outline
     renderer.Rectangle(MenuPos[WindowId], MenuSize[WindowId], EGuiColors.FrameBorderColor, EGuiStyle.FrameRounding);
 
-    renderer.PushAlpha(outline_alpha[GetWindowId()]);
-    renderer.Rectangle(MenuPos[WindowId], MenuSize[WindowId], EGuiColors.MenuTheme, EGuiStyle.FrameRounding);
-    renderer.PopAlpha();
-
     //Title
-    renderer.Text(renderer.TitleFont, title, MenuPos[WindowId] + Vec2(20, 7), EGuiColors.TextColor, LEFT);
+    renderer.Text(Fonts.TitleFont, title, MenuPos[WindowId] + Vec2(EGuiStyle.Padding, 7), EGuiColors.TextColor, LEFT);
 
     //Resizing area.
     SetResizingArea(GetWindowId(), MenuPos[WindowId] + MenuSize[WindowId] - Vec2(12, 12), { 12, 12 });

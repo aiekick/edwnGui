@@ -30,7 +30,7 @@ bool EGuiMain::Button(const char* title, Vec2 Size) {
 	renderer.Rectangle(NextDrawPos, Size, EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
 	renderer.PopAlpha();
 
-	renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
+	renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
 
 	SetNextDrawPos(OriginalPos);
 	SetNextDrawPosEx({0, Size.y + EGuiStyle.Padding });

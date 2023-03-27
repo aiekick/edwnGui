@@ -9,7 +9,7 @@ std::unordered_map<int, Vec2> EGuiMain::MenuSize;
 
 void EGuiMain::Begin() {
     Graphics.Create();
-    renderer.CreateObjects();
+    renderer.Create();
 }
 
 void EGuiMain::PreRender() {
@@ -49,9 +49,8 @@ enum {
 };
 
 void EGuiMain::DemoWindow() {
-    Vec2 Menu_Size = { 600, 390 };
-    SetNextWindowPos({ wnd.GetWindowSize().x / 2 - Menu_Size.x / 2, wnd.GetWindowSize().y / 2 - Menu_Size.y / 2 });
-    SetNextWindowSize({ 600, 390 }, Menu_Size);
+    SetNextWindowPos({ 100, 100 });
+    SetNextWindowSize({ 600, 390 }, {600, 390});
 
     static int tab = 0;
 
@@ -61,15 +60,13 @@ void EGuiMain::DemoWindow() {
 
         /* fixes position for rendering & elements */
         SetNextDrawPos(MenuPos);
-        SetNextDrawPosEx({ 292, 1 });
-
-        Vec2 TabSize = {(MenuSize.x - 140) / 6, 29};
+        SetNextDrawPosEx({ MenuSize.x - 400, 1 });
         
         /* draws and handles tabs */
-        if (Tab("Rage", tab == RAGE, TabSize)) tab = RAGE;
-        if (Tab("Visuals", tab == VISUALS, TabSize)) tab = VISUALS;
-        if (Tab("Misc", tab == MISC, TabSize)) tab = MISC;
-        if (Tab("Lua", tab == LUA, TabSize)) tab = LUA;
+        if (Tab("Rage", tab == RAGE)) tab = RAGE;
+        if (Tab("Visuals", tab == VISUALS)) tab = VISUALS;
+        if (Tab("Misc", tab == MISC)) tab = MISC;
+        if (Tab("Lua", tab == LUA)) tab = LUA;
 
         /* sets position for left group */
         SetNextDrawPos(MenuPos);
@@ -87,14 +84,14 @@ void EGuiMain::DemoWindow() {
         case RAGE:
             Child("Settings", Size);
             {
-                static bool test_checkbox = false;
+                /*static bool test_checkbox = false;
                 Checkbox("Enable", &test_checkbox);
 
                 static bool test_keybind = false;
                 Keybind("test bind", &test_keybind);
 
                 if (test_keybind)
-                    renderer.Text(renderer.Verdana, "Key on", { 2, 2 }, {255, 255, 255, 255}, LEFT);
+                    renderer.Text(Fonts.Primary, "Key on", { 2, 2 }, {255, 255, 255, 255}, LEFT);
 
                 static float test_float_slider = 50.f;
                 Slider("Test slider", 0.f, 100.f, &test_float_slider, " splatzys");
@@ -114,7 +111,7 @@ void EGuiMain::DemoWindow() {
                 Combobox("Test combo", &combo_selected, { "test 1", "test 2", "test 3", "test 4", "test 5", "test 6", "test 21", "test 2565" });
 
                 static std::vector<bool> multi_selected = {};
-                MultiCombobox("Test mutlicombo", multi_selected, { "test 1", "test 2", "test 3" });
+                MultiCombobox("Test mutlicombo", multi_selected, { "test 1", "test 2", "test 3" });*/
             }
             EndChild();
 

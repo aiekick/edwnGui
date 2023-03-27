@@ -33,7 +33,7 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 
 	std::string keystr = keybind_info[GetItemIdentifier()].key == NULL ? "..." : keys_list[keybind_info[GetItemIdentifier()].key].data();
 
-	Vec2 Area = renderer.GetTextSize(renderer.Verdana, ("[" + keystr + "]").c_str());
+	Vec2 Area = renderer.GetTextSize(Fonts.Primary, ("[" + keystr + "]").c_str());
 	Vec2 Pos = { (GetChildPos().x + GetChildSize().x - EGuiStyle.Padding * 2 - 12) - Area.x, PreviousDrawPos.y};
 	static Vec2 Size = { 60, 60 };
 
@@ -71,7 +71,7 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 
 		keybind_menu[keybind_menu.size() + 1] = temp_menu;
 		
-		Vec2 TextSize = renderer.GetTextSize(renderer.Verdana, "HOLD OFF");
+		Vec2 TextSize = renderer.GetTextSize(Fonts.Primary, "HOLD OFF");
 
 		for (int u = 0; u <= KeyMode::ALWAYS; u++)
 		{
@@ -103,7 +103,7 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 	if (keybind_info[GetItemIdentifier()].key == NULL)
 		*key_state = false;
 
-	renderer.Text(renderer.Verdana, ("[" + (keybind_info[GetItemIdentifier()].key == NULL ? "..." : keystr) + "]").c_str(), Pos + Vec2(EGuiStyle.Padding, 0), keybind_info[GetItemIdentifier()].binding ? EGuiColors.MenuTheme : EGuiColors.TextColor, LEFT);
+	renderer.Text(Fonts.Primary, ("[" + (keybind_info[GetItemIdentifier()].key == NULL ? "..." : keystr) + "]").c_str(), Pos + Vec2(EGuiStyle.Padding, 0), keybind_info[GetItemIdentifier()].binding ? EGuiColors.MenuTheme : EGuiColors.TextColor, LEFT);
 
 	return true;
 }
@@ -133,12 +133,12 @@ const char* GetKeyModeState(int mode) {
 void EGuiMain::RenderKeybinds() {
 	for (int i = 1; i <= keybind_menu.size(); i++) {
 		Vec2 Size = keybind_menu[i].size;
-		Vec2 TextSize = renderer.GetTextSize(renderer.Verdana, "HOLD OFF");
+		Vec2 TextSize = renderer.GetTextSize(Fonts.Primary, "HOLD OFF");
 
 		renderer.BorderedRectangle(keybind_menu[i].pos, Size, EGuiColors.ChildBgColor, EGuiColors.FrameBorderColor, EGuiStyle.ElementRounding);
 
 		for (int u = 0; u <= KeyMode::ALWAYS; u++)
-			renderer.Text(renderer.Verdana, GetKeyModeState(u), keybind_menu[i].pos + Vec2(Size.x / 2, 2 + ((TextSize.y + 2) * u)), (keybind_menu[i].key_mode == u ? EGuiColors.MenuTheme : EGuiColors.TextColor), CENTER);
+			renderer.Text(Fonts.Primary, GetKeyModeState(u), keybind_menu[i].pos + Vec2(Size.x / 2, 2 + ((TextSize.y + 2) * u)), (keybind_menu[i].key_mode == u ? EGuiColors.MenuTheme : EGuiColors.TextColor), CENTER);
 	}
 
 	//reset

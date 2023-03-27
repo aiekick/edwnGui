@@ -14,9 +14,9 @@ bool EGuiMain::Listbox(const char* title, int* selected, const char* items[]) {
     SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
 
     // Draw listbox.
-    renderer.Sprite(renderer.BackgroundTexture, NextDrawPos, Size);
+    renderer.Sprite(Textures.BackgroundTexture, NextDrawPos, Size);
     renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor);
-    renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
+    renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
 
 	// Calculate size of menu and draw menu background.
     renderer.FilledRectangle(NextDrawPos + Vec2(0, Size.y), Size + Vec2(0, Size.y * (sizeof(items) - 3)), EGuiColors.ElementBackColor);
@@ -35,7 +35,7 @@ bool EGuiMain::Listbox(const char* title, int* selected, const char* items[]) {
         }
 
         // Draw menu item.
-        renderer.Text(renderer.Verdana, items[i], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * i)), *selected == i ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
+        renderer.Text(Fonts.Primary, items[i], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * i)), *selected == i ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
     }
 
     // Restore original draw position.

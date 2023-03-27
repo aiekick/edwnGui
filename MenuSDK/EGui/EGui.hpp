@@ -30,13 +30,13 @@
 #include <chrono>
 #include <cmath>
 
+using namespace std;
+
 // EGui source files
 #include "Backend/Render/Classes/Color.hpp"
 #include "Backend/Render/Classes/Vector.hpp"
 #include "Backend/Render/Classes/Vector2D.hpp"
-#include "Backend/Render/Classes/Vertex.hpp"
 #include "Backend/Render/Classes/Rect.hpp"
-#include "Backend/Render/Classes/Easings.hpp"
 #include "Backend/Render/Textures/Textures.hpp"
 #include "Backend/Utility/Math.hpp"
 #include "Backend/Input/Input.hpp"
@@ -101,7 +101,7 @@ struct EGuiMain {
 
 	// Direct3D ---------------------------------------------------------------------------------------------------
 	IDirect3D9* D3D = NULL;
-	D3DPRESENT_PARAMETERS d3dparams = { 0 };
+	D3DPRESENT_PARAMETERS Paramaters = { };
 	IDirect3DDevice9* Device = NULL;
 	LPD3DXSPRITE Sprite = NULL;
 	LPDIRECT3DVERTEXBUFFER9 VertexBuffer = NULL;

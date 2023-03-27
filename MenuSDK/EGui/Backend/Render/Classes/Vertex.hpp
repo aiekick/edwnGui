@@ -1,5 +1,5 @@
 #pragma once
-#include <windows.h>
+#pragma once
 
 struct vertex
 {
@@ -29,15 +29,4 @@ struct Vertex_t {
 		m_TexCoord = coord;
 		color = clr;
 	}
-};
-
-struct D3DTLVERTEX
-{
-	float fX;
-	float fY;
-	float fZ;
-	float fRHW;
-	D3DCOLOR Color;
-	float fU;
-	float fV;
 };

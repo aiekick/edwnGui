@@ -20,7 +20,7 @@ bool EGuiMain::SubTab(const char* title, bool selected, Vec2 size) {
 	renderer.FilledRectangle(NextDrawPos - Vec2(0, 1), size, Color(EGuiColors.MenuTheme.r(), EGuiColors.MenuTheme.g(), EGuiColors.MenuTheme.b(), subtab_alpha[GetItemIdentifier()]), true);
 	renderer.FilledRectangle(NextDrawPos - Vec2(0, 1), { 1, size.y }, Color(EGuiColors.MenuTheme.r(), EGuiColors.MenuTheme.g(), EGuiColors.MenuTheme.b(), subtab_alpha[GetItemIdentifier()] * 5.1));
 
-	renderer.Text(renderer.Verdana, title, { NextDrawPos.x + size.x / 2, NextDrawPos.y + size.y / 2 }, EGuiColors.TextColor, CENTER_XY);
+	renderer.Text(Fonts.Primary, title, { NextDrawPos.x + size.x / 2, NextDrawPos.y + size.y / 2 }, EGuiColors.TextColor, CENTER_XY);
 
 	SetNextDrawPosEx({ 0, size.y });
 

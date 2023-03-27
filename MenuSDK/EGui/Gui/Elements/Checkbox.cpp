@@ -4,7 +4,7 @@ static std::unordered_map<int, float> checkbox_alpha;
 bool EGuiMain::Checkbox(const char* title, bool* state) {
 	SetItemIdentifier(GetItemIdentifier() + 1);
 
-	Vec2 Area = Vec2({ 10 + renderer.GetTextSize(renderer.Verdana, title).x + 6, 10 });
+	Vec2 Area = Vec2({ 10 + renderer.GetTextSize(Fonts.Primary, title).x + 6, 10 });
 	if (Input.ButtonBehaviour(NextDrawPos, Area, PRESS))
 		*state = !(*state);
 
@@ -22,7 +22,7 @@ bool EGuiMain::Checkbox(const char* title, bool* state) {
 	renderer.PopAlpha();
 
 	renderer.Rectangle(NextDrawPos, { 10, 10 }, EGuiColors.ElementBorderColor, 3);
-	renderer.Text(renderer.Verdana, title, NextDrawPos + Vec2(17, -1), EGuiColors.TextColor, LEFT);
+	renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(17, -1), EGuiColors.TextColor, LEFT);
 
 	SetNextDrawPosEx({0, Area.y + EGuiStyle.Padding});
 

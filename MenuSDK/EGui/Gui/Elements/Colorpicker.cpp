@@ -28,7 +28,7 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 
 	//create color popup.
 	if (color_open[GetItemIdentifier()]) {
-		Vec2 text_size = renderer.GetTextSize(renderer.Verdana, title);
+		Vec2 text_size = renderer.GetTextSize(Fonts.Primary, title);
 		Vec2 PickerSize = { 200, 175 + text_size.y };
 
 		if (!Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0), PickerSize) && Input.IsKeyPressed(VK_LBUTTON))
@@ -89,14 +89,14 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 void EGuiMain::RenderColorPickers() {
 	//render
 	for (int i = 1; i <= color_data.size(); i++) {
-		Vec2 text_size = renderer.GetTextSize(renderer.Verdana, color_data[i].title);
+		Vec2 text_size = renderer.GetTextSize(Fonts.Primary, color_data[i].title);
 		Vec2 size = color_data[i].size;
 		Color clr = color_data[i].clr;
 
 		//frame
 		Color clr_hue = Color::HSVtoRGB(color_data[i].hue, 1.f, 1.f);
-		renderer.BorderedRectangle(color_data[i].pos, size, EGuiColors.ChildBgColor, EGuiColors.ElementBorderColor);
-		renderer.BorderedRectangle(color_data[i].pos, {size.x, text_size.y + 5}, EGuiColors.ChildHeaderColor, EGuiColors.ElementBorderColor);
+		renderer.BorderedRectangle(color_data[i].pos, size, EGuiColors.ChildBgColor, EGuiColors.ElementBorderColor, EGuiStyle.ChildRounding);
+		renderer.BorderedRectangle(color_data[i].pos, {size.x, text_size.y + 5}, EGuiColors.ChildHeaderColor, EGuiColors.ElementBorderColor, EGuiStyle.ChildRounding, CORNER_TOP);
 
 		//color gradient
 		renderer.Gradient(color_data[i].pos + Vec2(5, text_size.y + 10), size - Vec2(25, 40), Color(255, 255, 255, 255), Color(clr_hue.r(), clr_hue.g(), clr_hue.b(), 255));
@@ -116,12 +116,12 @@ void EGuiMain::RenderColorPickers() {
 
 		//alpha bar
 		float alpha_amount = (clr.a() / 2.55) * (size.x - 25) / 100;
-		renderer.Gradient(color_data[i].pos + Vec2(5, size.y - 15), { size.x - 25, 10 }, Color(0, 0, 0, 255), Color(clr_hue.r(), clr_hue.g(), clr_hue.b(), 255));
+		renderer.Gradient(color_data[i].pos + Vec2(5, size.y - 15), { size.x - 25, 10 }, Color(0, 0, 0, 255), Color(clr.r(), clr.g(), clr.b(), 255));
 		renderer.Rectangle(color_data[i].pos + Vec2(5, size.y - 15), { size.x - 25, 10 }, Color(0, 0, 0, 255));
 		renderer.Rectangle(color_data[i].pos + Vec2(5 + alpha_amount - 2.5f, size.y - 15), Vec2(5, 10), Color(255, 255, 0, 255));
 
 		//title
-		renderer.Text(renderer.Verdana, color_data[i].title, { color_data[i].pos.x + 4, color_data[i].pos.y + 2 }, EGuiColors.TextColor, LEFT);
+		renderer.Text(Fonts.Primary, color_data[i].title, { color_data[i].pos.x + 4, color_data[i].pos.y + 2 }, EGuiColors.TextColor, LEFT);
 	}
 
 	//clear.
