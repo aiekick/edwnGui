@@ -479,6 +479,8 @@ const void ERenderer::FilledCircle(Vec2 Pos, float radius, Color clr, int e_comp
 	EGui.Device->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, NUM_VERTICES);
 
 	EGui.VertexBuffer->Release();
+
+	f_circle_vertices.clear();
 }
 
 const void ERenderer::BorderedCircle(Vec2 Pos, float radius, Color clr, Color borderClr, int e_completion, float rotation) {

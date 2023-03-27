@@ -29,6 +29,7 @@ void graphics::SetupRenderStates(IDirect3DDevice9 *Device) {
     Device->SetRenderState(D3DRS_STENCILENABLE, FALSE);
     Device->SetRenderState(D3DRS_CLIPPING, TRUE);
     Device->SetRenderState(D3DRS_LIGHTING, FALSE);
+    Device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
     Device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
     Device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
     Device->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);

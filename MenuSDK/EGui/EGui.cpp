@@ -84,7 +84,7 @@ void EGuiMain::DemoWindow() {
         case RAGE:
             Child("Settings", Size);
             {
-                /*static bool test_checkbox = false;
+                static bool test_checkbox = false;
                 Checkbox("Enable", &test_checkbox);
 
                 static bool test_keybind = false;
@@ -111,7 +111,7 @@ void EGuiMain::DemoWindow() {
                 Combobox("Test combo", &combo_selected, { "test 1", "test 2", "test 3", "test 4", "test 5", "test 6", "test 21", "test 2565" });
 
                 static std::vector<bool> multi_selected = {};
-                MultiCombobox("Test mutlicombo", multi_selected, { "test 1", "test 2", "test 3" });*/
+                MultiCombobox("Test mutlicombo", multi_selected, { "test 1", "test 2", "test 3" });
             }
             EndChild();
 
