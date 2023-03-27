@@ -71,36 +71,36 @@ struct ERenderer {
 
     const FontData AddFont(std::string name, int weight, int size, bool anti_alias = true, bool dropshadow = false, bool outline = false);
 
-    const void PushFont(FontData font);
+    const void PushFont(const FontData font);
     const void PopFont();
 
-    const void PushClip(Vec2 Pos, Vec2 Size);
+    const void PushClip(const Vec2 Pos, const Vec2 Size);
     const void PopClip();
 
     const void PushAlpha(int alpha);
     const void PopAlpha();
 
-    const void Line(Vec2 Pos, Vec2 Pos2, Color clr);
-    const void PolyLine(std::vector<Vec2> points, Color clr);
-    const void Polygon(std::vector<Vec2> points, Color clr);
+    const void Line(const Vec2 Pos, const Vec2 Pos2, const Color clr);
+    const void PolyLine(const std::vector<Vec2> points, const Color clr);
+    const void Polygon(const std::vector<Vec2> points, const Color clr);
 
-    const void Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
-    const void FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding_radius = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
-    const void BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding = 0.f, RoundingFlags flags = RoundingFlags::CORNER_ALL);
-    const void Gradient(Vec2 Pos, Vec2 Size, Color LColor, Color RColor, bool Vertical = false);
-    const void Gradient4(Vec2 Pos, Vec2 Size, Color TopLColor, Color TopRColor, Color BomLColor, Color BomRColor);
+    const void Rectangle(const Vec2 Pos, const Vec2 Size, const Color clr, float rounding_radius = 0.f, const RoundingFlags flags = RoundingFlags::CORNER_ALL);
+    const void FilledRectangle(const Vec2 Pos, const Vec2 Size, const Color clr, float rounding_radius = 0.f, const RoundingFlags flags = RoundingFlags::CORNER_ALL);
+    const void BorderedRectangle(const Vec2 Pos, const Vec2 Size, const Color clr, const Color BorderColor, float rounding = 0.f, const RoundingFlags flags = RoundingFlags::CORNER_ALL);
+    const void Gradient(const Vec2 Pos, const Vec2 Size, const Color LColor, const Color RColor, bool Vertical = false);
+    const void Gradient4(const Vec2 Pos, const Vec2 Size, const Color TopLColor, const Color TopRColor, const Color BomLColor, const Color BomRColor);
 
-    const void Triangle(Vec2 Top, Vec2 Left, Vec2 Right, Color clr);
-    const void TriangleFilled(Vec2 Top, Vec2 Left, Vec2 Right, Color clr);
+    const void Triangle(const Vec2 Top, const Vec2 Left, const Vec2 Right, const Color clr);
+    const void TriangleFilled(const Vec2 Top, const Vec2 Left, const Vec2 Right, const Color clr);
 
-    const void Circle(Vec2 Pos, float radius, Color clr, int e_completion = FULL, float rotation = 0.f);
-    const void FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion = FULL, float rotation = 0.f);
-    const void BorderedCircle(Vec2 Pos, float radius, Color clr, Color borderClr, int e_completion = FULL, float rotation = 0.f);
+    const void Circle(const Vec2 Pos, float radius, const Color clr, int e_completion = FULL, float rotation = 0.f);
+    const void FilledCircle(const Vec2 Pos, float radius, const Color clr, int e_completion = FULL, float rotation = 0.f);
+    const void BorderedCircle(const Vec2 Pos, float radius, const Color clr, Color borderClr, int e_completion = FULL, float rotation = 0.f);
 
-    const void Text(FontData Font, const char* text, Vec2 Pos, Color clr, int Orientation);
-    const Vec2 GetTextSize(FontData Font, const char* Text);
+    const void Text(const FontData Font, const char* text, const Vec2 Pos, const Color clr, int Orientation);
+    const Vec2 GetTextSize(const FontData Font, const char* Text);
 
-    const void Sprite(LPDIRECT3DTEXTURE9 Texture, Vec2 Pos, Vec2 Size, Color clr = Color(255, 255, 255, 255));
+    const void Sprite(const LPDIRECT3DTEXTURE9 Texture, const Vec2 Pos, const Vec2 Size, const Color clr = { 255, 255, 255, 255 });
 };
 
 extern ERenderer renderer;

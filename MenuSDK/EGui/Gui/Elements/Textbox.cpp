@@ -12,7 +12,7 @@ struct Textbox_info {
     float bar_x;
 };
 
-static std::unordered_map<int, Textbox_info> textbox_info;
+static std::map<int, Textbox_info> textbox_info;
 
 bool EGuiMain::Textbox(const char* title, std::string &str) {
     SetItemIdentifier(GetItemIdentifier() + 1);

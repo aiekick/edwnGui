@@ -6,8 +6,8 @@ struct DraggingInfo {
 	Vec2 Difference;
 };
 
-static std::unordered_map<int, Rect> DraggingArea;
-static std::unordered_map<int, DraggingInfo> dragging_info;
+static std::map<int, Rect> DraggingArea;
+static std::map<int, DraggingInfo> dragging_info;
 
 Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool Child, Vec2 SnapPos) {
 	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), wnd.GetWindowSize()) || IsResizing(GetWindowId()))

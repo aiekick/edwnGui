@@ -51,7 +51,7 @@ void graphics::Create() {
 
     EGui.Paramaters.Windowed = true; //Set this to false if your application is full screen.
     EGui.Paramaters.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    EGui.Paramaters.BackBufferFormat = D3DFMT_UNKNOWN;
+    EGui.Paramaters.BackBufferFormat = D3DFMT_A8R8G8B8;
     EGui.Paramaters.EnableAutoDepthStencil = TRUE;
     EGui.Paramaters.AutoDepthStencilFormat = D3DFMT_D16;
     EGui.Paramaters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;

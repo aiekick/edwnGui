@@ -1,6 +1,6 @@
 #include "../../EGui.hpp"
 
-static std::unordered_map<int, float> checkbox_alpha;
+static std::map<int, float> checkbox_alpha;
 bool EGuiMain::Checkbox(const char* title, bool* state) {
 	SetItemIdentifier(GetItemIdentifier() + 1);
 

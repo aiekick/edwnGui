@@ -1,8 +1,8 @@
 #include "../../EGui.hpp"
 #include <string>
 
-static std::unordered_map<int, bool> dragging;
-static std::unordered_map<int, float> slider_x;
+static std::map<int, bool> dragging;
+static std::map<int, float> slider_x;
 
 bool EGuiMain::Slider(const char* title, int min, int max, int* currentValue, const char* format) {
 	SetItemIdentifier(GetItemIdentifier() + 1);
@@ -108,8 +108,8 @@ bool EGuiMain::Slider(const char* title, float min, float max, float* currentVal
 	renderer.FilledRectangle(NextDrawPos + Vec2(0, text_size.y), Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), slider_size.y), EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
 	renderer.Rectangle(NextDrawPos + Vec2(0, text_size.y), slider_size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
 
-	renderer.FilledCircle(NextDrawPos + Vec2(-7, text_size.y - 2) + Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), 0), 7, EGuiColors.MenuTheme);
-	renderer.Circle(NextDrawPos + Vec2(-7, text_size.y - 2) + Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), 0), 7, EGuiColors.ElementBorderColor);
+	//renderer.FilledCircle(NextDrawPos + Vec2(-7, text_size.y - 2) + Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), 0), 7, EGuiColors.MenuTheme);
+	//renderer.Circle(NextDrawPos + Vec2(-7, text_size.y - 2) + Vec2(clamp(slider_x[GetItemIdentifier()], 8.f, (float)INT_MAX), 0), 7, EGuiColors.ElementBorderColor);
 
 	renderer.Text(Fonts.Primary, Value.c_str(), NextDrawPos + Vec2(slider_size.x, 0), EGuiColors.TextColor, RIGHT);
 

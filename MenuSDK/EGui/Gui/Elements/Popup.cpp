@@ -6,7 +6,7 @@ struct PopupData {
 	Color clr;
 };
 
-static std::unordered_map<int, PopupData> popup_data;
+static std::map<int, PopupData> popup_data;
 
 bool EGuiMain::Popup(const char* text, Vec2 position, Color clr) {
 	PopupData temp;

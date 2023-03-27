@@ -7,7 +7,7 @@ struct ResizingInfo {
 	Vec2 Difference;
 };
 
-static std::unordered_map <int, ResizingInfo> resizing_info;
+static std::map <int, ResizingInfo> resizing_info;
 
 Vec2 EGuiMain::Resizing(int id, Vec2 size) {
 	if (!wnd.IsWindowParent() || !Input.IsMouseHoveringRect(Vec2(0, 0), wnd.GetWindowSize()))

@@ -1,6 +1,6 @@
 #include "../../EGui.hpp"
 
-static std::unordered_map<int, float> tab_alpha;
+static std::map<int, float> tab_alpha;
 
 bool EGuiMain::Tab(const char* title, bool selected, Vec2 size) {
 	SetItemIdentifier(GetItemIdentifier() + 1);

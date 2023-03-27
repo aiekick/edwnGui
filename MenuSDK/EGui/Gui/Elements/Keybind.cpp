@@ -24,8 +24,8 @@ struct KeybindMenu {
 	Vec2 size;
 };
 
-static std::unordered_map<int, KeybindMenu> keybind_menu; //used to display the menu
-static std::unordered_map<int, KeybindInfo> keybind_info;
+static std::map<int, KeybindMenu> keybind_menu; //used to display the menu
+static std::map<int, KeybindInfo> keybind_info;
 
 bool EGuiMain::Keybind(const char* title, bool* key_state)
 {

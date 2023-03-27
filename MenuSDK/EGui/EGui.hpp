@@ -81,16 +81,6 @@ struct guiColors {
 	Color ElementColorOn = MenuTheme;
 };
 
-struct Object {
-	float Friction = 0.5f;
-	float BounceFactor = 0.7f;
-	float Weight = 100.f;
-	float Size = 20;
-	Vec2 Position = { 0, 0 };
-	Vec2 Velocity = { -1000, 0 };
-	Color Color = { 255, 0, 0, 255 };
-};
-
 struct EGuiMain {
 	// EGui -------------------------------------------------------------------------------------------------------
 	string GetVersion() { return EGUI_VERSION; }
@@ -166,11 +156,11 @@ struct EGuiMain {
 
 	// Window settings --------------------------------------------------------------------------------------------
 	int WindowId = -1;
-	static std::unordered_map<int, Vec2> MenuPos;
-	static std::unordered_map<int, Vec2> MenuSize;
+	static std::map<int, Vec2> MenuPos;
+	static std::map<int, Vec2> MenuSize;
 
 	// Window -----------------------------------------------------------------------------------------------------
-	std::unordered_map<int, bool> CanSetWindowPos, CanSetWindowSize; //WindowId is not correct but it will work lmfao.
+	std::map<int, bool> CanSetWindowPos, CanSetWindowSize; //WindowId is not correct but it will work lmfao.
 	Vec2 NextWindowPos, NextWindowSize, NextWindowSmallSize = Vec2(0, 0);
 	[[nodiscard]]Vec2 GetWindowPos() const { return MenuPos[WindowId]; }
 	[[nodiscard]]Vec2 GetWindowSize() const { return MenuSize[WindowId]; }

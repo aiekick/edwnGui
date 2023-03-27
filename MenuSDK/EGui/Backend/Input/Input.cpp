@@ -23,7 +23,7 @@ bool EInput::IsMouseHoveringRect(Vec2 pos, Vec2 size)
 	return false;
 }
 
-static std::unordered_map<int, bool> clicked;
+static std::map<int, bool> clicked;
 bool EInput::ButtonBehaviour(Vec2 pos, Vec2 size, int button_type, char key) {
 	if (!wnd.IsWindowParent())
 		return false;
@@ -71,7 +71,7 @@ bool EInput::IsKeyDown(int key) {
 	return (GetKeyState(key) & 0x80);
 }
 
-static std::unordered_map<int, bool> keypressed;
+static std::map<int, bool> keypressed;
 bool EInput::IsKeyPressed(int key)
 {
 	if (!wnd.IsWindowParent())

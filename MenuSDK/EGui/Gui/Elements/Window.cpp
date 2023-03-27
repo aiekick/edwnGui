@@ -1,7 +1,7 @@
 #include "../../EGui.hpp"
 
-static std::unordered_map<int, bool> outline_up;
-static std::unordered_map<int, float> outline_alpha;
+static std::map<int, bool> outline_up;
+static std::map<int, float> outline_alpha;
 bool EGuiMain::Window(int id, const char* title, bool draggable) {
     if (!(NextWindowPos == Vec2(0, 0))) {
         MenuPos[id] = NextWindowPos;

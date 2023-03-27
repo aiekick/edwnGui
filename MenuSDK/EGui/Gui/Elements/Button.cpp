@@ -1,6 +1,6 @@
 #include "../../EGui.hpp"
 
-static std::unordered_map<int, float> button_press_alpha;
+static std::map<int, float> button_press_alpha;
 
 bool EGuiMain::Button(const char* title, Vec2 Size) {
 	SetItemIdentifier(GetItemIdentifier() + 1);

@@ -13,7 +13,6 @@ const void ERenderer::Create() {
 	Fonts.TitleFont = AddFont("Verdana", FW_NORMAL, 16);
 }
 
-
 const void ERenderer::Release() {
 	Fonts.Primary.Font->Release();
 	Fonts.TabIcon.Font->Release();
@@ -35,7 +34,7 @@ const void ERenderer::SetAntiAliasing(bool state) {
 	EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, state);
 }
 
-const void ERenderer::PushFont(FontData font) {
+const void ERenderer::PushFont(const FontData font) {
 	if (!PushingFont) {
 		PushingFont = true;
 		Fonts.Override = font;
@@ -50,7 +49,7 @@ const void ERenderer::PopFont() {
 }
 
 Clip_info clip_info;
-const void ERenderer::PushClip(Vec2 Pos, Vec2 Size) {
+const void ERenderer::PushClip(const Vec2 Pos, const Vec2 Size) {
 	clip_info.PushingClip = true;
 	clip_info.OldClip = clip_info.Clip;
 	clip_info.Clip = { (int)Pos.x, (int)Pos.y, (int)(Pos.x + Size.x), (int)(Pos.y + Size.y) };
@@ -76,13 +75,11 @@ const void ERenderer::PopAlpha() {
 
 /* from here on out we are drawing shapes and thats it */
 std::vector<vertex> line_vertices;
-const void ERenderer::Line(Vec2 Pos, Vec2 Pos2, Color clr) {
+const void ERenderer::Line(const Vec2 Pos, const Vec2 Pos2, const Color clr) {
 	D3DCOLOR translated_color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
 
-	line_vertices = {
-		{ Pos.x, Pos.y, 0.0f, 1.0f, translated_color },
-		{ Pos2.x, Pos2.y, 0.0f, 1.0f, translated_color },
-	};
+	line_vertices.emplace_back(vertex(Pos.x, Pos.y, 0.0f, 1.0f, translated_color));
+	line_vertices.emplace_back(vertex(Pos2.x, Pos2.y, 0.0f, 1.0f, translated_color));
 
 	SetAntiAliasing(true);
 	EGui.Device->DrawPrimitiveUP(D3DPT_LINELIST, 1, line_vertices.data(), 20);
@@ -92,10 +89,8 @@ const void ERenderer::Line(Vec2 Pos, Vec2 Pos2, Color clr) {
 }
 
 std::vector<vertex> polyline_vertices;
-const void ERenderer::PolyLine(std::vector<Vec2> points, Color clr) {
+const void ERenderer::PolyLine(const std::vector<Vec2> points, const Color clr) {
 	D3DCOLOR translated_color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
-
-	polyline_vertices.reserve(points.size());
 
 	for (const auto& point : points)
 		polyline_vertices.emplace_back(point.x, point.y, 0.0f, 1.0f, translated_color);
@@ -108,10 +103,8 @@ const void ERenderer::PolyLine(std::vector<Vec2> points, Color clr) {
 }
 
 std::vector<vertex> polygon_vertices;
-const void ERenderer::Polygon(std::vector<Vec2> points, Color clr) {
+const void ERenderer::Polygon(const std::vector<Vec2> points, const Color clr) {
 	D3DCOLOR translated_color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
-
-	polygon_vertices.reserve(points.size());
 
 	for (const auto& point : points)
 		polygon_vertices.emplace_back(point.x, point.y, 0.0f, 1.0f, translated_color);
@@ -122,7 +115,7 @@ const void ERenderer::Polygon(std::vector<Vec2> points, Color clr) {
 }
 
 std::vector<vertex> rectangle_vertices;
-const void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, RoundingFlags flags) {
+const void ERenderer::Rectangle(const Vec2 Pos, const Vec2 Size, const Color clr, float rounding, const RoundingFlags flags) {
 	D3DCOLOR translated_color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
 
 	if (rounding > 0.5f && flags != CORNER_NONE) {
@@ -163,7 +156,7 @@ const void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
 					const auto angle = DEG2RAD(90.0f * (i - 1) + (90.f / num_segments) * p);
 
 					/* set point */
-					rectangle_vertices.push_back(vertex(
+					rectangle_vertices.emplace_back(vertex(
 						/* x */corner_point.x + rounding * std::cosf(angle),
 						/* y */ corner_point.y + rounding * std::sinf(angle),
 						/* z */ 0.f,
@@ -173,10 +166,10 @@ const void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
 				}
 			}
 			else
-				rectangle_vertices.push_back(vertex(corner_point.x, corner_point.y, 0.f, 1.f, translated_color));
+				rectangle_vertices.emplace_back(vertex(corner_point.x, corner_point.y, 0.f, 1.f, translated_color));
 		}
 
-		rectangle_vertices.push_back(rectangle_vertices.front());
+		rectangle_vertices.emplace_back(rectangle_vertices.front());
 
 		EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, rectangle_vertices.size() - 1, rectangle_vertices.data(), sizeof(vertex));
 
@@ -185,13 +178,11 @@ const void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
 		return;
 	}
 
-	rectangle_vertices = {
-		{ Pos.x, Pos.y, 0.0f, 1.0f, translated_color },
-		{ Pos.x + Size.x, Pos.y, 0.0f, 1.0f, translated_color },
-		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, translated_color },
-		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, translated_color },
-		{ Pos.x, Pos.y, 0.0f, 1.0f, translated_color }
-	};
+	rectangle_vertices.emplace_back(vertex(Pos.x, Pos.y, 0.0f, 1.0f, translated_color));
+	rectangle_vertices.emplace_back(vertex(Pos.x + Size.x, Pos.y, 0.0f, 1.0f, translated_color));
+	rectangle_vertices.emplace_back(vertex(Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, translated_color));
+	rectangle_vertices.emplace_back(vertex(Pos.x, Pos.y + Size.y, 0.0f, 1.0f, translated_color));
+	rectangle_vertices.emplace_back(rectangle_vertices.front());
 
 	EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, rectangle_vertices.size() - 1, rectangle_vertices.data(), sizeof(vertex));
 
@@ -199,7 +190,7 @@ const void ERenderer::Rectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, 
 }
 
 std::vector<vertex> f_rectangle_vertices;
-const void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float rounding, RoundingFlags flags) {
+const void ERenderer::FilledRectangle(const Vec2 Pos, const Vec2 Size, const Color clr, float rounding, const RoundingFlags flags) {
 	D3DCOLOR translated_color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
 
 	if (rounding > 0.5f && flags != CORNER_NONE) {
@@ -240,7 +231,7 @@ const void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float roun
 					const auto angle = DEG2RAD(90.0f * (i - 1) + (90.f / num_segments) * p);
 
 					/* set point */
-					f_rectangle_vertices.push_back(vertex(
+					f_rectangle_vertices.emplace_back(vertex(
 						/* x */corner_point.x + rounding * std::cosf(angle),
 						/* y */ corner_point.y + rounding * std::sinf(angle),
 						/* z */ 0.f,
@@ -250,10 +241,10 @@ const void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float roun
 				}
 			}
 			else
-				f_rectangle_vertices.push_back(vertex(corner_point.x, corner_point.y, 0.f, 1.f, translated_color));
+				f_rectangle_vertices.emplace_back(vertex(corner_point.x, corner_point.y, 0.f, 1.f, translated_color));
 		}
 
-		f_rectangle_vertices.push_back(f_rectangle_vertices.front());
+		f_rectangle_vertices.emplace_back(f_rectangle_vertices.front());
 
 		EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, f_rectangle_vertices.size() - 1, f_rectangle_vertices.data(), sizeof(vertex));
 
@@ -262,59 +253,57 @@ const void ERenderer::FilledRectangle(Vec2 Pos, Vec2 Size, Color clr, float roun
 		return;
 	}
 
-	f_rectangle_vertices = {
-		{ Pos.x, Pos.y, 0.0f, 1.0f, translated_color },
-		{ Pos.x + Size.x, Pos.y, 0.0f, 1.0f, translated_color },
-		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, translated_color },
-		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, translated_color },
-		{ Pos.x, Pos.y, 0.0f, 1.0f, translated_color }
-	};
+	f_rectangle_vertices.emplace_back(vertex(Pos.x, Pos.y, 0.0f, 1.0f, translated_color));
+	f_rectangle_vertices.emplace_back(vertex(Pos.x + Size.x, Pos.y, 0.0f, 1.0f, translated_color));
+	f_rectangle_vertices.emplace_back(vertex(Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, translated_color));
+	f_rectangle_vertices.emplace_back(vertex(Pos.x, Pos.y + Size.y, 0.0f, 1.0f, translated_color));
+	f_rectangle_vertices.emplace_back(f_rectangle_vertices.front());
 
 	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, f_rectangle_vertices.size() - 1, f_rectangle_vertices.data(), sizeof(vertex));
 
 	f_rectangle_vertices.clear();
 }
 
-const void ERenderer::BorderedRectangle(Vec2 Pos, Vec2 Size, Color clr, Color BorderColor, float rounding, RoundingFlags flags) {
+const void ERenderer::BorderedRectangle(const Vec2 Pos, const Vec2 Size, const Color clr, const Color BorderColor, float rounding, const RoundingFlags flags) {
 	FilledRectangle(Pos, Size, clr, rounding, flags);
 	Rectangle(Pos, Size, BorderColor, rounding, flags);
 }
 
 std::vector<vertex> gradient_vertices;
-const void ERenderer::Gradient(Vec2 Pos, Vec2 Size, Color LColor, Color ROtherColor, bool Vertical) {
+const void ERenderer::Gradient(const Vec2 Pos, const Vec2 Size, const Color LColor, const Color ROtherColor, bool Vertical) {
 	D3DCOLOR Color_Left = LColor.TranslateColor(PushingAlpha, PushingAlphaAmount);
 	D3DCOLOR Color_Right = ROtherColor.TranslateColor(PushingAlpha, PushingAlphaAmount);
 
-	gradient_vertices = {
-		{ Pos.x, Pos.y, 0.0f, 1.0f, Color_Left },
-		{ Pos.x + Size.x, Pos.y, 0.0f, 1.0f, Vertical ? Color_Left : Color_Right },
-		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, Vertical ? Color_Right : Color_Left },
-		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, Color_Right }
-	};
+	gradient_vertices.emplace_back(vertex(Pos.x, Pos.y, 0.0f, 1.0f, Color_Left));
+	gradient_vertices.emplace_back(vertex(Pos.x + Size.x, Pos.y, 0.0f, 1.0f, Vertical ? Color_Left : Color_Right));
+	gradient_vertices.emplace_back(vertex(Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, Color_Right));
+	gradient_vertices.emplace_back(vertex(Pos.x, Pos.y + Size.y, 0.0f, 1.0f, Vertical ? Color_Right : Color_Left));
+	gradient_vertices.emplace_back(gradient_vertices.front());
 
-	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, gradient_vertices.size() - 1, gradient_vertices.data(), sizeof(vertex));
+	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, gradient_vertices.size() - 1, gradient_vertices.data(), sizeof(vertex));
 
 	gradient_vertices.clear();
 }
 
 std::vector<vertex> gradient4_vertices;
-const void ERenderer::Gradient4(Vec2 Pos, Vec2 Size, Color TopLColor, Color TopRColor, Color BomLColor, Color BomRColor) {
+const void ERenderer::Gradient4(const Vec2 Pos, const Vec2 Size, const Color TopLColor, const Color TopRColor, const Color BomRColor, const Color BomLColor) {
 	D3DCOLOR Color_TL = TopLColor.TranslateColor(PushingAlpha, PushingAlphaAmount);
 	D3DCOLOR Color_TR = TopRColor.TranslateColor(PushingAlpha, PushingAlphaAmount);
 	D3DCOLOR Color_BL = BomLColor.TranslateColor(PushingAlpha, PushingAlphaAmount);
 	D3DCOLOR Color_BR = BomRColor.TranslateColor(PushingAlpha, PushingAlphaAmount);
 
-	gradient4_vertices = {
-		{ Pos.x, Pos.y, 0.0f, 1.0f, Color_TL },
-		{ Pos.x + Size.x, Pos.y, 0.0f, 1.0f, Color_TR },
-		{ Pos.x, Pos.y + Size.y, 0.0f, 1.0f, Color_BL },
-		{ Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, Color_BR }
-	};
+	gradient4_vertices.emplace_back(vertex(Pos.x, Pos.y, 0.0f, 1.0f, Color_TL));
+	gradient4_vertices.emplace_back(vertex(Pos.x + Size.x, Pos.y, 0.0f, 1.0f, Color_TR));
+	gradient4_vertices.emplace_back(vertex(Pos.x + Size.x, Pos.y + Size.y, 0.0f, 1.0f, Color_BR));
+	gradient4_vertices.emplace_back(vertex(Pos.x, Pos.y + Size.y, 0.0f, 1.0f, Color_BL));
+	gradient4_vertices.emplace_back(vertex(Pos.x, Pos.y, 0.0f, 1.0f, Color_TL));
 
-	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, gradient4_vertices.size() - 1, gradient4_vertices.data(), sizeof(vertex));
+	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, gradient4_vertices.size() - 1, gradient4_vertices.data(), sizeof(vertex));
+
+	gradient4_vertices.clear();
 }
 
-const void ERenderer::Text(FontData Font, const char* text, Vec2 Pos, Color clr, int Orientation) {
+const void ERenderer::Text(const FontData Font, const char* text, const Vec2 Pos, Color clr, int Orientation) {
 	auto font = PushingFont ? Fonts.Override : Font;
 
 	D3DCOLOR translated_color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
@@ -368,22 +357,19 @@ const void ERenderer::Text(FontData Font, const char* text, Vec2 Pos, Color clr,
 	SetAntiAliasing(false);
 }
 
-const Vec2 ERenderer::GetTextSize(FontData Font, const char* Text) {
+const Vec2 ERenderer::GetTextSize(const FontData Font, const char* Text) {
 	RECT rect; Font.Font->DrawTextA(0, Text, strlen(Text), &rect, DT_CALCRECT, D3DCOLOR_ARGB(0, 0, 0, 0));
 	return Vec2(float(rect.right - rect.left), float(rect.bottom - rect.top));
 }
 
 std::vector<vertex> triangle_vertices;
-const void ERenderer::Triangle(Vec2 Top, Vec2 Left, Vec2 Right, Color clr) {
+const void ERenderer::Triangle(const Vec2 Top, const Vec2 Left, const Vec2 Right, const Color clr) {
 	D3DCOLOR Color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
 
-	triangle_vertices = {
-		{ Top.x, Top.y, 0.0f, 1.0f, Color },
-		{ Right.x, Right.y, 0.0f, 1.0f, Color },
-		{ Left.x, Left.y, 0.0f, 1.0f, Color }
-	};
-
-	triangle_vertices.push_back(triangle_vertices.front());
+	triangle_vertices.emplace_back(vertex(Top.x, Top.y, 0.0f, 1.0f, Color));
+	triangle_vertices.emplace_back(vertex(Right.x, Right.y, 0.0f, 1.0f, Color));
+	triangle_vertices.emplace_back(vertex(Left.x, Left.y, 0.0f, 1.0f, Color));
+	triangle_vertices.emplace_back(triangle_vertices.front());
 
 	SetAntiAliasing(true);
 	EGui.Device->DrawPrimitiveUP(D3DPT_LINESTRIP, triangle_vertices.size() - 1, triangle_vertices.data(), sizeof(vertex));
@@ -393,14 +379,12 @@ const void ERenderer::Triangle(Vec2 Top, Vec2 Left, Vec2 Right, Color clr) {
 }
 
 std::vector<vertex> f_triangle_vertices;
-const void ERenderer::TriangleFilled(Vec2 Top, Vec2 Left, Vec2 Right, Color clr) {
+const void ERenderer::TriangleFilled(const Vec2 Top, const Vec2 Left, const Vec2 Right, const Color clr) {
 	D3DCOLOR Color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
 
-	f_triangle_vertices = {
-		{ Top.x, Top.y, 0.0f, 1.0f, Color },
-		{ Right.x, Right.y, 0.0f, 1.0f, Color },
-		{ Left.x, Left.y, 0.0f, 1.0f, Color }
-	};
+	f_triangle_vertices.emplace_back(vertex(Top.x, Top.y, 0.0f, 1.0f, Color));
+	f_triangle_vertices.emplace_back(vertex(Right.x, Right.y, 0.0f, 1.0f, Color));
+	f_triangle_vertices.emplace_back(vertex(Left.x, Left.y, 0.0f, 1.0f, Color));
 
 	EGui.Device->DrawPrimitiveUP(D3DPT_TRIANGLELIST, f_triangle_vertices.size() - 1, f_triangle_vertices.data(), sizeof(vertex));
 
@@ -408,24 +392,23 @@ const void ERenderer::TriangleFilled(Vec2 Top, Vec2 Left, Vec2 Right, Color clr)
 }
 
 std::vector<vertex> circle_vertices;
-const void ERenderer::Circle(Vec2 Pos, float radius, Color clr, int e_completion, float rotation) {
+const void ERenderer::Circle(const Vec2 Pos, float radius, const Color clr, int e_completion, float rotation) {
 	D3DCOLOR Color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
-	Pos = Pos + Vec2(radius, radius);
 
 	const int NUM_VERTICES = clamp((int)radius, 16, 64);
 
 	float angle = rotation * D3DX_PI / 180;
-	float pi;
+	float completion;
 
-	if (e_completion == FULL) pi = D3DX_PI;
-	if (e_completion == HALF) pi = D3DX_PI / 2;
-	if (e_completion == QUARTER) pi = D3DX_PI / 3.91;
+	if (e_completion == FULL) completion = D3DX_PI;
+	if (e_completion == HALF) completion = D3DX_PI / 2;
+	if (e_completion == QUARTER) completion = D3DX_PI / 3.91;
 
 	for (int i = 0; i < NUM_VERTICES + 1; i++) {
 		float t = (float)i / (float)NUM_VERTICES;
-		float x = Pos.x + radius * cos(2 * pi * t + angle);
-		float y = Pos.y + radius * sin(2 * pi * t + angle);
-		circle_vertices.push_back(vertex(x, y, 0.f, 1.f, Color));
+		float x = Pos.x + radius + radius * cos(2 * completion * t + angle);
+		float y = Pos.y + radius + radius * sin(2 * completion * t + angle);
+		circle_vertices.emplace_back(vertex(x, y, 0.f, 1.f, Color));
 	}
 
 	EGui.Device->CreateVertexBuffer((NUM_VERTICES + 1) * sizeof(vertex), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE, D3DPOOL_DEFAULT, &EGui.VertexBuffer, NULL);
@@ -447,9 +430,8 @@ const void ERenderer::Circle(Vec2 Pos, float radius, Color clr, int e_completion
 }
 
 std::vector<vertex> f_circle_vertices;
-const void ERenderer::FilledCircle(Vec2 Pos, float radius, Color clr, int e_completion, float rotation) {
+const void ERenderer::FilledCircle(const Vec2 Pos, float radius, const Color clr, int e_completion, float rotation) {
 	D3DCOLOR Color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
-	Pos = Pos + Vec2(radius, radius);
 
 	const int NUM_VERTICES = clamp((int)radius, 16, 64);
 
@@ -462,9 +444,9 @@ const void ERenderer::FilledCircle(Vec2 Pos, float radius, Color clr, int e_comp
 
 	for (int i = 0; i < NUM_VERTICES + 1; i++) {
 		float t = (float)i / (float)NUM_VERTICES;
-		float x = Pos.x + radius * cos(2 * completion * t + angle);
-		float y = Pos.y + radius * sin(2 * completion * t + angle);
-		f_circle_vertices.push_back(vertex(x, y, 0.f, 1.f, Color));
+		float x = Pos.x + radius + radius * cos(2 * completion * t + angle);
+		float y = Pos.y + radius + radius * sin(2 * completion * t + angle);
+		f_circle_vertices.emplace_back(vertex(x, y, 0.f, 1.f, Color));
 	}
 
 	EGui.Device->CreateVertexBuffer((NUM_VERTICES + 1) * sizeof(vertex), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW | D3DFVF_DIFFUSE, D3DPOOL_DEFAULT, &EGui.VertexBuffer, NULL);
@@ -483,12 +465,12 @@ const void ERenderer::FilledCircle(Vec2 Pos, float radius, Color clr, int e_comp
 	f_circle_vertices.clear();
 }
 
-const void ERenderer::BorderedCircle(Vec2 Pos, float radius, Color clr, Color borderClr, int e_completion, float rotation) {
+const void ERenderer::BorderedCircle(const Vec2 Pos, float radius, const Color clr, const Color borderClr, int e_completion, float rotation) {
 	FilledCircle(Pos, radius, clr, e_completion, rotation);
 	Circle(Pos, radius, borderClr, e_completion, rotation);
 }
 
-const void ERenderer::Sprite(LPDIRECT3DTEXTURE9 Texture, Vec2 Pos, Vec2 Size, Color clr) {
+const void ERenderer::Sprite(const LPDIRECT3DTEXTURE9 Texture, const Vec2 Pos, const Vec2 Size, const Color clr) {
 	D3DCOLOR Color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
 
 	D3DXVECTOR3 pos = D3DXVECTOR3(Pos.x, Pos.y, 0.0f);

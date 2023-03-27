@@ -4,8 +4,8 @@ guiStyle EGuiStyle;
 guiColors EGuiColors;
 EGuiMain EGui;
 
-std::unordered_map<int, Vec2> EGuiMain::MenuPos;
-std::unordered_map<int, Vec2> EGuiMain::MenuSize;
+std::map<int, Vec2> EGuiMain::MenuPos;
+std::map<int, Vec2> EGuiMain::MenuSize;
 
 void EGuiMain::Begin() {
     Graphics.Create();
@@ -89,9 +89,6 @@ void EGuiMain::DemoWindow() {
 
                 static bool test_keybind = false;
                 Keybind("test bind", &test_keybind);
-
-                if (test_keybind)
-                    renderer.Text(Fonts.Primary, "Key on", { 2, 2 }, {255, 255, 255, 255}, LEFT);
 
                 static float test_float_slider = 50.f;
                 Slider("Test slider", 0.f, 100.f, &test_float_slider, " splatzys");
