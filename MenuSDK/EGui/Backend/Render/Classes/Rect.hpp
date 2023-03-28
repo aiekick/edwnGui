@@ -4,7 +4,8 @@ struct Rect {
     float x, y, w, h;
 
     Rect() { x = y = w = 0; h = 0; }
-    Rect(float _x, float _y, float _w, float _h) { x = _x; y = _y; w = _w; h = _h; }
+    Rect(float _x, float _y, float _w, float _h)
+        : x(_x), y(_y), w(_w), h(_h) {}
 
     Rect& operator+=(const Rect& other)
     {
@@ -34,5 +35,13 @@ struct Rect {
 
     bool operator==(const Rect& other) const {
         return x == other.x && y == other.y && w == other.w && h == other.h;
+    }
+
+    void clear()
+    {
+        x = 0;
+        y = 0;
+        w = 0;
+        h = 0;
     }
 };

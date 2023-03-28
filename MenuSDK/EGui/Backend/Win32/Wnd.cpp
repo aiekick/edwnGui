@@ -3,12 +3,13 @@ EWindow wnd;
 
 #if 0
 //Put this were your wndproc function is and call it with the wndproc args. this is required for input.
-extern LRESULT WINAPI EGui_ImplWin32_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern LRESULT WINAPI edwnGui_ImplWin32_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
 
-LRESULT WINAPI EGui_ImplWin32_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT WINAPI edwnGui_ImplWin32_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	static bool DeviceLost = false;
-
+	float mouse_wheel_delta = 0.f;
+	bool set_delta = false;
 	switch (msg) {
 	case WM_SETCURSOR:
 		if (EGui.SettingCursor) {
@@ -17,7 +18,14 @@ LRESULT WINAPI EGui_ImplWin32_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		}
 		else
 			SetCursor(EGui.CursorArrow);
-
+		break;
+	case WM_MOUSEMOVE:
+		const POINTS p = MAKEPOINTS(lParam);
+		Input.UpdateMousePos(Vec2(p.x, p.y));
+		break;
+	case WM_MOUSEWHEEL:
+		mouse_wheel_delta = GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? 8 : -8;
+		Input.UpdateMouseWheelDelta(mouse_wheel_delta);
 		break;
 	case WM_EXITSIZEMOVE:
 		if (EGui.Device != NULL && wParam != SIZE_MINIMIZED)
@@ -44,6 +52,7 @@ LRESULT WINAPI EGui_ImplWin32_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		return 0;
 		break;
 	}
+
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
@@ -68,7 +77,7 @@ bool EWindow::CreateGuiWindow(std::string title, Vec2 wPos, Vec2 wSize)
 	if (wPos == Vec2(0, 0)) wPos = Pos;
 	if (wSize == Vec2(0, 0)) wSize = Size;
 
-	wc = { sizeof(wc), CS_CLASSDC, EGui_ImplWin32_WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, title.c_str(), NULL };
+	wc = { sizeof(wc), CS_CLASSDC, edwnGui_ImplWin32_WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, title.c_str(), NULL };
 	RegisterClassEx(&wc);
 	EGui.hwnd = CreateWindowA(wc.lpszClassName, title.c_str(), WS_OVERLAPPEDWINDOW, Pos.x, Pos.y, Size.x, Size.y, NULL, NULL, wc.hInstance, NULL);
 

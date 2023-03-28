@@ -1,12 +1,18 @@
 #pragma once
 #include "../../EGui.hpp"
-#include <memory>
 
-enum circle_type { FULL, HALF, QUARTER };
-enum text_alignment { LEFT, CENTER, CENTER_XY, RIGHT };
+enum circle_type { 
+    FULL,
+    HALF,
+    QUARTER
+};
 
-template<typename T> static inline T Min(T lhs, T rhs) { return lhs < rhs ? lhs : rhs; }
-template<typename T> static inline T Max(T lhs, T rhs) { return lhs >= rhs ? lhs : rhs; }
+enum text_alignment { 
+    LEFT,
+    CENTER,
+    CENTER_XY,
+    RIGHT
+};
 
 enum RoundingFlags {
     CORNER_NONE = 0,
@@ -24,42 +30,23 @@ enum RoundingFlags {
     CORNER_ALL = CORNER_TOP | CORNER_RIGHT | CORNER_BOTTOM | CORNER_LEFT
 };
 
-//Used for clipping.
-struct Clip_info {
-    bool OldPushingClip = false;
-    bool PushingClip = false;
-    RECT Clip = { -1, -1, -1, -1 };
-    RECT OldClip = { -1, -1, -1, -1 };
-};
-
-struct FontData {
-    LPD3DXFONT Font;
-    bool anti_alias;
-    bool drop_shadow;
-    bool outline;
-};
-
-struct EFonts {
-    FontData Override; /* used for push font and pop font */
-    FontData Primary;
-    FontData TabIcon;
-    FontData TitleFont;
-};
-
-extern EFonts Fonts;
-
 struct ETextures {
     IDirect3DTexture9* BackgroundTexture;
     IDirect3DTexture9* AlphaTexture;
     IDirect3DTexture9* MouseTexture;
 };
 
+struct EFonts {
+    Font Override = {};
+    Font Primary = {};
+    Font TabIcon = {};
+    Font TitleFont = {};
+};
+
 extern ETextures Textures;
+extern EFonts Fonts;
 
 struct ERenderer {
-    bool NeedsUpdate = true;
-    bool Initialized = false;
-
     bool PushingFont = false;
     bool PushingAlpha = false;
     int PushingAlphaAmount = 0;
@@ -69,9 +56,9 @@ struct ERenderer {
 
     const void SetAntiAliasing(bool state);
 
-    const FontData AddFont(std::string name, int weight, int size, bool anti_alias = true, bool dropshadow = false, bool outline = false);
+    const Font AddFont(std::string name, int weight, int size, bool anti_alias = true, bool dropshadow = false, bool outline = false);
 
-    const void PushFont(const FontData font);
+    const void PushFont(const Font font);
     const void PopFont();
 
     const void PushClip(const Vec2 Pos, const Vec2 Size);
@@ -97,8 +84,8 @@ struct ERenderer {
     const void FilledCircle(const Vec2 Pos, float radius, const Color clr, int e_completion = FULL, float rotation = 0.f);
     const void BorderedCircle(const Vec2 Pos, float radius, const Color clr, Color borderClr, int e_completion = FULL, float rotation = 0.f);
 
-    const void Text(const FontData Font, const char* text, const Vec2 Pos, const Color clr, int Orientation);
-    const Vec2 GetTextSize(const FontData Font, const char* Text);
+    const void Text(const Font Font, const char* text, const Vec2 Pos, const Color clr, int Orientation);
+    const Vec2 GetTextSize(const Font Font, const char* Text);
 
     const void Sprite(const LPDIRECT3DTEXTURE9 Texture, const Vec2 Pos, const Vec2 Size, const Color clr = { 255, 255, 255, 255 });
 };

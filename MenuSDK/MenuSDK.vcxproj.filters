@@ -25,7 +25,6 @@
     <ClCompile Include="EGui\Gui\Elements\SubTabs.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Child.cpp" />
     <ClCompile Include="EGui\Backend\Animation\Animation.cpp" />
-    <ClCompile Include="EGui\Backend\Render\Wrapper.cpp" />
     <ClCompile Include="EGui\Backend\Utility\Math.cpp" />
     <ClCompile Include="EGui\Backend\Camera\Camera.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Label.cpp" />
@@ -49,8 +48,9 @@
     <ClInclude Include="EGui\Backend\Threading\atomic_lock.h" />
     <ClInclude Include="EGui\Backend\Threading\packed_heap.h" />
     <ClInclude Include="EGui\Backend\Threading\shared_mutex.h" />
-    <ClInclude Include="EGui\Backend\Render\Wrapper.hpp" />
     <ClInclude Include="EGui\Backend\Utility\Math.hpp" />
     <ClInclude Include="EGui\Backend\Camera\Camera.hpp" />
+    <ClInclude Include="EGui\Backend\Render\Classes\Clip.hpp" />
+    <ClInclude Include="EGui\Backend\Render\Classes\Font.hpp" />
   </ItemGroup>
 </Project>

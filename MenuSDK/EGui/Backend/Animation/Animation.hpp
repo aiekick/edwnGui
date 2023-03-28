@@ -16,8 +16,9 @@ struct Anims {
 		return float(x + (goal - x) * time);
 	}
 
-	float linear(float in, float t, float c, float d) {
-		return c * t / d + in;
+	//gay no work lol
+	float linear(float x, float goal, float time) {
+		return x + (goal - x) / time;
 	}
 
 	float Flip(float x) {

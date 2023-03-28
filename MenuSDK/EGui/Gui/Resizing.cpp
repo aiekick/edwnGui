@@ -47,8 +47,8 @@ Vec2 EGuiMain::Resizing(int id, Vec2 size) {
 		NewSize = Input.GetMousePos() - MenuPos[id];
 	}
 
-	NewSize.x = std::clamp(NewSize.x, NextWindowSmallSize.x, (float)INT_MAX);
-	NewSize.y = std::clamp(NewSize.y, NextWindowSmallSize.y, (float)INT_MAX);
+	NewSize.x = Math.Clamp(NewSize.x, NextWindowSmallSize.x, (float)INT_MAX);
+	NewSize.y = Math.Clamp(NewSize.y, NextWindowSmallSize.y, (float)INT_MAX);
 
 	return NewSize;
 }

@@ -16,24 +16,27 @@ bool EGuiMain::Window(int id, const char* title, bool draggable) {
     //Set window identifier & dragging state, this is set so elements can identify what window they are parent to & for end window to know if it should handle drag.
     SetWindowId(id);
     SetWindowDragability(draggable);
-    SetWindowDraggingBounds(MenuPos[WindowId], MenuSize[WindowId]);
+    SetWindowDraggingBounds(MenuPos[id], MenuSize[id]);
     SetItemIdentifier(GetItemIdentifier() + 1);
 
+    Vec2 Pos = MenuPos[id];
+    Vec2 Size = MenuSize[id];
+
     //Background
-    renderer.FilledRectangle(MenuPos[WindowId], MenuSize[WindowId], EGuiColors.FrameBackColor, EGuiStyle.FrameRounding);
+    renderer.FilledRectangle(Pos, Size, EGuiColors.FrameBackColor, EGuiStyle.FrameRounding);
 
     //Top bar
-    renderer.FilledRectangle(MenuPos[WindowId], Vec2(MenuSize[WindowId].x, 30), EGuiColors.FrameHeaderColor, EGuiStyle.FrameRounding);
+    renderer.FilledRectangle(Pos, Vec2(MenuSize[WindowId].x, 30), EGuiColors.FrameHeaderColor, EGuiStyle.FrameRounding);
 
     //Outline
-    renderer.Rectangle(MenuPos[WindowId], MenuSize[WindowId], EGuiColors.FrameBorderColor, EGuiStyle.FrameRounding);
+    renderer.Rectangle(Pos, Size, EGuiColors.FrameBorderColor, EGuiStyle.FrameRounding);
 
     //Title
-    renderer.Text(Fonts.TitleFont, title, MenuPos[WindowId] + Vec2(EGuiStyle.Padding, 7), EGuiColors.TextColor, LEFT);
+    renderer.Text(Fonts.TitleFont, title, Pos + Vec2(EGuiStyle.Padding + 4, 7), EGuiColors.TextColor, LEFT);
 
     //Resizing area.
-    SetResizingArea(GetWindowId(), MenuPos[WindowId] + MenuSize[WindowId] - Vec2(12, 12), { 12, 12 });
-    renderer.Line(MenuPos[WindowId] + MenuSize[WindowId] - Vec2(12, 0), MenuPos[WindowId] + MenuSize[WindowId] - Vec2(0, 12), EGuiColors.FrameBorderColor);
+    SetResizingArea(GetWindowId(),Pos + Size - Vec2(12, 12), { 12, 12 });
+    renderer.Line(Pos +Size - Vec2(12, 0),Pos + Size - Vec2(0, 12), EGuiColors.FrameBorderColor);
 
 	return true;
 }

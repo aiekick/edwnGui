@@ -47,7 +47,7 @@ Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool
 
 	//This restricts our element from going out of window bounds
 	if (!CanDragOffscreen)
-		NewPos = { std::clamp(NewPos.x, 0.f, wnd.GetWindowSize().x - size.x), std::clamp(NewPos.y, 0.f, wnd.GetWindowSize().y - size.y) };
+		NewPos = { Math.Clamp(NewPos.x, 0.f, wnd.GetWindowSize().x - size.x), Math.Clamp(NewPos.y, 0.f, wnd.GetWindowSize().y - size.y) };
 
 	return NewPos;
 }

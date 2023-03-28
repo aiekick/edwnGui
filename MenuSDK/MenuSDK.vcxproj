@@ -170,7 +170,6 @@
     <ClCompile Include="EGui\Backend\Animation\Animation.cpp" />
     <ClCompile Include="EGui\Backend\Animation\Timing.cpp" />
     <ClCompile Include="EGui\Backend\Camera\Camera.cpp" />
-    <ClCompile Include="EGui\Backend\Render\Wrapper.cpp" />
     <ClCompile Include="EGui\Backend\Utility\Math.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Child.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Keybind.cpp" />
@@ -200,6 +199,8 @@
     <ClInclude Include="EGui\Backend\Animation\Animation.hpp" />
     <ClInclude Include="EGui\Backend\Animation\Timing.hpp" />
     <ClInclude Include="EGui\Backend\Camera\Camera.hpp" />
+    <ClInclude Include="EGui\Backend\Render\Classes\Clip.hpp" />
+    <ClInclude Include="EGui\Backend\Render\Classes\Font.hpp" />
     <ClInclude Include="EGui\Backend\Render\Fonts\Fonts.hpp" />
     <ClInclude Include="EGui\Backend\Render\Renderer.hpp" />
     <ClInclude Include="EGui\Backend\Render\Textures\Textures.hpp" />
@@ -207,7 +208,6 @@
     <ClInclude Include="EGui\Backend\Render\Classes\Rect.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Vector.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Vector2D.hpp" />
-    <ClInclude Include="EGui\Backend\Render\Wrapper.hpp" />
     <ClInclude Include="EGui\Backend\Threading\atomic_lock.h" />
     <ClInclude Include="EGui\Backend\Threading\packed_heap.h" />
     <ClInclude Include="EGui\Backend\Threading\shared_mutex.h" />

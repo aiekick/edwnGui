@@ -17,9 +17,9 @@ bool EGuiMain::Tab(const char* title, bool selected, Vec2 size) {
 	float delta_time = timing.getDeltaTime();
 	
 	if (selected)
-		tab_alpha[GetItemIdentifier()] = clamp(Animations.lerp(tab_alpha[GetItemIdentifier()], 255.f, delta_time * 8), 0.f, 255.f);
+		tab_alpha[GetItemIdentifier()] = Math.Clamp(Animations.lerp(tab_alpha[GetItemIdentifier()], 255.f, delta_time * 8), 0.f, 255.f);
 	else
-		tab_alpha[GetItemIdentifier()] = clamp(Animations.lerp(tab_alpha[GetItemIdentifier()], 0.f, delta_time * 8), 0.f, 255.f);
+		tab_alpha[GetItemIdentifier()] = Math.Clamp(Animations.lerp(tab_alpha[GetItemIdentifier()], 0.f, delta_time * 8), 0.f, 255.f);
 
 	renderer.FilledRectangle(NextDrawPos, size, Color(255, 255, 255, tab_alpha[GetItemIdentifier()] / 25.5));
 

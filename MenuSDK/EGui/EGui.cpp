@@ -21,6 +21,9 @@ void EGuiMain::PreRender() {
 
 void EGuiMain::Render() {
     Graphics.End();
+
+    //move this somewhere else. it wont work with an internal cheat lol.
+    Input.UpdateMouseWheelDelta(0.f);
 }
 
 /* this should ONLY be called if we are not using an external window for testing, as in we are making it render into another processes window. */
@@ -50,7 +53,7 @@ enum {
 
 void EGuiMain::DemoWindow() {
     SetNextWindowPos({ 100, 100 });
-    SetNextWindowSize({ 600, 390 }, {600, 390});
+    SetNextWindowSize({ 600, 490 }, {600, 490});
 
     static int tab = 0;
 
@@ -85,30 +88,30 @@ void EGuiMain::DemoWindow() {
             Child("Settings", Size);
             {
                 static bool test_checkbox = false;
-                Checkbox("Enable", &test_checkbox);
+                Checkbox("Enable checkbox", &test_checkbox);
 
                 static bool test_keybind = false;
-                Keybind("test bind", &test_keybind);
+                Keybind("Example keybind", &test_keybind);
 
                 static float test_float_slider = 50.f;
-                Slider("Test slider", 0.f, 100.f, &test_float_slider, " splatzys");
+                Slider("Example slider", 0.f, 100.f, &test_float_slider);
 
                 static std::string test_textbox = "monkey balls 420";
-                Textbox("Example text_box", test_textbox);
+                Textbox("Example text box", test_textbox);
 
                 static int button_press_count = 0;
-                if (Button("test button"))
+                if (Button("Example button"))
                     button_press_count++;
 
                 Label((std::string("Button press count: ") + std::to_string(button_press_count)).c_str());
 
-                ColorPicker("Lol picker", &EGuiColors.MenuTheme);
+                ColorPicker("Example color picker", &EGuiColors.MenuTheme);
 
                 static int combo_selected = 0;
-                Combobox("Test combo", &combo_selected, { "test 1", "test 2", "test 3", "test 4", "test 5", "test 6", "test 21", "test 2565" });
+                Combobox("Example combo", &combo_selected, { "test 1", "test 2", "test 3", "test 4", "test 5", "test 6", "test 21", "test 2565" });
 
                 static std::vector<bool> multi_selected = {};
-                MultiCombobox("Test mutlicombo", multi_selected, { "test 1", "test 2", "test 3" });
+                MultiCombobox("Example mutli combo", multi_selected, { "test 1", "test 2", "test 3", "test 4", "test 5", "test 6", "test 21", "test 2565" });
             }
             EndChild();
 

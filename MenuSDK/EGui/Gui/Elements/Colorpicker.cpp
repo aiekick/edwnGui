@@ -20,10 +20,12 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 	Vec2 size = { 25, 10 };
 	Vec2 pos = { (GetChildPos().x + GetChildSize().x - 12 - EGuiStyle.Padding) - size.x, PreviousDrawPos.y };
 
-	renderer.FilledRectangle(pos, size, *selected, EGuiStyle.ElementRounding);
-	renderer.Rectangle(pos, size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
+	if (Input.IsRectInRect(pos, size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
+		renderer.FilledRectangle(pos, size, *selected, EGuiStyle.ElementRounding);
+		renderer.Rectangle(pos, size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
+	}
 
-	if (Input.ButtonBehaviour(pos, size, PRESS))
+	if (Input.ButtonBehaviour(pos, size, PRESS) && Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
 		color_open[GetItemIdentifier()] = !color_open[GetItemIdentifier()];
 
 	//create color popup.
@@ -69,6 +71,8 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 
 		if (Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0), PickerSize))
 			SetWindowDragability(false);
+
+		SetDisableInputArea(pos + Vec2(size.x + 10, 0), PickerSize);
 
 		ColorData temp;
 		temp.title = title;

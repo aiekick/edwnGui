@@ -30,10 +30,10 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
     SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
 
     // Handle the typing bool
-    if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS))
+    if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS) && Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
         textbox_info[GetItemIdentifier()].typing = !textbox_info[GetItemIdentifier()].typing;
 
-    if (Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(NextDrawPos, Size))
+    if ((Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(NextDrawPos, Size)) || !Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
         textbox_info[GetItemIdentifier()].typing = false;
 
     if (textbox_info[GetItemIdentifier()].typing) {
@@ -71,17 +71,19 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
     float delta_time = timing.getDeltaTime();
 
     if (textbox_info[GetItemIdentifier()].typing)
-        textbox_info[GetItemIdentifier()].outline_alpha = clamp(Animations.lerp(textbox_info[GetItemIdentifier()].outline_alpha, 255.f, delta_time * 8), 0.f, 255.f);
+        textbox_info[GetItemIdentifier()].outline_alpha = Math.Clamp(Animations.lerp(textbox_info[GetItemIdentifier()].outline_alpha, 255.f, delta_time * 8), 0.f, 255.f);
     else
-        textbox_info[GetItemIdentifier()].outline_alpha = clamp(Animations.lerp(textbox_info[GetItemIdentifier()].outline_alpha, 0.f, delta_time * 8), 0.f, 255.f);
+        textbox_info[GetItemIdentifier()].outline_alpha = Math.Clamp(Animations.lerp(textbox_info[GetItemIdentifier()].outline_alpha, 0.f, delta_time * 8), 0.f, 255.f);
 
     // Draw dropdown button.
-    renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
-    renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
+    if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
+        renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
+        renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
 
-    renderer.PushAlpha(textbox_info[GetItemIdentifier()].outline_alpha);
-    renderer.Rectangle(NextDrawPos, Size, EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
-    renderer.PopAlpha();
+        renderer.PushAlpha(textbox_info[GetItemIdentifier()].outline_alpha);
+        renderer.Rectangle(NextDrawPos, Size, EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
+        renderer.PopAlpha();
+    }
 
     //change this because it needs to work with custom menu sizes and is just shit lol. @zoiak shit code bro.
     std::string temp = str;

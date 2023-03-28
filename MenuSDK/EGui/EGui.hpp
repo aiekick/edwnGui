@@ -37,6 +37,8 @@ using namespace std;
 #include "Backend/Render/Classes/Vector.hpp"
 #include "Backend/Render/Classes/Vector2D.hpp"
 #include "Backend/Render/Classes/Rect.hpp"
+#include "Backend/Render/Classes/Font.hpp"
+#include "Backend/Render/Classes/Clip.hpp"
 #include "Backend/Render/Textures/Textures.hpp"
 #include "Backend/Utility/Math.hpp"
 #include "Backend/Input/Input.hpp"
@@ -46,7 +48,6 @@ using namespace std;
 #include "Backend/Camera/Camera.hpp"
 #include "Backend/Graphics/DirectX.hpp"
 #include "Backend/Render/renderer.hpp"
-#include "Backend/Render/Wrapper.hpp"
 
 // Pragma comments
 #pragma comment (lib, "d3d9.lib")
@@ -66,16 +67,16 @@ struct guiStyle {
 };
 
 struct guiColors {
-	Color MenuTheme = Color(45, 118, 69, 255);
-	Color FrameBackColor = Color(15, 25, 41, 255);
-	Color FrameHeaderColor = Color(25, 39, 58, 255);
+	Color MenuTheme = Color(255, 140, 140, 255);
+	Color FrameBackColor = Color(25, 25, 25, 255);
+	Color FrameHeaderColor = Color(35, 35, 35, 255);
 	Color FrameBorderColor = Color(0, 0, 0, 255);
-	Color ChildBgColor = Color(25, 39, 58, 255);
-	Color ChildHeaderColor = Color(15, 29, 48, 255);
+	Color ChildBgColor = Color(30, 30, 30, 255);
+	Color ChildHeaderColor = Color(35, 35, 35, 255);
 	Color TextColor = Color(250, 250, 250, 255);
 	Color TextColorHovered = Color(255, 255, 255, 255);
 	Color TextColorDisabled = Color(240, 240, 240, 255);
-	Color ElementBackColor = Color(12, 26, 46, 255);
+	Color ElementBackColor = Color(15, 15, 15, 255);
 	Color ElementBorderColor = Color(0, 0, 0, 255);
 	Color ElementColorHovered = Color(0, 0, 0, 0);
 	Color ElementColorOn = MenuTheme;
@@ -182,10 +183,14 @@ struct EGuiMain {
 	void SetWindowId(int id) { WindowId = id; }
 
 	// Children ---------------------------------------------------------------------------------------------------
+	const char* CurrentChildName = "";
+	Rect ChildArea = { 0, 0, 0, 0 };
 	Vec2 ChildPos = { 0, 0 };
 	Vec2 ChildSize = { 0, 0 };
 	Vec2 GetChildPos() { return ChildPos; }
 	Vec2 GetChildSize() { return ChildSize; }
+	Rect GetChildArea() { return ChildArea; }
+	const char* GetCurrentChildName() { return CurrentChildName; }
 	bool Child(const char* title, Vec2 size);
 	bool EndChild();
 
@@ -216,8 +221,10 @@ struct EGuiMain {
 	void RenderCombos();
 	void RenderMultiCombos();
 
+	// InputDisable -----------------------------------------------------------------------------------------------
+	Rect DisableInputArea = { 0, 0, 0, 0 };
 	bool InputAreaDisabled();
-	Rect DisableInputArea = {0, 0, 0, 0};
+	void SetDisableInputArea(Vec2 pos, Vec2 size) { DisableInputArea = Rect(pos.x, pos.y, size.x, size.y); }
 
 	// Identifier -------------------------------------------------------------------------------------------------
 	int GetItemIdentifier() { return ItemIdentifier; }

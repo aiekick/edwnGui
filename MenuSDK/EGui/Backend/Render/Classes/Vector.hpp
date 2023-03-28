@@ -4,7 +4,8 @@ struct Vec {
     float x, y, z;
 
     Vec() { x = y = z = 0; }
-    Vec(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
+    Vec(float _x, float _y, float _z)
+        : x(_x), y(_y), z(_z) {}
 
     Vec& operator+=(const Vec& other)
     {

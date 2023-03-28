@@ -34,12 +34,16 @@ bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& selected, std
     SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
 
     // Toggle open state of dropdown menu when button is pressed.
-    if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS))
+    if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS) && Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
         multicombo_info[GetItemIdentifier()].open = !multicombo_info[GetItemIdentifier()].open;
+    else if (!Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
+        multicombo_info[GetItemIdentifier()].open = false;
 
     // Draw dropdown button.
-    renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
-    renderer.Rectangle(NextDrawPos, Size, multicombo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
+    if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
+        renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
+        renderer.Rectangle(NextDrawPos, Size, multicombo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
+    }
 
     if (multicombo_info[GetItemIdentifier()].open) {
         if (!Input.IsMouseHoveringRect(NextDrawPos, Vec2(Size.x, Size.y * (options.size() + 1))) && Input.IsKeyDown(VK_LBUTTON))

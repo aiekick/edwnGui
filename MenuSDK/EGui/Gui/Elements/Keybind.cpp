@@ -37,7 +37,7 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 	Vec2 Pos = { (GetChildPos().x + GetChildSize().x - EGuiStyle.Padding * 2 - 12) - Area.x, PreviousDrawPos.y};
 	static Vec2 Size = { 60, 60 };
 
-	if (Input.ButtonBehaviour(Pos, Area, PRESS))
+	if (Input.ButtonBehaviour(Pos, Area, PRESS) && Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
 		keybind_info[GetItemIdentifier()].binding = !keybind_info[GetItemIdentifier()].binding;
 
 	if (keybind_info[GetItemIdentifier()].binding) {
@@ -57,9 +57,9 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 	}
 
 	//used to open/close the display for key mode.
-	if (Input.ButtonBehaviour(Pos, Area, PRESS, VK_RBUTTON))
+	if (Input.ButtonBehaviour(Pos, Area, PRESS, VK_RBUTTON) && Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
 		keybind_info[GetItemIdentifier()].open = !keybind_info[GetItemIdentifier()].open;
-	else if (keybind_info[GetItemIdentifier()].open && (Input.IsKeyPressed(VK_LBUTTON) && !Input.IsMouseHoveringRect(Pos + Vec2(Area.x + 10, 0), Size)))
+	else if ((keybind_info[GetItemIdentifier()].open && (Input.IsKeyPressed(VK_LBUTTON) && !Input.IsMouseHoveringRect(Pos + Vec2(Area.x + 10, 0), Size))) || !Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) 
 		keybind_info[GetItemIdentifier()].open = false;
 
 	if (keybind_info[GetItemIdentifier()].open) {
@@ -80,6 +80,8 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 				keybind_info[GetItemIdentifier()].open = false;
 			}
 		}
+
+		SetDisableInputArea(Pos + Vec2(Area.x + 10, 0), Size);
 	}
 
 	if (!keybind_info[GetItemIdentifier()].binding) {
@@ -103,7 +105,8 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 	if (keybind_info[GetItemIdentifier()].key == NULL)
 		*key_state = false;
 
-	renderer.Text(Fonts.Primary, ("[" + (keybind_info[GetItemIdentifier()].key == NULL ? "..." : keystr) + "]").c_str(), Pos + Vec2(EGuiStyle.Padding, 0), keybind_info[GetItemIdentifier()].binding ? EGuiColors.MenuTheme : EGuiColors.TextColor, LEFT);
+	if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
+		renderer.Text(Fonts.Primary, ("[" + (keybind_info[GetItemIdentifier()].key == NULL ? "..." : keystr) + "]").c_str(), Pos + Vec2(EGuiStyle.Padding, 0), keybind_info[GetItemIdentifier()].binding ? EGuiColors.MenuTheme : EGuiColors.TextColor, LEFT);
 
 	return true;
 }

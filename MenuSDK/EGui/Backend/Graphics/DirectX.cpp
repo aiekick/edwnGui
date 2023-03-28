@@ -49,18 +49,19 @@ void graphics::SetupRenderStates(IDirect3DDevice9 *Device) {
 void graphics::Create() {
     EGui.D3D = Direct3DCreate9(D3D_SDK_VERSION);
 
-    EGui.Paramaters.Windowed = true; //Set this to false if your application is full screen.
+    EGui.Paramaters.Windowed = TRUE;
     EGui.Paramaters.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    EGui.Paramaters.BackBufferFormat = D3DFMT_A8R8G8B8;
+    EGui.Paramaters.BackBufferFormat = D3DFMT_UNKNOWN;
     EGui.Paramaters.EnableAutoDepthStencil = TRUE;
     EGui.Paramaters.AutoDepthStencilFormat = D3DFMT_D16;
     EGui.Paramaters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-    EGui.Paramaters.MultiSampleType = D3DMULTISAMPLE_4_SAMPLES; //Lower this for better performance. 0 for best performace and 16 for best quality.
+    //EGui.Paramaters.PresentationInterval = D3DPRESENT_INTERVAL_ONE; //Present with VSync
+    EGui.Paramaters.MultiSampleType = D3DMULTISAMPLE_4_SAMPLES;
     EGui.Paramaters.MultiSampleQuality = 0;
     
     // create device
-    HRESULT result = EGui.D3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, EGui.hwnd,
-        D3DCREATE_SOFTWARE_VERTEXPROCESSING, &EGui.Paramaters, &EGui.Device);
+    if (EGui.D3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, EGui.hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &EGui.Paramaters, &EGui.Device) < 0)
+        return;
 
     // set device render states.
     SetupRenderStates(EGui.Device);
@@ -69,7 +70,7 @@ void graphics::Create() {
 // Begin a scene for rendering.
 void graphics::Begin() {
     // clear our scene for next draw.
-    EGui.Device->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_RGBA(15, 15, 15, NULL), 1.f, 0);
+    EGui.Device->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_RGBA(0, 0, 0, NULL), 1.f, 0);
     EGui.Device->BeginScene();
 }
 
@@ -97,7 +98,7 @@ void graphics::ResetDevice() {
 
 // Clean up the Direct3D context.
 void graphics::Cleanup() {
-    EGui.Device->Release();
-    EGui.D3D->Release();
+    if (EGui.Device) { EGui.Device->Release(); EGui.Device = NULL; }
+    if (EGui.D3D) { EGui.D3D->Release(); EGui.D3D = NULL; }
     renderer.Release();
 }

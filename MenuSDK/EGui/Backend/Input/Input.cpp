@@ -3,24 +3,34 @@
 EInput Input;
 
 //This could use a recode, try using ScreenToClient(hwnd, cursor_point), it should compensate for the window pos. too FUCKING tired, need sleep. its like 2pm and I been up for like 20 hours.
-bool EInput::IsMouseHoveringRect(Vec2 pos, Vec2 size)
-{
+bool EInput::IsPointInRect(Vec2 point, Vec2 pos, Vec2 size) {
+	return(point.x >= pos.x && point.x <= pos.x + size.x) && (point.y >= pos.y && point.y <= pos.y + size.y);
+}
+
+bool EInput::IsRectInRect(Vec2 pos, Vec2 size, Vec2 pos2, Vec2 size2) {
+	bool visible = false;
+
+	if (!visible && pos.x >= pos2.x)
+		visible = true;
+
+	if (!visible && pos.x + size.x <= pos2.x + size2.x)
+		visible = true;
+
+	if (!visible && pos.y >= pos2.y)
+		visible = true;
+
+	if (!visible && pos.y + size.y <= pos2.y + size2.y)
+		visible = true;
+
+	return visible;
+}
+
+bool EInput::IsMouseHoveringRect(Vec2 pos, Vec2 size) {
 	if (!wnd.IsWindowParent())
 		return false;
 
-	Vec2 WindowPos = wnd.GetWindowPos();
-
-	POINT p;
-	if (GetCursorPos(&p))
-	{
-		//@todo: get our actual current cursor size incase of custom cursors. https://forums.codeguru.com/showthread.php?449040-get-the-system-current-cursor-size
-		//The (x = -7, y = -30) is to compensate for our cursor size.
-		bool Windowed = wnd.IsWindowed(EGui.hwnd);
-		if ((p.x - (Windowed ? 7 : 0) - WindowPos.x >= pos.x && p.x - (Windowed ? 7 : 0) - WindowPos.x <= pos.x + size.x) && (p.y - (Windowed ? 30 : 0) - WindowPos.y >= pos.y && p.y - (Windowed ? 30 : 0) - WindowPos.y <= pos.y + size.y))
-			return true;
-	}
-
-	return false;
+	Vec2 CursorPos = GetMousePos();
+	return (CursorPos.x >= pos.x && CursorPos.x <= pos.x + size.x) && (CursorPos.y >= pos.y && CursorPos.y <= pos.y + size.y);
 }
 
 static std::map<int, bool> clicked;
@@ -90,10 +100,18 @@ bool EInput::IsKeyPressed(int key)
 	return pressed;
 }
 
-Vec2 EInput::GetMousePos() {
-	POINT p;
-	GetCursorPos(&p);
-	ScreenToClient(EGui.hwnd, &p);
+void EInput::UpdateMousePos(const Vec2 point) {
+	MousePos = point;
+}
 
-	return { (float)p.x, (float)p.y };
+Vec2 EInput::GetMousePos() {
+	return MousePos;
+}
+
+void EInput::UpdateMouseWheelDelta(float delta) {
+	MouseWheelDelta = delta;
+}
+
+float EInput::GetMouseWheelDelta() {
+	return MouseWheelDelta;
 }

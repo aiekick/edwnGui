@@ -14,15 +14,15 @@ const void ERenderer::Create() {
 }
 
 const void ERenderer::Release() {
-	Fonts.Primary.Font->Release();
-	Fonts.TabIcon.Font->Release();
-	Fonts.TitleFont.Font->Release();
+	Fonts.Primary.font->Release();
+	Fonts.TabIcon.font->Release();
+	Fonts.TitleFont.font->Release();
 }
 
-const FontData ERenderer::AddFont(std::string name, int weight, int size, bool anti_alias, bool dropshadow, bool outline) {
-	FontData font;
+const Font ERenderer::AddFont(std::string name, int weight, int size, bool anti_alias, bool dropshadow, bool outline) {
+	Font font;
 	{
-		D3DXCreateFontA(EGui.Device, size, 0, weight, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, DEFAULT_PITCH, name.c_str(), &font.Font);
+		D3DXCreateFontA(EGui.Device, size, 0, weight, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, DEFAULT_PITCH, name.c_str(), &font.font);
 		font.anti_alias = anti_alias;
 		font.drop_shadow = dropshadow;
 		font.outline = outline;
@@ -34,7 +34,7 @@ const void ERenderer::SetAntiAliasing(bool state) {
 	EGui.Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, state);
 }
 
-const void ERenderer::PushFont(const FontData font) {
+const void ERenderer::PushFont(const Font font) {
 	if (!PushingFont) {
 		PushingFont = true;
 		Fonts.Override = font;
@@ -303,7 +303,7 @@ const void ERenderer::Gradient4(const Vec2 Pos, const Vec2 Size, const Color Top
 	gradient4_vertices.clear();
 }
 
-const void ERenderer::Text(const FontData Font, const char* text, const Vec2 Pos, Color clr, int Orientation) {
+const void ERenderer::Text(const Font Font, const char* text, const Vec2 Pos, Color clr, int Orientation) {
 	auto font = PushingFont ? Fonts.Override : Font;
 
 	D3DCOLOR translated_color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
@@ -328,37 +328,36 @@ const void ERenderer::Text(const FontData Font, const char* text, const Vec2 Pos
 
 	if (font.outline) {
 		SetRect(&clip_rect, Pos.x - 1, Pos.y - 1, 0, 0);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
+		font.font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x + 1, Pos.y + 1, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
+		font.font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x, Pos.y + 1, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
+		font.font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x + 1, Pos.y, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
+		font.font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x, Pos.y - 1, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
+		font.font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x - 1, Pos.y, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
+		font.font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x + 1, Pos.y - 1, Pos.x, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
+		font.font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 		SetRect(&clip_rect, Pos.x - 1, Pos.y, Pos.x + 1, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
+		font.font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 	}
 	else if (font.drop_shadow) {
 		SetRect(&clip_rect, Pos.x + 1, Pos.y, Pos.x + 1, Pos.y);
-		font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
+		font.font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, D3DCOLOR_RGBA(0, 0, 0, clr.a()));
 	}
-
 
 	SetRect(&clip_rect, Pos.x, Pos.y, Pos.x, Pos.y);
 
 	SetAntiAliasing(font.anti_alias);
-	font.Font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, translated_color);
+	font.font->DrawTextA(NULL, text, -1, &clip_rect, TextFlags, translated_color);
 	SetAntiAliasing(false);
 }
 
-const Vec2 ERenderer::GetTextSize(const FontData Font, const char* Text) {
-	RECT rect; Font.Font->DrawTextA(0, Text, strlen(Text), &rect, DT_CALCRECT, D3DCOLOR_ARGB(0, 0, 0, 0));
+const Vec2 ERenderer::GetTextSize(const Font Font, const char* Text) {
+	RECT rect; Font.font->DrawTextA(0, Text, strlen(Text), &rect, DT_CALCRECT, D3DCOLOR_ARGB(0, 0, 0, 0));
 	return Vec2(float(rect.right - rect.left), float(rect.bottom - rect.top));
 }
 
@@ -395,7 +394,7 @@ std::vector<vertex> circle_vertices;
 const void ERenderer::Circle(const Vec2 Pos, float radius, const Color clr, int e_completion, float rotation) {
 	D3DCOLOR Color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
 
-	const int NUM_VERTICES = clamp((int)radius, 16, 64);
+	const int NUM_VERTICES = Math.Clamp((int)radius, 16, 64);
 
 	float angle = rotation * D3DX_PI / 180;
 	float completion;
@@ -433,7 +432,7 @@ std::vector<vertex> f_circle_vertices;
 const void ERenderer::FilledCircle(const Vec2 Pos, float radius, const Color clr, int e_completion, float rotation) {
 	D3DCOLOR Color = clr.TranslateColor(PushingAlpha, PushingAlphaAmount);
 
-	const int NUM_VERTICES = clamp((int)radius, 16, 64);
+	const int NUM_VERTICES = Math.Clamp((int)radius, 16, 64);
 
 	float angle = rotation * D3DX_PI / 180;
 	float completion;
