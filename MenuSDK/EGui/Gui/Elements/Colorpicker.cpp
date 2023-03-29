@@ -20,16 +20,14 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 	Vec2 size = { 25, 10 };
 	Vec2 pos = { (GetChildPos().x + GetChildSize().x - 12 - EGuiStyle.Padding) - size.x, PreviousDrawPos.y };
 
-	if (Input.IsRectInRect(pos, size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
-		renderer.FilledRectangle(pos, size, *selected, EGuiStyle.ElementRounding);
-		renderer.Rectangle(pos, size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
-	}
+	bool should_render = Input.IsRectInRect(pos, size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h));
 
+	//handle input
 	if (Input.ButtonBehaviour(pos, size, PRESS) && Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
 		color_open[GetItemIdentifier()] = !color_open[GetItemIdentifier()];
 
 	//create color popup.
-	if (color_open[GetItemIdentifier()]) {
+	if (color_open[GetItemIdentifier()] && should_render) {
 		Vec2 text_size = renderer.GetTextSize(Fonts.Primary, title);
 		Vec2 PickerSize = { 200, 175 + text_size.y };
 
@@ -87,6 +85,12 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 		color_data[color_data.size() + 1] = temp;
 	}
 
+	//render
+	if (should_render) {
+		renderer.FilledRectangle(pos, size, *selected, EGuiStyle.ElementRounding);
+		renderer.Rectangle(pos, size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
+	}
+
 	return true;
 }
 
@@ -105,7 +109,7 @@ void EGuiMain::RenderColorPickers() {
 		//color gradient
 		renderer.Gradient(color_data[i].pos + Vec2(5, text_size.y + 10), size - Vec2(25, 40), Color(255, 255, 255, 255), Color(clr_hue.r(), clr_hue.g(), clr_hue.b(), 255));
 		renderer.Gradient(color_data[i].pos + Vec2(5, text_size.y + 10), size - Vec2(25, 40), Color(0, 0, 0, 0), Color(0, 0, 0, 255), true);
-		renderer.Rectangle(color_data[i].pos + Vec2(5, text_size.y + 10) + Vec2(color_data[i].saturation * (size.x - 25), ((size.y - 40) - (color_data[i].value * (size.y - 40)))), { 5, 5 }, Color(255, 255, 0, 255));
+		renderer.Rectangle(color_data[i].pos + Vec2(2, text_size.y + 10) + Vec2(color_data[i].saturation * (size.x - 25), ((size.y - 40) - (color_data[i].value * (size.y - 40)))), { 5, 5 }, Color(255, 255, 0, 255));
 
 		//color bar
 		for (int j = 0; j < size.y - 40; j++) {

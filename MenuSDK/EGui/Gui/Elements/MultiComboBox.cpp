@@ -21,31 +21,21 @@ std::map<int, MultiComboRenderInfo> multicombo_render_info;
 bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& selected, std::vector<std::string> options) {
     SetItemIdentifier(GetItemIdentifier() + 1);
 
-    // Keep track of whether the selected value has changed.
     bool value_changed = false;
-
-    // Calculate size of dropdown button.
     auto Size = Vec2({ GetChildSize().x - ((12 + EGuiStyle.Padding) * 2 + EGuiStyle.Padding), 18 });
-
-    // Save current draw position.
     auto OriginalPos = GetNextDrawPos();
 
-    // Set next draw position to right of dropdown button.
     SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
 
-    // Toggle open state of dropdown menu when button is pressed.
+    bool should_render = Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h));
+
+    //Handle input
     if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS) && Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
         multicombo_info[GetItemIdentifier()].open = !multicombo_info[GetItemIdentifier()].open;
-    else if (!Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
+    else if (!should_render)
         multicombo_info[GetItemIdentifier()].open = false;
 
-    // Draw dropdown button.
-    if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
-        renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
-        renderer.Rectangle(NextDrawPos, Size, multicombo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
-        renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
-    }
-
+    //Render drop menu
     if (multicombo_info[GetItemIdentifier()].open) {
         if (!Input.IsMouseHoveringRect(NextDrawPos, Vec2(Size.x, Size.y * (options.size() + 1))) && Input.IsKeyDown(VK_LBUTTON))
             multicombo_info[GetItemIdentifier()].open = false;
@@ -77,13 +67,16 @@ bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& selected, std
         multicombo_info[GetItemIdentifier()].clip_y = 0.f;
     }
 
-    // Restore original draw position.
-    SetNextDrawPos(OriginalPos);
+    //Render element
+    if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
+        renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
+        renderer.Rectangle(NextDrawPos, Size, multicombo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
+        renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
+    }
 
-    // Set next draw position below dropdown menu.
+    SetNextDrawPos(OriginalPos);
     SetNextDrawPosEx({ 0, Size.y + EGuiStyle.Padding });
 
-    // Return whether the selected value has changed.
     return value_changed;
 }
 

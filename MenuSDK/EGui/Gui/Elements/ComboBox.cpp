@@ -21,43 +21,29 @@ std::map<int, ComboRenderInfo> combo_render_info;
 bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::string> options) {
     SetItemIdentifier(GetItemIdentifier() + 1);
 
-    // Keep track of whether the selected value has changed.
     bool value_changed = false;
-
-    // Calculate size of dropdown button.
     auto Size = Vec2({ GetChildSize().x - ((12 + EGuiStyle.Padding) * 2 + EGuiStyle.Padding), 18 });
-
-    // Save current draw position.
     auto OriginalPos = GetNextDrawPos();
 
-    // Set next draw position to right of dropdown button.
     SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
 
-    // Toggle open state of dropdown menu when button is pressed.
-    if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS) && Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)) && Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
+    bool should_render = Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h));
+
+    //Handle input
+    if (should_render && Input.ButtonBehaviour(NextDrawPos, Size, PRESS) && Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
         combo_info[GetItemIdentifier()].open = !combo_info[GetItemIdentifier()].open;
-    else if (!Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
+    else if (!should_render)
         combo_info[GetItemIdentifier()].open = false;
 
-    // Draw dropdown button.
-    if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
-        renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
-        renderer.Rectangle(NextDrawPos, Size, combo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
-        renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
-    }
-
-    // If dropdown menu is open, draw menu items.
+    //Render drop menu
     if (combo_info[GetItemIdentifier()].open) {
         if (!Input.IsMouseHoveringRect(NextDrawPos, Vec2(Size.x, Size.y * (options.size() + 1))) && Input.IsKeyDown(VK_LBUTTON))
             combo_info[GetItemIdentifier()].open = false;
 
-        // Iterate over menu items.
         for (int i = 0; i < options.size(); ++i) {
-            // Update selected value when menu item is pressed.
             if (Input.ButtonBehaviour(NextDrawPos + Vec2(0, Size.y * (i + 1)), Size, PRESS)) {
                 *selected = i;
 
-                //close popup
                 combo_info[GetItemIdentifier()].open = !combo_info[GetItemIdentifier()].open;
                 value_changed = true;
             }
@@ -83,13 +69,16 @@ bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::strin
         combo_info[GetItemIdentifier()].clip_y = 0.f;
     }
 
-    // Restore original draw position.
-    SetNextDrawPos(OriginalPos);
+    //Render element
+    if (should_render) {
+        renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
+        renderer.Rectangle(NextDrawPos, Size, combo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
+        renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
+    }
 
-    // Set next draw position below dropdown menu.
+    SetNextDrawPos(OriginalPos);
     SetNextDrawPosEx({ 0, Size.y + EGuiStyle.Padding });
 
-    // Return whether the selected value has changed.
     return value_changed;
 }
 

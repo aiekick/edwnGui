@@ -17,23 +17,19 @@ static std::map<int, Textbox_info> textbox_info;
 bool EGuiMain::Textbox(const char* title, std::string &str) {
     SetItemIdentifier(GetItemIdentifier() + 1);
 
-    // Keep track of whether the selected value has changed.
     bool value_changed = false;
-
-    // Calculate size of dropdown button.
     auto Size = Vec2({ GetChildSize().x - ((12 + EGuiStyle.Padding) * 2 + EGuiStyle.Padding), 18 });
-
-    // Save current draw position.
     auto OriginalPos = NextDrawPos;
 
-    // Set next draw position to right of dropdown button.
     SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
 
-    // Handle the typing bool
+    bool ShouldRender = Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h));
+
+    //Handle input (should get keys & write to string)
     if (Input.ButtonBehaviour(NextDrawPos, Size, PRESS) && Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
         textbox_info[GetItemIdentifier()].typing = !textbox_info[GetItemIdentifier()].typing;
 
-    if ((Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(NextDrawPos, Size)) || !Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
+    if ((Input.IsKeyDown(VK_LBUTTON) && !Input.IsMouseHoveringRect(NextDrawPos, Size)) || !ShouldRender)
         textbox_info[GetItemIdentifier()].typing = false;
 
     if (textbox_info[GetItemIdentifier()].typing) {
@@ -70,12 +66,11 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
 
     float delta_time = timing.getDeltaTime();
 
-    if (textbox_info[GetItemIdentifier()].typing)
-        textbox_info[GetItemIdentifier()].outline_alpha = Math.Clamp(Animations.lerp(textbox_info[GetItemIdentifier()].outline_alpha, 255.f, delta_time * 8), 0.f, 255.f);
-    else
-        textbox_info[GetItemIdentifier()].outline_alpha = Math.Clamp(Animations.lerp(textbox_info[GetItemIdentifier()].outline_alpha, 0.f, delta_time * 8), 0.f, 255.f);
+    //Alpha animation
+    textbox_info[GetItemIdentifier()].outline_alpha = Math.Clamp(Animations.lerp(textbox_info[GetItemIdentifier()].outline_alpha, textbox_info[GetItemIdentifier()].typing ? 255.f : 0.f, delta_time * 8), 0.f, 255.f);
 
-    if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
+    //Render element
+    if (ShouldRender) {
         renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
         renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
 
@@ -84,9 +79,10 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
         renderer.PopAlpha();
     }
 
-    //change this because it needs to work with custom menu sizes and is just shit lol. @zoiak shit code bro.
     std::string temp = str;
-    if (str.length() > 53U) //This can vary depending on your textbox size, make this dynamic in the future.
+
+    //todo: change this (did not have enough time before release but it works I guess lmao)
+    if (str.length() > 53U)
         temp = str.substr(0U, 53U).append(("..."));
 
     Vec2 TextSize = renderer.GetTextSize(Fonts.Primary, temp.c_str());
@@ -96,7 +92,7 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
         if (textbox_info[GetItemIdentifier()].bar_x == NULL)
             textbox_info[GetItemIdentifier()].bar_x = TextSize.x;
 
-        textbox_info[GetItemIdentifier()].bar_x = Animations.lerp(textbox_info[GetItemIdentifier()].bar_x, TextSize.x, timing.getDeltaTime() * 8);
+        textbox_info[GetItemIdentifier()].bar_x = Animations.lerp(textbox_info[GetItemIdentifier()].bar_x, TextSize.x, delta_time * 8);
 
         if (timing.getRealTime() >= textbox_info[GetItemIdentifier()].bar_time + 0.5f) {
             textbox_info[GetItemIdentifier()].bar_time = timing.getRealTime();
@@ -111,7 +107,6 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
         if (textbox_info[GetItemIdentifier()].bar)
             renderer.Line(NextDrawPos + Vec2(4 + textbox_info[GetItemIdentifier()].bar_x, 4), NextDrawPos + Vec2(4 + textbox_info[GetItemIdentifier()].bar_x, 4 + TextSize.y), EGuiColors.TextColor);
     
-        //same as the else statement but when you type or delete text its animated using clipping.
         renderer.PushClip(NextDrawPos + Vec2(5, 4), Vec2(textbox_info[GetItemIdentifier()].bar_x, TextSize.y));
         renderer.Text(Fonts.Primary, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
         renderer.PopClip();
@@ -119,12 +114,8 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
     else if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
         renderer.Text(Fonts.Primary, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
 
-    // Restore original draw position.
     SetNextDrawPos(OriginalPos);
-
-    // Set next draw position below dropdown menu.
     SetNextDrawPosEx({ 0, 18 + EGuiStyle.Padding });
 
-    // Return whether the selected value has changed.
     return value_changed;
 }

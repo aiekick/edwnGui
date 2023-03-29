@@ -18,6 +18,7 @@ bool EGuiMain::Slider(const char* title, int min, int max, int* currentValue, co
 
 	bool is_hovering_child = Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h));
 
+	//Handle input
 	if (!dragging[GetItemIdentifier()] && Input.IsKeyDown(VK_LBUTTON) && Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size) && is_hovering_child)
 		dragging[GetItemIdentifier()] = true;
 	else if (dragging[GetItemIdentifier()] && !Input.IsKeyDown(VK_LBUTTON))
@@ -25,6 +26,7 @@ bool EGuiMain::Slider(const char* title, int min, int max, int* currentValue, co
 
 	bool hovering = Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size);
 
+	//Handle input (Arrow keys & +/- buttons)
 	if ((hovering && Input.IsKeyPressed(VK_LEFT)) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), button_size, PRESS) && is_hovering_child)
 		*currentValue = *currentValue - 1;
 	else if ((hovering && Input.IsKeyPressed(VK_RIGHT)) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), button_size, PRESS) && is_hovering_child)
@@ -42,6 +44,7 @@ bool EGuiMain::Slider(const char* title, int min, int max, int* currentValue, co
 
 	slider_x[GetItemIdentifier()] = Math.Clamp(Animations.lerp(slider_x[GetItemIdentifier()], Math.Map(*currentValue, min, max, 0, (int)slider_size.x), timing.getDeltaTime() * 8), 0.f, slider_size.x);
 
+	//Render element
 	if (Input.IsRectInRect(NextDrawPos, Vec2(slider_size.x, slider_size.y + text_size.y), Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
 		renderer.FilledRectangle(NextDrawPos + Vec2(0, text_size.y), slider_size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
 		renderer.Text(Fonts.Primary, title, NextDrawPos, EGuiColors.TextColor, LEFT);
@@ -75,6 +78,7 @@ bool EGuiMain::Slider(const char* title, float min, float max, float* currentVal
 
 	bool is_hovering_child = Input.IsMouseHoveringRect(Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h));
 
+	//Handle input
 	if (!dragging[GetItemIdentifier()] && Input.IsKeyDown(VK_LBUTTON) && Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size) && is_hovering_child)
 		dragging[GetItemIdentifier()] = true;
 	else if (dragging[GetItemIdentifier()] && !Input.IsKeyDown(VK_LBUTTON))
@@ -82,6 +86,7 @@ bool EGuiMain::Slider(const char* title, float min, float max, float* currentVal
 
 	bool hovering = Input.IsMouseHoveringRect(NextDrawPos + Vec2(0, text_size.y), slider_size);
 
+	//Handle input (Arrow keys & +/- buttons)
 	if ((hovering && Input.IsKeyPressed(VK_LEFT)) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + EGuiStyle.Padding, 0), button_size, PRESS) && is_hovering_child)
 		*currentValue = *currentValue - 1.f;
 	else if ((hovering && Input.IsKeyPressed(VK_RIGHT)) || Input.ButtonBehaviour(NextDrawPos + Vec2(text_size.x + (EGuiStyle.Padding / 2) * 2 + button_size.x, 0), button_size, PRESS) && is_hovering_child)
@@ -99,6 +104,7 @@ bool EGuiMain::Slider(const char* title, float min, float max, float* currentVal
 
 	slider_x[GetItemIdentifier()] = Math.Clamp(Animations.lerp(slider_x[GetItemIdentifier()], Math.Map((int)*currentValue, (int)min, (int)max, 0, (int)slider_size.x), timing.getDeltaTime() * 8), 0.f, slider_size.x);
 
+	//Render element
 	if (Input.IsRectInRect(NextDrawPos, Vec2(slider_size.x, slider_size.y + text_size.y), Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
 		renderer.FilledRectangle(NextDrawPos + Vec2(0, text_size.y), slider_size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
 		renderer.Text(Fonts.Primary, title, NextDrawPos, EGuiColors.TextColor, LEFT);
