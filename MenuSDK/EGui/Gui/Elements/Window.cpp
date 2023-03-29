@@ -52,7 +52,7 @@ bool EGuiMain::EndWindow() {
     MenuSize[WindowId] = Resizing(GetWindowId(), MenuSize[WindowId]);
 
     // Restore all stored data.
-    DisableInputArea = Rect(0, 0, 0, 0);
+    DisableInputArea.clear();
     SetItemIdentifier(0);
     return true;
 }

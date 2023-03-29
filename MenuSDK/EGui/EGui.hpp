@@ -45,7 +45,6 @@ using namespace std;
 #include "Backend/Win32/wnd.hpp"
 #include "Backend/Animation/Timing.hpp"
 #include "Backend/Animation/Animation.hpp"
-#include "Backend/Camera/Camera.hpp"
 #include "Backend/Graphics/DirectX.hpp"
 #include "Backend/Render/renderer.hpp"
 
@@ -102,6 +101,7 @@ struct EGuiMain {
 	// EGui -------------------------------------------------------------------------------------------------------
 	void Begin();
 	void End();
+	void DebugProfiler();
 	void DemoWindow();
 
 	/* for window hijacking */
@@ -120,9 +120,6 @@ struct EGuiMain {
 
 	// Dragging ---------------------------------------------------------------------------------------------------
 	Vec2 Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen = true, bool Child = false, Vec2 SnapPos = { -1, -1 });
-	void SetDraggingArea(int id, Vec2 pos, Vec2 size);
-	Rect GetDraggingArea(int id);
-	bool InDraggingArea(int id);
 	bool IsDragging(int id);
 
 	// Cursor -----------------------------------------------------------------------------------------------------
@@ -149,8 +146,7 @@ struct EGuiMain {
 	HCURSOR CursorPerson = LoadCursor(NULL, IDC_PERSON);
 
 	// NextDrawPos ------------------------------------------------------------------------------------------------
-	Vec2 NextDrawPos = { 0, 0 };
-	Vec2 PreviousDrawPos = { 0, 0 };
+	Vec2 NextDrawPos, PreviousDrawPos = { 0, 0 };
 	inline Vec2 GetNextDrawPos() { return NextDrawPos; }
 	void SetNextDrawPos(Vec2 pos) { PreviousDrawPos = NextDrawPos; NextDrawPos = pos; }
 	void SetNextDrawPosEx(Vec2 pos) { PreviousDrawPos = NextDrawPos; NextDrawPos = NextDrawPos + pos; }
@@ -185,8 +181,7 @@ struct EGuiMain {
 	// Children ---------------------------------------------------------------------------------------------------
 	const char* CurrentChildName = "";
 	Rect ChildArea = { 0, 0, 0, 0 };
-	Vec2 ChildPos = { 0, 0 };
-	Vec2 ChildSize = { 0, 0 };
+	Vec2 ChildPos, ChildSize = { 0, 0 };
 	Vec2 GetChildPos() { return ChildPos; }
 	Vec2 GetChildSize() { return ChildSize; }
 	Rect GetChildArea() { return ChildArea; }
@@ -202,7 +197,6 @@ struct EGuiMain {
 
 	// Elements ---------------------------------------------------------------------------------------------------
 	bool Checkbox(const char* title, bool* state);
-	//bool Combobox(const char* title, int* selected, const char* items[]);
 	bool Combobox(const char* title, int* selected, std::vector<std::string> options);
 	bool MultiCombobox(const char* title, std::vector<bool>& selected, std::vector<std::string> options);
 	bool Listbox(const char* title, int* selected, const char* items[]);

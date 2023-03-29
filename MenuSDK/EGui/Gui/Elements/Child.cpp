@@ -38,19 +38,23 @@ bool EGuiMain::Child(const char* title, Vec2 size) {
 
 	ChildArea = { ChildAreaPos.x, ChildAreaPos.y, ChildAreaSize.x, ChildAreaSize.y };
 
-	child_data[CurrentChildName].Size = size - Vec2(0, 21);
-	child_data[CurrentChildName].OgNextDrawPos = NextDrawPos + Vec2(0, 25);
-	SetNextDrawPosEx({ 5, 25 + child_data[CurrentChildName].scroll_weight});
+	child_data[CurrentChildName].Size = size - Vec2(0, 22);
+	child_data[CurrentChildName].OgNextDrawPos = NextDrawPos + Vec2(0, 22);
+	SetNextDrawPosEx({ 5, 22 + EGuiStyle.Padding + child_data[CurrentChildName].scroll_weight });
 
 	return true;
 }
 
 bool EGuiMain::EndChild() {
 	if (child_data[CurrentChildName].hovered) {
-		if (NextDrawPos.y - (child_data[CurrentChildName].OgNextDrawPos.y + child_data[CurrentChildName].Size.y) > 0)
-			child_data[CurrentChildName].scroll_abs = Math.Clamp(child_data[CurrentChildName].scroll_abs + Input.GetMouseWheelDelta(), -(NextDrawPos.y - (child_data[CurrentChildName].OgNextDrawPos.y + child_data[CurrentChildName].Size.y)), 0.f);
-		
-		child_data[CurrentChildName].scroll_weight = Animations.smoothLerp(child_data[CurrentChildName].scroll_weight, child_data[CurrentChildName].scroll_abs, timing.getDeltaTime() * 8);
+		float idk_y = (child_data[CurrentChildName].OgNextDrawPos.y + child_data[CurrentChildName].Size.y) - ((NextDrawPos.y - child_data[CurrentChildName].scroll_weight) + child_data[CurrentChildName].scroll_abs);
+
+		float mouse_delta = Input.GetMouseWheelDelta();
+
+		if (NextDrawPos.y - (child_data[CurrentChildName].OgNextDrawPos.y + child_data[CurrentChildName].Size.y) >= 0)
+			child_data[CurrentChildName].scroll_abs = Math.Clamp(child_data[CurrentChildName].scroll_abs + mouse_delta, idk_y + child_data[CurrentChildName].scroll_abs, 0.f);
+
+		child_data[CurrentChildName].scroll_weight = Animations.lerp(child_data[CurrentChildName].scroll_weight, child_data[CurrentChildName].scroll_abs, timing.getDeltaTime() * 8);
 	}
 
 	ChildArea.clear();

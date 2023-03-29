@@ -51,6 +51,14 @@ enum {
     LUA
 };
 
+void EGuiMain::DebugProfiler() {
+    wnd.SetGraphicsWindowTitle(
+          "EGui, [debug profiler] fps: " + std::to_string(timing.getFrameRateAbs()) +
+          " Highest fps: " + std::to_string(timing.getFrameRateAbsMax()) +
+          " Float Time: " + std::to_string(timing.getRealTime())
+    );
+}
+
 void EGuiMain::DemoWindow() {
     SetNextWindowPos({ 100, 100 });
     SetNextWindowSize({ 600, 490 }, {600, 490});
@@ -78,6 +86,7 @@ void EGuiMain::DemoWindow() {
         SetNextDrawPosEx({ spacing, 30.f + spacing });
 
         Vec2 Size = { (MenuSize.x / 2) - spacing * 1.5f, MenuSize.y - (30.f + spacing * 2.f) };
+        Vec2 Size2 = { Size.x, (Size.y / 2) - spacing / 2 };
 
         Vec2 LeftPos = { MenuPos.x + spacing, MenuPos.y + 30 + spacing };
         Vec2 RightPos = { MenuPos.x + Size.x + spacing * 2, MenuPos.y + 30 + spacing };
@@ -85,7 +94,7 @@ void EGuiMain::DemoWindow() {
         /* handle children (NONONO not those type lol, your weird for thinking that) */
         switch (tab) {
         case RAGE:
-            Child("Settings", Size);
+            Child("Example group 0", Size);
             {
                 static bool test_checkbox = false;
                 Checkbox("Enable checkbox", &test_checkbox);
@@ -117,17 +126,17 @@ void EGuiMain::DemoWindow() {
 
             SetNextDrawPos(RightPos);
 
-            Child("User Interface", { Size.x, (Size.y / 2) - spacing / 2 });
+            Child("Example group 1", Size2);
             {
-
+                
             }
             EndChild();
 
             SetNextDrawPosEx({ 0, (Size.y / 2) + spacing / 2 });
 
-            Child("Post Process (Too lazy to add switching)", { Size.x, (Size.y / 2) - spacing / 2 });
+            Child("Example group 2", Size2);
             {
-
+                
             }
             EndChild();
             break;

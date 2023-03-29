@@ -8,9 +8,7 @@ float Timing::getFrameTime() {
     static LARGE_INTEGER prevTime;
     static bool initialized = false;
 
-    // Get the frequency of the high-resolution performance counter
-    if (!initialized)
-    {
+    if (!initialized) {
         LARGE_INTEGER freq;
         QueryPerformanceFrequency(&freq);
         frequency = static_cast<double>(freq.QuadPart);
@@ -18,35 +16,28 @@ float Timing::getFrameTime() {
         initialized = true;
     }
 
-    // Get the current time
     LARGE_INTEGER currentTime;
     QueryPerformanceCounter(&currentTime);
 
-    // Calculate the elapsed time in seconds
     double elapsedTime = static_cast<double>(currentTime.QuadPart - prevTime.QuadPart) / frequency;
-
-    // Update the previous time
     prevTime = currentTime;
 
-    // Return the delta time as a float
     return static_cast<float>(elapsedTime);
 }
 
-// Define a global variable to store the last time the function was called
+float Timing::getRealTime() {
+    auto current_time = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration_cast<std::chrono::duration<double>>(current_time.time_since_epoch()).count();
+}
+
 static auto lastTime = high_resolution_clock::now();
 static float deltaTime = 0.f;
 
 void Timing::updateDeltaTime() {
-    // Get the current time
     auto currentTime = high_resolution_clock::now();
-
-    // Calculate the time elapsed since the last time the function was called
     double thisDeltaTime = duration_cast<duration<double>>(currentTime - lastTime).count();
 
-    // Update the last time the function was called
     lastTime = currentTime;
-
-    //Update the delta time.
     deltaTime = thisDeltaTime;
 
     return;
@@ -97,9 +88,4 @@ int Timing::getFrameRate() {
 
 int Timing::getFrameRateMax() {
     return FrameRate_Max;
-}
-
-float Timing::getRealTime() {
-    auto current_time = std::chrono::high_resolution_clock::now();
-    return std::chrono::duration_cast<std::chrono::duration<double>>(current_time.time_since_epoch()).count();
 }

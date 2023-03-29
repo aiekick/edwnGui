@@ -6,7 +6,6 @@ struct DraggingInfo {
 	Vec2 Difference;
 };
 
-static std::map<int, Rect> DraggingArea;
 static std::map<int, DraggingInfo> dragging_info;
 
 Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool Child, Vec2 SnapPos) {
@@ -27,13 +26,11 @@ Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool
 	else if (!dragging_info[id].Dragging && !Input.IsKeyDown(VK_LBUTTON))
 		dragging_info[id].OutOfBounds = false;
 
-	//Check if we should start DraggingState.
 	if (!dragging_info[id].Dragging && !dragging_info[id].OutOfBounds && Input.IsKeyDown(VK_LBUTTON) && Input.IsMouseHoveringRect(pos, size)) {
 		dragging_info[id].Dragging = true;
 		dragging_info[id].Difference = Input.GetMousePos() - NewPos;
 	}
 
-	//Check for if we are not DraggingState anymore.
 	if (dragging_info[id].Dragging && !Input.IsKeyDown(VK_LBUTTON))
 		dragging_info[id].Dragging = false;
 
@@ -45,23 +42,10 @@ Vec2 EGuiMain::Dragging(int id, Vec2 pos, Vec2 size, bool CanDragOffscreen, bool
 	if (SnapPos.x != -1 && NewPos.x > SnapPos.x - 10 && NewPos.x < SnapPos.x + 10 && NewPos.y > SnapPos.y - 10 && NewPos.y < SnapPos.y + 10)
 		NewPos = SnapPos;
 
-	//This restricts our element from going out of window bounds
 	if (!CanDragOffscreen)
 		NewPos = { Math.Clamp(NewPos.x, 0.f, wnd.GetWindowSize().x - size.x), Math.Clamp(NewPos.y, 0.f, wnd.GetWindowSize().y - size.y) };
 
 	return NewPos;
-}
-
-void EGuiMain::SetDraggingArea(int id, Vec2 pos, Vec2 size) {
-	DraggingArea[id] = { pos.x, pos.y, size.x, size.y };
-}
-
-Rect EGuiMain::GetDraggingArea(int id) {
-	return DraggingArea[id];
-}
-
-bool EGuiMain::InDraggingArea(int id) {
-	return Input.IsMouseHoveringRect({ DraggingArea[id].x, DraggingArea[id].y }, { DraggingArea[id].w, DraggingArea[id].h });
 }
 
 bool EGuiMain::IsDragging(int id)

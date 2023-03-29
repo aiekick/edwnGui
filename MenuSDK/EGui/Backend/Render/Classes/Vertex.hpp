@@ -10,4 +10,8 @@ struct vertex
     vertex(float x_, float y_, float z_, float rhw_, DWORD color_)
         : x(x_), y(y_), z(z_), rhw(rhw_), color(color_)
     {}
+
+    void clear() {
+        x, y, z, rhw, color = NULL;
+    }
 };

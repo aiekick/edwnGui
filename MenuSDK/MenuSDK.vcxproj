@@ -169,7 +169,6 @@
   <ItemGroup>
     <ClCompile Include="EGui\Backend\Animation\Animation.cpp" />
     <ClCompile Include="EGui\Backend\Animation\Timing.cpp" />
-    <ClCompile Include="EGui\Backend\Camera\Camera.cpp" />
     <ClCompile Include="EGui\Backend\Utility\Math.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Child.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Keybind.cpp" />
@@ -179,9 +178,9 @@
     <ClCompile Include="EGui\EGui.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Button.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Colorpicker.cpp" />
-    <ClCompile Include="EGui\Gui\Elements\Combo.cpp" />
+    <ClCompile Include="EGui\Gui\Elements\ComboBox.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Listbox.cpp" />
-    <ClCompile Include="EGui\Gui\Elements\MultiCombo.cpp" />
+    <ClCompile Include="EGui\Gui\Elements\MultiComboBox.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Popup.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Slider.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Window.cpp" />
@@ -198,7 +197,6 @@
   <ItemGroup>
     <ClInclude Include="EGui\Backend\Animation\Animation.hpp" />
     <ClInclude Include="EGui\Backend\Animation\Timing.hpp" />
-    <ClInclude Include="EGui\Backend\Camera\Camera.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Clip.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Font.hpp" />
     <ClInclude Include="EGui\Backend\Render\Fonts\Fonts.hpp" />
@@ -215,7 +213,6 @@
     <ClInclude Include="EGui\EGui.hpp" />
     <ClInclude Include="EGui\Backend\Graphics\DirectX.hpp" />
     <ClInclude Include="EGui\Backend\Win32\Wnd.hpp" />
-    <ClInclude Include="Common.hpp" />
     <ClInclude Include="EGui\Backend\Input\Input.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Vertex.hpp" />
   </ItemGroup>

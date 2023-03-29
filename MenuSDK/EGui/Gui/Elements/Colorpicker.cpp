@@ -36,9 +36,9 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 		if (!Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0), PickerSize) && Input.IsKeyPressed(VK_LBUTTON))
 			color_open[GetItemIdentifier()] = false;
 
-		float Hue = Color::RGBtoHSV(*selected).Hue;
-		float Saturation = Color::RGBtoHSV(*selected).Saturation;
-		float Value = Color::RGBtoHSV(*selected).Value;
+		float Hue = selected->RGBtoHSV().Hue;
+		float Saturation = selected->RGBtoHSV().Saturation;
+		float Value = selected->RGBtoHSV().Value;
 		float Alpha = selected->a();
 
 		//Primary picker
@@ -65,7 +65,7 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 			Alpha = Math.GetPercent(Alpha, PickerSize.x - 25) * 2.55;
 		}
 
-		//todo: fix math for saturation and value, there like opposite. run it and drag to bottom right you will see what I mean lol. I will clean up code dont worry.
+		//Not correct?
 		*selected = Color::HSVtoRGB(Hue, Saturation, Value);
 		*selected = Color(selected->r(), selected->g(), selected->b(), Alpha);
 

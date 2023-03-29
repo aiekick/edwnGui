@@ -11,6 +11,15 @@ struct EMath {
 	}
 
 	template<class T>
+	constexpr const T& Min(const T& x, const T& min) {
+		return x > min ? x : min;
+	}
+
+	const float Max(const float x, const float max) {
+		return x < max ? x : max;
+	}
+
+	template<class T>
 	constexpr const T& Map(const T& x, const T& in_min, const T& in_max, const T& out_min, const T& out_max) {
 		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	}

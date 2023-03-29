@@ -1,9 +1,5 @@
-// This code defines a Graphics struct and implements methods for creating a Direct3D device,
-// starting and ending a scene, and cleaning up the Direct3D context.
-
 #include "DirectX.hpp"
 
-// Define the Graphics struct.
 graphics Graphics;
 
 void graphics::SetupRenderStates(IDirect3DDevice9 *Device) {
@@ -45,7 +41,6 @@ void graphics::SetupRenderStates(IDirect3DDevice9 *Device) {
     Device->SetPixelShader(nullptr);
 }
 
-//Creates our DirectX9 Device and Sets up our Paramaters.
 void graphics::Create() {
     EGui.D3D = Direct3DCreate9(D3D_SDK_VERSION);
 
@@ -54,33 +49,26 @@ void graphics::Create() {
     EGui.Paramaters.BackBufferFormat = D3DFMT_UNKNOWN;
     EGui.Paramaters.EnableAutoDepthStencil = TRUE;
     EGui.Paramaters.AutoDepthStencilFormat = D3DFMT_D16;
-    EGui.Paramaters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-    //EGui.Paramaters.PresentationInterval = D3DPRESENT_INTERVAL_ONE; //Present with VSync
+    EGui.Paramaters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE; //VSync (D3DPRESENT_INTERVAL_ONE)
     EGui.Paramaters.MultiSampleType = D3DMULTISAMPLE_4_SAMPLES;
     EGui.Paramaters.MultiSampleQuality = 0;
-    
-    // create device
+
     if (EGui.D3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, EGui.hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &EGui.Paramaters, &EGui.Device) < 0)
         return;
 
-    // set device render states.
     SetupRenderStates(EGui.Device);
 }
 
-// Begin a scene for rendering.
 void graphics::Begin() {
-    // clear our scene for next draw.
     EGui.Device->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_RGBA(0, 0, 0, NULL), 1.f, 0);
     EGui.Device->BeginScene();
 }
 
-// End the current scene.
 void graphics::End() {
     EGui.Device->EndScene();
     EGui.Device->Present(NULL, NULL, NULL, NULL);
 }
 
-// Used or WndProc for window updates.
 void graphics::OnDeviceLost(LPARAM lParam) {
     EGui.Paramaters.BackBufferWidth = LOWORD(lParam);
     EGui.Paramaters.BackBufferHeight = HIWORD(lParam);
@@ -90,13 +78,11 @@ void graphics::OnDeviceLost(LPARAM lParam) {
     renderer.Create();
 }
 
-// Reset the Direct3D device.
 void graphics::ResetDevice() {
     EGui.Device->Reset(&EGui.Paramaters);
     Create();
 }
 
-// Clean up the Direct3D context.
 void graphics::Cleanup() {
     if (EGui.Device) { EGui.Device->Release(); EGui.Device = NULL; }
     if (EGui.D3D) { EGui.D3D->Release(); EGui.D3D = NULL; }

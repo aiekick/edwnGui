@@ -43,6 +43,7 @@ bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& selected, std
     if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
         renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
         renderer.Rectangle(NextDrawPos, Size, multicombo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
+        renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
     }
 
     if (multicombo_info[GetItemIdentifier()].open) {
@@ -75,9 +76,6 @@ bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& selected, std
         multicombo_info[GetItemIdentifier()].alpha = 0.f;
         multicombo_info[GetItemIdentifier()].clip_y = 0.f;
     }
-
-    // Draw text
-    renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
 
     // Restore original draw position.
     SetNextDrawPos(OriginalPos);

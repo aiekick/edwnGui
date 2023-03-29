@@ -7,10 +7,10 @@
     <ClCompile Include="EGui\Gui\Elements\Tabs.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Checkbox.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Window.cpp" />
-    <ClCompile Include="EGui\Gui\Elements\Combo.cpp" />
+    <ClCompile Include="EGui\Gui\Elements\ComboBox.cpp" />
     <ClCompile Include="EGui\Backend\Render\Renderer.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Slider.cpp" />
-    <ClCompile Include="EGui\Gui\Elements\MultiCombo.cpp" />
+    <ClCompile Include="EGui\Gui\Elements\MultiComboBox.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Listbox.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Button.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Colorpicker.cpp" />
@@ -26,11 +26,9 @@
     <ClCompile Include="EGui\Gui\Elements\Child.cpp" />
     <ClCompile Include="EGui\Backend\Animation\Animation.cpp" />
     <ClCompile Include="EGui\Backend\Utility\Math.cpp" />
-    <ClCompile Include="EGui\Backend\Camera\Camera.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Label.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common.hpp" />
     <ClInclude Include="EGui\Backend\Render\Renderer.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Color.hpp" />
     <ClInclude Include="EGui\Backend\Input\Input.hpp" />
@@ -49,7 +47,6 @@
     <ClInclude Include="EGui\Backend\Threading\packed_heap.h" />
     <ClInclude Include="EGui\Backend\Threading\shared_mutex.h" />
     <ClInclude Include="EGui\Backend\Utility\Math.hpp" />
-    <ClInclude Include="EGui\Backend\Camera\Camera.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Clip.hpp" />
     <ClInclude Include="EGui\Backend\Render\Classes\Font.hpp" />
   </ItemGroup>

@@ -43,6 +43,7 @@ bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::strin
     if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
         renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
         renderer.Rectangle(NextDrawPos, Size, combo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
+        renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
     }
 
     // If dropdown menu is open, draw menu items.
@@ -81,9 +82,6 @@ bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::strin
         combo_info[GetItemIdentifier()].alpha = 0.f;
         combo_info[GetItemIdentifier()].clip_y = 0.f;
     }
-
-    // Draw text
-    renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
 
     // Restore original draw position.
     SetNextDrawPos(OriginalPos);

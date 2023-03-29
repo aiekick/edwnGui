@@ -4,42 +4,36 @@ struct Color
 {
 	unsigned char RGBA[4];
 
-	Color()
-	{
+	Color() {
 		RGBA[0] = 255;
 		RGBA[1] = 255;
 		RGBA[2] = 255;
 		RGBA[3] = 255;
 	}
-	Color(int r, int g, int b, int a = 255)
-	{
+
+	Color(int r, int g, int b, int a = 255) {
 		RGBA[0] = r;
 		RGBA[1] = g;
 		RGBA[2] = b;
 		RGBA[3] = a;
 	}
-	inline int r() const
-	{
+
+	inline int r() const {
 		return RGBA[0];
 	}
-	inline int g() const
-	{
+	inline int g() const {
 		return RGBA[1];
 	}
-	inline int b() const
-	{
+	inline int b() const {
 		return RGBA[2];
 	}
-	inline int a() const
-	{
+	inline int a() const {
 		return RGBA[3];
 	}
-	bool operator!=(Color color)
-	{
+	bool operator!=(Color color) {
 		return RGBA[0] != color.RGBA[0] || RGBA[1] != color.RGBA[1] || RGBA[2] != color.RGBA[2] || RGBA[3] != color.RGBA[3];
 	}
-	bool operator==(Color color)
-	{
+	bool operator==(Color color) {
 		return RGBA[0] == color.RGBA[0] && RGBA[1] == color.RGBA[1] && RGBA[2] == color.RGBA[2] && RGBA[3] == color.RGBA[3];
 	}
 
@@ -108,11 +102,12 @@ struct Color
 		float Hue, Saturation, Value;
 	};
 
-	static Hsv_t RGBtoHSV(Color a) {
+
+	Hsv_t RGBtoHSV() {
 		float red, grn, blu;
-		red = (float)a.r() / 255.f;
-		grn = (float)a.g() / 255.f;
-		blu = (float)a.b() / 255.f;
+		red = (float)r() / 255.f;
+		grn = (float)g() / 255.f;
+		blu = (float)b() / 255.f;
 		float hue, sat, val;
 		float x, f, i;
 		Hsv_t result;

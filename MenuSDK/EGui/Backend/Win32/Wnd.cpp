@@ -56,6 +56,20 @@ LRESULT WINAPI edwnGui_ImplWin32_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPA
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+bool EWindow::DispatchMessages() {
+	MSG msg;
+	std::memset(&msg, 0, sizeof(MSG));
+	if (PeekMessage(&msg, nullptr, 0u, 0u, PM_REMOVE)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+
+		if (msg.message == WM_QUIT)
+			return false;
+	}
+
+	return true;
+}
+
 Vec2 EWindow::GetWindowPos() {
 	RECT rect = { NULL };
 	if (GetWindowRect(EGui.hwnd, &rect))
@@ -66,7 +80,7 @@ Vec2 EWindow::GetWindowPos() {
 
 Vec2 EWindow::GetWindowSize() {
 	RECT rect = { NULL };
-	if (GetClientRect(EGui.hwnd, &rect)) // -1 because the outline is drawn there lol and getclientrect does not account for it
+	if (GetClientRect(EGui.hwnd, &rect))
 		return Vec2(rect.right - rect.left - 1, rect.bottom - rect.top - 1);
 
 	return Vec2(0, 0);

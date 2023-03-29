@@ -75,7 +75,6 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
     else
         textbox_info[GetItemIdentifier()].outline_alpha = Math.Clamp(Animations.lerp(textbox_info[GetItemIdentifier()].outline_alpha, 0.f, delta_time * 8), 0.f, 255.f);
 
-    // Draw dropdown button.
     if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
         renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding);
         renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
@@ -117,7 +116,7 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
         renderer.Text(Fonts.Primary, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
         renderer.PopClip();
     }
-    else
+    else if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
         renderer.Text(Fonts.Primary, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
 
     // Restore original draw position.
