@@ -47,12 +47,12 @@ bool EGuiMain::Child(const char* title, Vec2 size) {
 
 bool EGuiMain::EndChild() {
 	if (child_data[CurrentChildName].hovered) {
-		float idk_y = (child_data[CurrentChildName].OgNextDrawPos.y + child_data[CurrentChildName].Size.y) - ((NextDrawPos.y - child_data[CurrentChildName].scroll_weight) + child_data[CurrentChildName].scroll_abs);
+		float scrolling_range = (child_data[CurrentChildName].OgNextDrawPos.y + child_data[CurrentChildName].Size.y) - ((NextDrawPos.y - child_data[CurrentChildName].scroll_weight) + child_data[CurrentChildName].scroll_abs);
 
 		float mouse_delta = Input.GetMouseWheelDelta();
 
 		if (NextDrawPos.y - (child_data[CurrentChildName].OgNextDrawPos.y + child_data[CurrentChildName].Size.y) >= 0)
-			child_data[CurrentChildName].scroll_abs = Math.Clamp(child_data[CurrentChildName].scroll_abs + mouse_delta, idk_y + child_data[CurrentChildName].scroll_abs, 0.f);
+			child_data[CurrentChildName].scroll_abs = Math.Clamp(child_data[CurrentChildName].scroll_abs + mouse_delta, scrolling_range + child_data[CurrentChildName].scroll_abs, 0.f);
 
 		child_data[CurrentChildName].scroll_weight = Animations.lerp(child_data[CurrentChildName].scroll_weight, child_data[CurrentChildName].scroll_abs, timing.getDeltaTime() * 8);
 	}
