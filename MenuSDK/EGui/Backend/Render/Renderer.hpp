@@ -56,7 +56,7 @@ struct ERenderer {
 
     const void SetAntiAliasing(bool state);
 
-    const Font AddFont(std::string name, int weight, int size, bool anti_alias = true, bool dropshadow = false, bool outline = false);
+    const Font AddFont(const char* name, int size, int weight, bool anti_alias = true, bool drop_shadow = false, bool outline = false);
 
     const void PushFont(const Font font);
     const void PopFont();
