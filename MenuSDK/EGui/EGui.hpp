@@ -2,13 +2,7 @@
 #define DIRECTINPUT_VERSION 0x800
 #define EGUI_VERSION "1.0 open beta"
 
-// External dependencies
-#include <d3d9.h>
-#include <d3dx9.h>
-#include <D3dx9tex.h>
-#include <Windows.h>
-#include <dInput.h>
-#include <tchar.h>
+// Standard library includes
 #include <iostream>
 #include <string>
 #include <thread>
@@ -16,9 +10,19 @@
 #include <functional>
 #include <unordered_map>
 #include <map>
-#include <dwrite.h>
 #include <chrono>
 #include <cmath>
+
+// Windows-specific includes
+#include <Windows.h>
+#include <tchar.h>
+
+// DirectX includes
+#include <d3d9.h>
+#include <d3dx9.h>
+
+// DirectInput include
+#include <dInput.h>
 
 using namespace std;
 
