@@ -34,27 +34,25 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 		if (!Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0), PickerSize) && Input.IsKeyPressed(VK_LBUTTON))
 			color_open[GetItemIdentifier()] = false;
 
-		float Hue = selected->RGBtoHSV().Hue;
-		float Saturation = selected->RGBtoHSV().Saturation;
-		float Value = selected->RGBtoHSV().Value;
+		Color::Hsv_t HSV = selected->RGBtoHSV();
 		float Alpha = selected->a();
 
 		//Primary picker
 		if (Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0) + Vec2(5, text_size.y + 10), PickerSize - Vec2(25, 40)) && Input.IsKeyDown(VK_LBUTTON)) {
 			//Saturation
-			Saturation = (Input.GetMousePos().x - (pos.x + size.x + 14)) / (PickerSize.x - 25);
-			Saturation = Math.Clamp(Saturation, 0.f, 1.f);
+			HSV.Saturation = (Input.GetMousePos().x - (pos.x + size.x + 14)) / (PickerSize.x - 25);
+			HSV.Saturation = Math.Clamp(HSV.Saturation, 0.f, 1.f);
 
 			//Value
-			Value = 1.f - ((Input.GetMousePos().y - (pos.y + size.y + 14)) / (PickerSize.y - 40));
-			Value = Math.Clamp(Value, 0.f, 1.f);
+			HSV.Value = 1.f - ((Input.GetMousePos().y - (pos.y + size.y + 14)) / (PickerSize.y - 40));
+			HSV.Value = Math.Clamp(HSV.Value, 0.f, 1.f);
 		}
 
 		//Hue bar
 		if (Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0) + Vec2(PickerSize.x - 15, text_size.y + 10), { 10, PickerSize.y - 40 }) && Input.IsKeyDown(VK_LBUTTON)) {
-			Hue = Input.GetMousePos().y - (pos.y + size.y + 14);
-			Hue = Math.GetPercent(Hue, PickerSize.y - 40) * 3.60;
-			Hue = Math.Clamp(Hue, 0.f, 360.f);
+			HSV.Hue = Input.GetMousePos().y - (pos.y + size.y + 14);
+			HSV.Hue = Math.GetPercent(HSV.Hue, PickerSize.y - 40) * 3.60;
+			HSV.Hue = Math.Clamp(HSV.Hue, 0.f, 360.f);
 		}
 
 		//Alpha bar
@@ -64,7 +62,7 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 		}
 
 		//Not correct?
-		*selected = Color::HSVtoRGB(Hue, Saturation, Value);
+		*selected = Color::HSVtoRGB(HSV.Hue, HSV.Saturation, HSV.Value);
 		*selected = Color(selected->r(), selected->g(), selected->b(), Alpha);
 
 		if (Input.IsMouseHoveringRect(pos + Vec2(size.x + 10, 0), PickerSize))
@@ -78,9 +76,9 @@ bool EGuiMain::ColorPicker(const char* title, Color* selected, bool alpha_bar) {
 		temp.size = PickerSize;
 		temp.clr = *selected;
 		temp.alpha_bar = alpha_bar;
-		temp.hue = Hue;
-		temp.saturation = Saturation;
-		temp.value = Value;
+		temp.hue = HSV.Hue;
+		temp.saturation = HSV.Saturation;
+		temp.value = HSV.Value;
 
 		color_data[color_data.size() + 1] = temp;
 	}

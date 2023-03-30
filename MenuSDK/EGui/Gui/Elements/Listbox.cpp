@@ -37,11 +37,11 @@ bool EGuiMain::ListBox(const char* title, int* selected, std::vector<std::string
 
 		renderer.BorderedRectangle(Pos + Vec2(0, Size.y), { Size.x, Size.y * options.size() }, EGuiColors.ElementBackColor, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, CORNER_BOTTOM);
 		for (int i = 0; i < options.size(); i++) {
-			renderer.Text(Fonts.Primary, options[i].c_str(), Pos + Vec2(6, 3 + (Size.y * (i + 1))), *selected == i ? EGuiColors.MenuTheme : EGuiColors.TextColor, LEFT);
+			renderer.Text(Fonts.Primary, options[i].c_str(), Pos + Vec2(6, 3 + (Size.y * (i + 1))), *selected == i ? EGuiColors.Accent : EGuiColors.TextColor, LEFT);
 
 			if (*selected == i) {
-				renderer.FilledRectangle(Pos + Vec2(1, Size.y * (i + 1)), { 2, Size.y }, EGuiColors.MenuTheme);
-				renderer.Gradient(Pos + Vec2(2, Size.y * (i + 1)), { Size.x - 3, Size.y }, EGuiColors.MenuTheme.OverrideAlpha(75), EGuiColors.MenuTheme.OverrideAlpha(0));
+				renderer.FilledRectangle(Pos + Vec2(1, Size.y * (i + 1)), { 2, Size.y }, EGuiColors.Accent);
+				renderer.Gradient(Pos + Vec2(2, Size.y * (i + 1)), { Size.x - 3, Size.y }, EGuiColors.Accent.OverrideAlpha(75), EGuiColors.Accent.OverrideAlpha(0));
 			}
 		}
 	}

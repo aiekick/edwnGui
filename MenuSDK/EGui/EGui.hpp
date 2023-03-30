@@ -1,16 +1,6 @@
-//1.00
-/* EGui is software provided to you by Edwin777 (main developer)
-* Everyone helped, your feedback was extremely helpful and will be extremely helpful within the coming years.
-* I plan to maintain this code and fix security/code issues over time. this message was wrote march 11th, 2023.
-* EGui was a dream of mine for a long time and it finally became a reality once I got back into school.
-* I feel the support and the hate really helped me get this far into the project, Thank you to all who supported.
-* To all who hated, I respect your opinion as I am a beginner to coding but you saying its impossible was a really big motivator for me.
-* Thanks to all for the motivation, I hope yall can build off of my work and make something better. -Edwin777
-*/
-
 #pragma once
 #define DIRECTINPUT_VERSION 0x800
-#define EGUI_VERSION "pre pre pre alpha lol"
+#define EGUI_VERSION "1.0 open beta"
 
 // External dependencies
 #include <d3d9.h>
@@ -66,7 +56,7 @@ struct guiStyle {
 };
 
 struct guiColors {
-	Color MenuTheme = Color(255, 140, 140, 255);
+	Color Accent = Color(255, 140, 140, 255);
 	Color FrameBackColor = Color(25, 25, 25, 255);
 	Color FrameHeaderColor = Color(35, 35, 35, 255);
 	Color FrameBorderColor = Color(0, 0, 0, 255);
@@ -78,7 +68,7 @@ struct guiColors {
 	Color ElementBackColor = Color(15, 15, 15, 255);
 	Color ElementBorderColor = Color(0, 0, 0, 255);
 	Color ElementColorHovered = Color(0, 0, 0, 0);
-	Color ElementColorOn = MenuTheme;
+	Color ElementColorOn = Accent;
 };
 
 struct EGuiMain {

@@ -25,8 +25,7 @@ struct Anims {
 		return -x;
 	}
 
-	float Square(float value)
-	{
+	float Square(float value) {
 		float OddNum = 1.0;
 		float SquareNum = 0.0;
 

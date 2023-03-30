@@ -24,7 +24,7 @@ bool EGuiMain::Tab(const char* title, bool selected, Vec2 size) {
 	renderer.FilledRectangle(NextDrawPos, size, Color(255, 255, 255, tab_alpha[GetItemIdentifier()] / 25.5));
 
 	renderer.PushAlpha(tab_alpha[GetItemIdentifier()]);
-	renderer.FilledRectangle(NextDrawPos + Vec2(0, size.y), { size.x, 2 }, EGuiColors.MenuTheme);
+	renderer.FilledRectangle(NextDrawPos + Vec2(0, size.y), { size.x, 2 }, EGuiColors.Accent);
 	renderer.PopAlpha();
 
 	renderer.Text(Fonts.TitleFont, title, { NextDrawPos.x + size.x / 2, NextDrawPos.y + size.y / 2 }, selected ? EGuiColors.TextColor : EGuiColors.TextColorDisabled, CENTER_XY);

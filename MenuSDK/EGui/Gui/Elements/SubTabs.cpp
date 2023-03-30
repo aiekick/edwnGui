@@ -17,8 +17,8 @@ bool EGuiMain::SubTab(const char* title, bool selected, Vec2 size) {
 	else
 		subtab_alpha[GetItemIdentifier()] = Math.Clamp(subtab_alpha[GetItemIdentifier()] - 2.5f, 0.f, 50.f);
 
-	renderer.FilledRectangle(NextDrawPos - Vec2(0, 1), size, Color(EGuiColors.MenuTheme.r(), EGuiColors.MenuTheme.g(), EGuiColors.MenuTheme.b(), subtab_alpha[GetItemIdentifier()]), true);
-	renderer.FilledRectangle(NextDrawPos - Vec2(0, 1), { 1, size.y }, Color(EGuiColors.MenuTheme.r(), EGuiColors.MenuTheme.g(), EGuiColors.MenuTheme.b(), subtab_alpha[GetItemIdentifier()] * 5.1));
+	renderer.FilledRectangle(NextDrawPos - Vec2(0, 1), size, Color(EGuiColors.Accent.r(), EGuiColors.Accent.g(), EGuiColors.Accent.b(), subtab_alpha[GetItemIdentifier()]), true);
+	renderer.FilledRectangle(NextDrawPos - Vec2(0, 1), { 1, size.y }, Color(EGuiColors.Accent.r(), EGuiColors.Accent.g(), EGuiColors.Accent.b(), subtab_alpha[GetItemIdentifier()] * 5.1));
 
 	renderer.Text(Fonts.Primary, title, { NextDrawPos.x + size.x / 2, NextDrawPos.y + size.y / 2 }, EGuiColors.TextColor, CENTER_XY);
 

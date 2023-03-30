@@ -75,7 +75,7 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
         renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding);
 
         renderer.PushAlpha(textbox_info[GetItemIdentifier()].outline_alpha);
-        renderer.Rectangle(NextDrawPos, Size, EGuiColors.MenuTheme, EGuiStyle.ElementRounding);
+        renderer.Rectangle(NextDrawPos, Size, EGuiColors.Accent, EGuiStyle.ElementRounding);
         renderer.PopAlpha();
     }
 

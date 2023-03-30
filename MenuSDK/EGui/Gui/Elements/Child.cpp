@@ -26,8 +26,8 @@ bool EGuiMain::Child(const char* title, Vec2 size) {
 	renderer.BorderedRectangle(NextDrawPos, size, EGuiColors.ChildBgColor, EGuiColors.ElementBorderColor, EGuiStyle.ChildRounding);
 	renderer.FilledRectangle(NextDrawPos + Vec2(1, 1), { size.x - 2, 19 }, EGuiColors.ChildHeaderColor, EGuiStyle.ChildRounding, CORNER_TOP);
 
-	renderer.Gradient(NextDrawPos + Vec2(1, 20), Vec2((size.x - 2) / 2, 1), EGuiColors.MenuTheme, EGuiColors.MenuTheme.OverrideAlpha(0), false);
-	renderer.Gradient(NextDrawPos + Vec2(1 + ((size.x - 2) / 2), 20), Vec2((size.x - 2) / 2, 1), EGuiColors.MenuTheme.OverrideAlpha(0), EGuiColors.MenuTheme, false);
+	renderer.Gradient(NextDrawPos + Vec2(1, 20), Vec2((size.x - 2) / 2, 1), EGuiColors.Accent, EGuiColors.Accent.OverrideAlpha(0), false);
+	renderer.Gradient(NextDrawPos + Vec2(1 + ((size.x - 2) / 2), 20), Vec2((size.x - 2) / 2, 1), EGuiColors.Accent.OverrideAlpha(0), EGuiColors.Accent, false);
 	renderer.Gradient(NextDrawPos + Vec2(1, 21), Vec2((size.x - 2), 10), {0, 0, 0, 100}, { 0, 0, 0, 0 }, true);
 
 	renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2{ 5, 4 }, EGuiColors.TextColor, LEFT);

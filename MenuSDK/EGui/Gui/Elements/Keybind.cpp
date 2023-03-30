@@ -111,7 +111,7 @@ bool EGuiMain::Keybind(const char* title, bool* key_state)
 		*key_state = false;
 
 	if (ShouldRender)
-		renderer.Text(Fonts.Primary, ("[" + (keybind_info[GetItemIdentifier()].key == NULL ? "..." : keystr) + "]").c_str(), Pos + Vec2(EGuiStyle.Padding, 0), keybind_info[GetItemIdentifier()].binding ? EGuiColors.MenuTheme : EGuiColors.TextColor, LEFT);
+		renderer.Text(Fonts.Primary, ("[" + (keybind_info[GetItemIdentifier()].key == NULL ? "..." : keystr) + "]").c_str(), Pos + Vec2(EGuiStyle.Padding, 0), keybind_info[GetItemIdentifier()].binding ? EGuiColors.Accent : EGuiColors.TextColor, LEFT);
 
 	return true;
 }
@@ -146,7 +146,7 @@ void EGuiMain::RenderKeybinds() {
 		renderer.BorderedRectangle(keybind_menu[i].pos, Size, EGuiColors.ChildBgColor, EGuiColors.FrameBorderColor, EGuiStyle.ElementRounding);
 
 		for (int u = 0; u <= KeyMode::ALWAYS; u++)
-			renderer.Text(Fonts.Primary, GetKeyModeState(u), keybind_menu[i].pos + Vec2(Size.x / 2, 2 + ((TextSize.y + 2) * u)), (keybind_menu[i].key_mode == u ? EGuiColors.MenuTheme : EGuiColors.TextColor), CENTER);
+			renderer.Text(Fonts.Primary, GetKeyModeState(u), keybind_menu[i].pos + Vec2(Size.x / 2, 2 + ((TextSize.y + 2) * u)), (keybind_menu[i].key_mode == u ? EGuiColors.Accent : EGuiColors.TextColor), CENTER);
 	}
 
 	//reset

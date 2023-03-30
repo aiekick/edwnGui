@@ -72,7 +72,7 @@ bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::strin
     //Render element
     if (should_render) {
         renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
-        renderer.Rectangle(NextDrawPos, Size, combo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
+        renderer.Rectangle(NextDrawPos, Size, combo_info[GetItemIdentifier()].open ? EGuiColors.Accent : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
         renderer.Text(Fonts.Primary, (std::string(title) + " -> " + options[*selected]).c_str(), NextDrawPos + Vec2(6, 3), EGuiColors.TextColor, LEFT);
     }
 
@@ -92,15 +92,15 @@ void EGuiMain::RenderCombos() {
         renderer.PushClip(pos, Vec2(size.x + 1, combo_render_info[i].Clip_y));
         renderer.PushAlpha(combo_render_info[i].alpha);
         renderer.FilledRectangle(pos, size + Vec2(0, size.y * (options.size() - 1)), EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, CORNER_BOTTOM);
-        renderer.Rectangle(pos, size + Vec2(0, size.y * (options.size() - 1)), EGuiColors.MenuTheme, EGuiStyle.ElementRounding, CORNER_BOTTOM);
+        renderer.Rectangle(pos, size + Vec2(0, size.y * (options.size() - 1)), EGuiColors.Accent, EGuiStyle.ElementRounding, CORNER_BOTTOM);
         
         for (int j = 0; j < options.size(); j++) {
-            renderer.Text(Fonts.Primary, options[j].c_str(), pos + Vec2(6, 3 + (size.y * (j))), selected == j ? EGuiColors.MenuTheme : EGuiColors.TextColor, LEFT);
+            renderer.Text(Fonts.Primary, options[j].c_str(), pos + Vec2(6, 3 + (size.y * (j))), selected == j ? EGuiColors.Accent : EGuiColors.TextColor, LEFT);
             renderer.PopAlpha();
 
             if (selected == j) {
-                renderer.FilledRectangle(pos + Vec2(1, size.y * (j)), { 2, size.y }, EGuiColors.MenuTheme);
-                renderer.Gradient(pos + Vec2(2, size.y * (j)), { size.x - 3, size.y }, EGuiColors.MenuTheme.OverrideAlpha(75), EGuiColors.MenuTheme.OverrideAlpha(0));
+                renderer.FilledRectangle(pos + Vec2(1, size.y * (j)), { 2, size.y }, EGuiColors.Accent);
+                renderer.Gradient(pos + Vec2(2, size.y * (j)), { size.x - 3, size.y }, EGuiColors.Accent.OverrideAlpha(75), EGuiColors.Accent.OverrideAlpha(0));
             }
         }
 

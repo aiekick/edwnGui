@@ -18,7 +18,7 @@ bool EGuiMain::Checkbox(const char* title, bool* state) {
 		renderer.FilledRectangle(NextDrawPos, { 10, 10 }, EGuiColors.ElementBackColor, 3);
 
 		renderer.PushAlpha(checkbox_alpha[GetItemIdentifier()]);
-		renderer.FilledRectangle(NextDrawPos, { 10, 10 }, EGuiColors.MenuTheme, 3);
+		renderer.FilledRectangle(NextDrawPos, { 10, 10 }, EGuiColors.Accent, 3);
 		renderer.PopAlpha();
 
 		renderer.Rectangle(NextDrawPos, { 10, 10 }, EGuiColors.ElementBorderColor, 3);

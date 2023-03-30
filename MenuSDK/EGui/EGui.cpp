@@ -114,7 +114,7 @@ void EGuiMain::DemoWindow() {
 
                 Label((std::string("Button press count: ") + std::to_string(button_press_count)).c_str());
 
-                ColorPicker("Example color picker", &EGuiColors.MenuTheme);
+                ColorPicker("Example color picker", &EGuiColors.Accent);
 
                 static int combo_selected = 0;
                 Combobox("Example combo", &combo_selected, { "test 1", "test 2", "test 3", "test 4", "test 5", "test 6", "test 21", "test 2565" });
