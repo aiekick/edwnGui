@@ -3,7 +3,7 @@
 Discord: https://discord.gg/cUpvKPATkk
 
 edwnGui is a DirectX9 Graphical User Interface made by https://github.com/EdwinS7
-![alt text](https://cdn.discordapp.com/attachments/979215332432576532/1084328197556015254/image.png)
+![alt text](https://cdn.discordapp.com/attachments/979215332432576532/1091070372461428878/image_2023-03-30_144148054-removebg-preview_1.png)
 
 ## How easy exactly is it to use?
 ```cpp
