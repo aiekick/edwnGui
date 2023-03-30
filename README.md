@@ -1,4 +1,7 @@
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Verdana&duration=2500&color=F77878&background=9B00FF00&width=435&lines=EGui+V2)](https://git.io/typing-svg)
+
+[![Discord](https://pepy.tech/badge/reactionmenu)](https://discord.gg/cUpvKPATkk) 
+[![Downloads](https://pepy.tech/badge/reactionmenu/month)](https://pepy.tech/project/reactionmenu)
+[![Downloads](https://pepy.tech/badge/reactionmenu/week)](https://pepy.tech/project/reactionmenu)
 
 EGui is a Direct3D9 Graphical User Interface made for easy gui designment. (x64/x86)
 ![alt text](https://cdn.discordapp.com/attachments/979215332432576532/1084328197556015254/image.png)
