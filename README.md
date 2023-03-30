@@ -1,4 +1,5 @@
 
+![alt text](https://cdn.discordapp.com/attachments/979215332432576532/1091069585320579162/edwnGui.png)
 Discord: https://discord.gg/cUpvKPATkk
 
 edwnGui is a DirectX9 Graphical User Interface made by https://github.com/EdwinS7
