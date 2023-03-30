@@ -77,7 +77,7 @@ bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& selected, std
         std::string temp = "";
         for (int i = 0; i < options.size(); i++) {
             if (selected[i])
-                temp.append(i == 0 ? options[i] : ", " + options[i]);
+                temp.append(temp.empty() ? options[i] : ", " + options[i]);
         }
 
         renderer.PushClip(NextDrawPos, Size);
