@@ -43,8 +43,6 @@ using namespace std;
 #pragma comment (lib, "d3dx9.lib")
 
 #define PI 3.14159265359
-#define PI_2 1.570796326795
-#define PI_SQR 9.869604401090658
 
 struct guiStyle {
 	float Alpha = 255.f;

@@ -1,13 +1,13 @@
 #pragma once
 #include "../../EGui.hpp"
 
-enum circle_type { 
+enum CircleType { 
     FULL,
     HALF,
     QUARTER
 };
 
-enum text_alignment { 
+enum TextAlignment { 
     LEFT,
     CENTER,
     CENTER_XY,

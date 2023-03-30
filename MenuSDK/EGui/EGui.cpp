@@ -124,6 +124,10 @@ void EGuiMain::DemoWindow() {
 
                 static int listbox_selected = 0;
                 ListBox("Example List Box", &listbox_selected, {"Item 1" , "Item 2", "Item 3"});
+
+                for (int i = 0; i < 100; i++) {
+                    Label("lool");
+                }
             }
             EndChild();
 

@@ -50,17 +50,35 @@ const void ERenderer::PopFont() {
 
 Clip_info clip_info;
 const void ERenderer::PushClip(const Vec2 Pos, const Vec2 Size) {
+	//Store old data
+	clip_info.OldClips.push(std::make_pair(clip_info.PushingClip, clip_info.Clip));
+
+	//Store new data
 	clip_info.PushingClip = true;
-	clip_info.OldClip = clip_info.Clip;
-	clip_info.Clip = { (int)Pos.x, (int)Pos.y, (int)(Pos.x + Size.x), (int)(Pos.y + Size.y) };
+	clip_info.Clip = { Math.Min(Pos.x, clip_info.OldClips.top().second.x), Math.Min(Pos.y, clip_info.OldClips.top().second.y), Size.x, Size.y };
+
+	//Enable clipping.
+	RECT Area = { clip_info.Clip.x, clip_info.Clip.y, clip_info.Clip.x + clip_info.Clip.w, clip_info.Clip.y + clip_info.Clip.h };
 	EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
-	EGui.Device->SetScissorRect(&clip_info.Clip);
+	EGui.Device->SetScissorRect(&Area);
 }
 
 const void ERenderer::PopClip() {
-	clip_info.PushingClip = clip_info.OldPushingClip;
-	clip_info.Clip = clip_info.OldClip;
-	EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+	if (!clip_info.OldClips.empty()) {
+		clip_info.PushingClip = clip_info.OldClips.top().first;
+		clip_info.Clip = clip_info.OldClips.top().second;
+		clip_info.OldClips.pop();
+	}
+	else
+		clip_info.clear();
+
+	if (clip_info.PushingClip) {
+		RECT Area = { clip_info.Clip.x, clip_info.Clip.y, clip_info.Clip.x + clip_info.Clip.w, clip_info.Clip.y + clip_info.Clip.h };
+		EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+		EGui.Device->SetScissorRect(&Area);
+	}
+	else
+		EGui.Device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 const void ERenderer::PushAlpha(int alpha) {

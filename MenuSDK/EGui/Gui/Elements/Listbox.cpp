@@ -19,7 +19,7 @@ bool EGuiMain::ListBox(const char* title, int* selected, std::vector<std::string
 	Vec2 Pos = NextDrawPos + Vec2(12 + EGuiStyle.Padding, 0);
 	Vec2 Size = { GetChildSize().x - ((12 + EGuiStyle.Padding) * 2 + EGuiStyle.Padding), 18 };
 	
-	bool should_render = Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h));
+	bool should_render = Input.IsRectInRect(NextDrawPos, Size + Vec2(0, Size.y * options.size()), Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h));
 
 	Vec2 OriginalPos = GetNextDrawPos();
 	SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });

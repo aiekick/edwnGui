@@ -1,11 +1,16 @@
 #pragma once
+#include <stack>
 
 struct Clip_info {
-    bool OldPushingClip, PushingClip;
-    RECT Clip, OldClip;
+    bool PushingClip;
+    Rect Clip;
+    std::stack<std::pair<bool, Rect>> OldClips;
 
     void clear() {
-        OldPushingClip, PushingClip = NULL;
-        Clip, OldClip = {};
+        PushingClip = false;
+        Clip = {};
+        while (!OldClips.empty()) {
+            OldClips.pop();
+        }
     }
 };
