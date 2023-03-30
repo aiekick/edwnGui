@@ -20,13 +20,13 @@ const void ERenderer::Release() {
 }
 
 const Font ERenderer::AddFont(std::string name, int weight, int size, bool anti_alias, bool dropshadow, bool outline) {
-	Font font;
-	{
+	Font font; {
 		D3DXCreateFontA(EGui.Device, size, 0, weight, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, DEFAULT_PITCH, name.c_str(), &font.font);
 		font.anti_alias = anti_alias;
 		font.drop_shadow = dropshadow;
 		font.outline = outline;
 	}
+
 	return font;
 }
 

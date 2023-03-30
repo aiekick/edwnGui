@@ -74,6 +74,7 @@ struct ERenderer {
     const void Rectangle(const Vec2 Pos, const Vec2 Size, const Color clr, float rounding_radius = 0.f, const RoundingFlags flags = RoundingFlags::CORNER_ALL);
     const void FilledRectangle(const Vec2 Pos, const Vec2 Size, const Color clr, float rounding_radius = 0.f, const RoundingFlags flags = RoundingFlags::CORNER_ALL);
     const void BorderedRectangle(const Vec2 Pos, const Vec2 Size, const Color clr, const Color BorderColor, float rounding = 0.f, const RoundingFlags flags = RoundingFlags::CORNER_ALL);
+
     const void Gradient(const Vec2 Pos, const Vec2 Size, const Color LColor, const Color RColor, bool Vertical = false);
     const void Gradient4(const Vec2 Pos, const Vec2 Size, const Color TopLColor, const Color TopRColor, const Color BomLColor, const Color BomRColor);
 
