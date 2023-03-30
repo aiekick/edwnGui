@@ -1,7 +1,5 @@
 
-[![Discord](https://pepy.tech/badge/reactionmenu)](https://discord.gg/cUpvKPATkk) 
-[![Downloads](https://pepy.tech/badge/reactionmenu/month)](https://pepy.tech/project/reactionmenu)
-[![Downloads](https://pepy.tech/badge/reactionmenu/week)](https://pepy.tech/project/reactionmenu)
+![discord](https://discord.gg/cUpvKPATkk)
 
 EGui is a Direct3D9 Graphical User Interface made for easy gui designment. (x64/x86)
 ![alt text](https://cdn.discordapp.com/attachments/979215332432576532/1084328197556015254/image.png)
