@@ -1,67 +1,31 @@
 
-![discord](https://discord.gg/cUpvKPATkk)
+Discord: https://discord.gg/cUpvKPATkk
 
-EGui is a Direct3D9 Graphical User Interface made for easy gui designment. (x64/x86)
+edwnGui is a DirectX9 Graphical User Interface made by https://github.com/EdwinS7
 ![alt text](https://cdn.discordapp.com/attachments/979215332432576532/1084328197556015254/image.png)
 
 ## How easy exactly is it to use?
 ```cpp
-#include "EGui.hpp"
+#include "EGui/EGui.hpp"
 
 int main() {
-    wnd.CreateGraphicsWindow("EGui - " + EGui.GetVersion());
-    EGui.Begin();
+    wnd.CreateGraphicsWindow("EGui - " + EGui.GetVersion(), { 1280, 800 });
 
-    MSG msg;
-    std::memset(&msg, 0, sizeof(MSG));
-    while (msg.message != WM_QUIT) {
-        if (PeekMessage(&msg, nullptr, 0u, 0u, PM_REMOVE)) {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-            continue;
-        }
+    EGui.Begin();
+    while (TRUE){
+        if (!wnd.DispatchMessages())
+            break;
 
         EGui.PreRender();
-        
-        //Render data here, run our demo window.
-        EGui.DemoWindow();
-        
+        {
+            EGui.DemoWindow();
+        }
         EGui.Render();
+    }
+    EGui.End();
 
-    } EGui.End();
-
-    return 0;
+    return EXIT_SUCCESS;
 }
 ```
-The code provided above creates a window and sets up a directx9 device, then it begins setting up edwnGui to work with this enviornment. It calls PreRender, PreRender is where it clears our scene and prepares for next render. DemoWindow is our testing window. Render is the present and endscene, this renders everything we gave the renderer earlie 
 
-## How do I use this in a dynamic link library?
-First, your gonna need to call
-```cpp
-SetWindowHandle(HWND) -> located in EGui struct. Example: EGui.SetWindowHandle(HWND);
-```
-
-Second, your gonna need to call
-```cpp
-SetDevice(Device) -> located in EGui struct. Example: EGui.SetDevice(pDevice);
-```
-
-Third, your gonna need to call (this will fix colors looking off from what you want)
-```cpp
-SetupRenderStates(Device) -> located in Graphics struct. Example: Graphics.SetupRenderStates(pDevice);
-```
-
-Fourth, your gonna need to call
-```cpp
-Update() -> located in EGui struct. Example: EGui.Update();
-```
-
-Fifth, your gonna need to call (once)
-```cpp
-CreateObjects() -> located in renderer struct. Example: renderer.CreateObjects();
-```
-
-Finally, you can call, optional.
-```cpp
-DemoWindow() -> located in EGui struct. Example: EGui.DemoWindow();
-```
+The coded provided to you above creates a Window, This window is our DirectX9 Test Enviornment. What do we use this for? We can use this to build us a menu or virtually anything you want. **There is no sample yet on how to implement it into a dynamic link library!** Your welcome to try yourself as of right now. you will need to call EGui.SetDevice(hDevice), you will also need to call Graphics.SetupRenderStates(hDevice). Now you should have a working internal version of edwnGui. Keep in mind you will have to also setup wndproc. head over here for more context, https://github.com/EdwinS7/edwnGui/blob/main/MenuSDK/EGui/Backend/Win32/Wnd.cpp#L4
