@@ -179,7 +179,7 @@
     <ClCompile Include="EGui\Gui\Elements\Button.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Colorpicker.cpp" />
     <ClCompile Include="EGui\Gui\Elements\ComboBox.cpp" />
-    <ClCompile Include="EGui\Gui\Elements\Listbox.cpp" />
+    <ClCompile Include="EGui\Gui\Elements\ListBox.cpp" />
     <ClCompile Include="EGui\Gui\Elements\MultiComboBox.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Popup.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Slider.cpp" />

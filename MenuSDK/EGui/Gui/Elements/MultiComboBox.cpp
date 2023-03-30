@@ -68,10 +68,21 @@ bool EGuiMain::MultiCombobox(const char* title, std::vector<bool>& selected, std
     }
 
     //Render element
-    if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h))) {
+    if (should_render) {
         renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
         renderer.Rectangle(NextDrawPos, Size, multicombo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (multicombo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
-        renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
+       
+        selected.resize(options.size());
+
+        std::string temp = "";
+        for (int i = 0; i < options.size(); i++) {
+            if (selected[i])
+                temp.append(i == 0 ? options[i] : ", " + options[i]);
+        }
+
+        renderer.PushClip(NextDrawPos, Size);
+        renderer.Text(Fonts.Primary, (std::string(title) + " -> {" + temp + "}").c_str(), NextDrawPos + Vec2(6, 3), EGuiColors.TextColor, LEFT);
+        renderer.PopClip();
     }
 
     SetNextDrawPos(OriginalPos);
@@ -92,11 +103,17 @@ void EGuiMain::RenderMultiCombos() {
         renderer.FilledRectangle(pos, size + Vec2(0, size.y * (options.size() - 1)), EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, CORNER_BOTTOM);
         renderer.Rectangle(pos, size + Vec2(0, size.y * (options.size() - 1)), EGuiColors.MenuTheme, EGuiStyle.ElementRounding, CORNER_BOTTOM);
 
-        for (int j = 0; j < options.size(); j++)
-            renderer.Text(Fonts.Primary, options[j].c_str(), pos + Vec2(size.x / 2, 2 + (size.y * (j))), selected[j] ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
+        for (int j = 0; j < options.size(); j++) {
+            renderer.Text(Fonts.Primary, options[j].c_str(), pos + Vec2(6, 3 + (size.y * (j))), selected[j] ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), LEFT);
+            renderer.PopAlpha();
+
+            if (selected[j]) {
+                renderer.FilledRectangle(pos + Vec2(1, size.y * (j)), { 2, size.y }, EGuiColors.MenuTheme);
+                renderer.Gradient(pos + Vec2(2, size.y * (j)), { size.x - 3, size.y }, EGuiColors.MenuTheme.OverrideAlpha(75), EGuiColors.MenuTheme.OverrideAlpha(0));
+            }
+        }
 
         renderer.PopClip();
-        renderer.PopAlpha();
     }
 
     //clear.

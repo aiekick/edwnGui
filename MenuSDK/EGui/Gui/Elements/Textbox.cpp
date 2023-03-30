@@ -108,11 +108,11 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
             renderer.Line(NextDrawPos + Vec2(4 + textbox_info[GetItemIdentifier()].bar_x, 4), NextDrawPos + Vec2(4 + textbox_info[GetItemIdentifier()].bar_x, 4 + TextSize.y), EGuiColors.TextColor);
     
         renderer.PushClip(NextDrawPos + Vec2(5, 4), Vec2(textbox_info[GetItemIdentifier()].bar_x, TextSize.y));
-        renderer.Text(Fonts.Primary, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
+        renderer.Text(Fonts.Primary, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(6, 3), EGuiColors.TextColor, LEFT);
         renderer.PopClip();
     }
     else if (Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h)))
-        renderer.Text(Fonts.Primary, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(4, 4), EGuiColors.TextColor, LEFT);
+        renderer.Text(Fonts.Primary, (str.empty() && !textbox_info[GetItemIdentifier()].typing) ? title : temp.c_str(), NextDrawPos + Vec2(6, 3), EGuiColors.TextColor, LEFT);
 
     SetNextDrawPos(OriginalPos);
     SetNextDrawPosEx({ 0, 18 + EGuiStyle.Padding });

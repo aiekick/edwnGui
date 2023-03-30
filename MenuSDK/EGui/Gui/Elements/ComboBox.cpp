@@ -73,7 +73,7 @@ bool EGuiMain::Combobox(const char* title, int* selected, std::vector<std::strin
     if (should_render) {
         renderer.FilledRectangle(NextDrawPos, Size, EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
         renderer.Rectangle(NextDrawPos, Size, combo_info[GetItemIdentifier()].open ? EGuiColors.MenuTheme : EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, (combo_info[GetItemIdentifier()].open ? CORNER_TOP : CORNER_ALL));
-        renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
+        renderer.Text(Fonts.Primary, (std::string(title) + " -> " + options[*selected]).c_str(), NextDrawPos + Vec2(6, 3), EGuiColors.TextColor, LEFT);
     }
 
     SetNextDrawPos(OriginalPos);
@@ -94,11 +94,17 @@ void EGuiMain::RenderCombos() {
         renderer.FilledRectangle(pos, size + Vec2(0, size.y * (options.size() - 1)), EGuiColors.ElementBackColor, EGuiStyle.ElementRounding, CORNER_BOTTOM);
         renderer.Rectangle(pos, size + Vec2(0, size.y * (options.size() - 1)), EGuiColors.MenuTheme, EGuiStyle.ElementRounding, CORNER_BOTTOM);
         
-        for (int j = 0; j < options.size(); j++)
-            renderer.Text(Fonts.Primary, options[j].c_str(), pos + Vec2(size.x / 2, 2 + (size.y * (j))), selected == j ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
+        for (int j = 0; j < options.size(); j++) {
+            renderer.Text(Fonts.Primary, options[j].c_str(), pos + Vec2(6, 3 + (size.y * (j))), selected == j ? EGuiColors.MenuTheme : EGuiColors.TextColor, LEFT);
+            renderer.PopAlpha();
+
+            if (selected == j) {
+                renderer.FilledRectangle(pos + Vec2(1, size.y * (j)), { 2, size.y }, EGuiColors.MenuTheme);
+                renderer.Gradient(pos + Vec2(2, size.y * (j)), { size.x - 3, size.y }, EGuiColors.MenuTheme.OverrideAlpha(75), EGuiColors.MenuTheme.OverrideAlpha(0));
+            }
+        }
 
         renderer.PopClip();
-        renderer.PopAlpha();
     }
 
     //clear.

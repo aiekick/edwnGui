@@ -11,7 +11,7 @@
     <ClCompile Include="EGui\Backend\Render\Renderer.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Slider.cpp" />
     <ClCompile Include="EGui\Gui\Elements\MultiComboBox.cpp" />
-    <ClCompile Include="EGui\Gui\Elements\Listbox.cpp" />
+    <ClCompile Include="EGui\Gui\Elements\ListBox.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Button.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Colorpicker.cpp" />
     <ClCompile Include="EGui\Gui\Elements\Popup.cpp" />

@@ -1,49 +1,53 @@
 #include "../../EGui.hpp"
 
-bool EGuiMain::Listbox(const char* title, int* selected, const char* items[]) {
-	// Keep track of whether the selected value has changed.
-    bool value_changed = false;
+struct ListBoxData {
+	std::string search;
+	int selected;
 
-    // Calculate size of listbox button.
-    auto Size = Vec2({ GetChildSize().x - ((12 + EGuiStyle.Padding) * 2 + EGuiStyle.Padding), 18 });
+	struct AlphaSettings {
+		float alpha;
+	};
 
-    // Calculate unique ID for listbox menu.
-    int id = 1 + sizeof(title) + sizeof(items);
+	std::map<int, AlphaSettings> alpha_settings;
+};
 
-    auto OriginalPos = GetNextDrawPos();
-    SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
+std::map<int, ListBoxData> list_box_data;
 
-    // Draw listbox.
-    renderer.Sprite(Textures.BackgroundTexture, NextDrawPos, Size);
-    renderer.Rectangle(NextDrawPos, Size, EGuiColors.ElementBorderColor);
-    renderer.Text(Fonts.Primary, title, NextDrawPos + Vec2(Size.x / 2, 2), EGuiColors.TextColor, CENTER);
+bool EGuiMain::ListBox(const char* title, int* selected, std::vector<std::string> options) {
+	SetItemIdentifier(GetItemIdentifier() + 1);
 
-	// Calculate size of menu and draw menu background.
-    renderer.FilledRectangle(NextDrawPos + Vec2(0, Size.y), Size + Vec2(0, Size.y * (sizeof(items) - 3)), EGuiColors.ElementBackColor);
+	Vec2 Pos = NextDrawPos + Vec2(12 + EGuiStyle.Padding, 0);
+	Vec2 Size = { GetChildSize().x - ((12 + EGuiStyle.Padding) * 2 + EGuiStyle.Padding), 18 };
+	
+	bool should_render = Input.IsRectInRect(NextDrawPos, Size, Vec2(GetChildArea().x, GetChildArea().y), Vec2(GetChildArea().w, GetChildArea().h));
 
-    if (Input.IsMouseHoveringRect(NextDrawPos, Size + Vec2(0, Size.y * (sizeof(items) - 2))))
-        renderer.Rectangle(NextDrawPos, Size + Vec2(0, Size.y * (sizeof(items) - 2)), EGuiColors.MenuTheme);
-    else
-        renderer.Rectangle(NextDrawPos, Size + Vec2(0, Size.y * (sizeof(items) - 2)), EGuiColors.ElementBorderColor);
+	Vec2 OriginalPos = GetNextDrawPos();
+	SetNextDrawPosEx({ 12 + EGuiStyle.Padding, 0 });
 
-    // Iterate over menu items.
-    for (size_t i = 0; i < sizeof(items) - 2; ++i) {
-        // Update selected value when menu item is pressed.
-        if (Input.ButtonBehaviour(NextDrawPos + Vec2(0, Size.y * (i + 1)), Size, PRESS)) {
-            *selected = i;
-            value_changed = true;
-        }
+	if (should_render) {
+		//Handle input
+		for (int i = 0; i < options.size(); i++) {
+			if (Input.ButtonBehaviour(Pos + Vec2(0, Size.y * (i + 1)), Size, PRESS))
+				*selected = i;
+		}
 
-        // Draw menu item.
-        renderer.Text(Fonts.Primary, items[i], NextDrawPos + Vec2(Size.x / 2, 2 + Size.y + (Size.y * i)), *selected == i ? EGuiColors.MenuTheme : Color(255, 255, 255, 255), CENTER);
-    }
+		//Render element
+		renderer.BorderedRectangle(Pos, Size, EGuiColors.ElementBackColor, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, CORNER_TOP);
+		renderer.Text(Fonts.Primary, title, Pos + Vec2(6, 3), EGuiColors.TextColor, LEFT);
 
-    // Restore original draw position.
-    SetNextDrawPos(OriginalPos);
+		renderer.BorderedRectangle(Pos + Vec2(0, Size.y), { Size.x, Size.y * options.size() }, EGuiColors.ElementBackColor, EGuiColors.ElementBorderColor, EGuiStyle.ElementRounding, CORNER_BOTTOM);
+		for (int i = 0; i < options.size(); i++) {
+			renderer.Text(Fonts.Primary, options[i].c_str(), Pos + Vec2(6, 3 + (Size.y * (i + 1))), *selected == i ? EGuiColors.MenuTheme : EGuiColors.TextColor, LEFT);
 
-    // Set next draw position below list menu.
-    SetNextDrawPosEx({ 0, 18 + EGuiStyle.Padding + (Size.y * (sizeof(items) - 2)) });
+			if (*selected == i) {
+				renderer.FilledRectangle(Pos + Vec2(1, Size.y * (i + 1)), { 2, Size.y }, EGuiColors.MenuTheme);
+				renderer.Gradient(Pos + Vec2(2, Size.y * (i + 1)), { Size.x - 3, Size.y }, EGuiColors.MenuTheme.OverrideAlpha(75), EGuiColors.MenuTheme.OverrideAlpha(0));
+			}
+		}
+	}
 
-    // Return whether the selected value has changed.
-    return value_changed;
+	SetNextDrawPos(OriginalPos);
+	SetNextDrawPosEx({0, (Size.y * (options.size() + 1)) + EGuiStyle.Padding});
+
+	return true;
 }

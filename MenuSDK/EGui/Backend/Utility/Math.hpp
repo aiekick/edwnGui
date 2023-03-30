@@ -15,10 +15,11 @@ struct EMath {
 		return x > min ? x : min;
 	}
 
-	const float Max(const float x, const float max) {
+	template<class T>
+	constexpr const T& Max(const T& x, const T& max) {
 		return x < max ? x : max;
 	}
-
+	
 	template<class T>
 	constexpr const T& Map(const T& x, const T& in_min, const T& in_max, const T& out_min, const T& out_max) {
 		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -29,13 +30,11 @@ struct EMath {
 		return (x / max) * 100;
 	}
 
-	template<class T>
-	constexpr const T& RandomInt(const T& min, const T& max) {
+	int RandomInt(int min, int max) {
 		return rand() % max + min;
 	}
 
-	template<class T>
-	constexpr const T& RandomFloat(const T& min, const T& max) {
+	float RandomFloat(float min, float max) {
 		float random = ((float)rand()) / (float)RAND_MAX;
 		float diff = max - min;
 		float r = random * diff;
