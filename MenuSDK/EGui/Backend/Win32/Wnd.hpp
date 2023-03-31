@@ -28,9 +28,6 @@ struct EWindow {
 	HWND hwnd;
 	vector<HWND> wnds;
 	WNDCLASSEX wc;
-
-	Vec2 Size = { 1280, 800 };
-	Vec2 Pos = { 100, 100 };
 };
 
 extern EWindow wnd;

@@ -21,6 +21,10 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
+// DirectX library's
+#pragma comment (lib, "d3d9.lib")
+#pragma comment (lib, "d3dx9.lib")
+
 // DirectInput include
 #include <dInput.h>
 
@@ -41,10 +45,6 @@ using namespace std;
 #include "Backend/Animation/Animation.hpp"
 #include "Backend/Graphics/DirectX.hpp"
 #include "Backend/Render/renderer.hpp"
-
-// Pragma comments
-#pragma comment (lib, "d3d9.lib")
-#pragma comment (lib, "d3dx9.lib")
 
 #define PI 3.14159265359
 
@@ -200,6 +200,9 @@ struct EGuiMain {
 	bool ColorPicker(const char* title, Color* selected, bool alpha_bar = true);
 	bool Popup(const char* text, Vec2 position, Color clr);
 	bool Label(const char* str, Color custom_color = {255, 255, 255, 255});
+
+	void Spacing(float space = 10.f) { SetNextDrawPosEx(Vec2(0, space)); }
+	void SpacingEx(float space = 10.f) { SetNextDrawPosEx(Vec2(space, space)); }
 
 	void RenderColorPickers();
 	void RenderKeybinds();

@@ -88,12 +88,12 @@ Vec2 EWindow::GetWindowSize() {
 
 bool EWindow::CreateGuiWindow(std::string title, Vec2 wPos, Vec2 wSize)
 {
-	if (wPos == Vec2(0, 0)) wPos = Pos;
-	if (wSize == Vec2(0, 0)) wSize = Size;
+	if (wPos == Vec2(0, 0)) wPos = {100, 100};
+	if (wSize == Vec2(0, 0)) wSize = {1820, 720};
 
 	wc = { sizeof(wc), CS_CLASSDC, edwnGui_ImplWin32_WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, title.c_str(), NULL };
 	RegisterClassEx(&wc);
-	EGui.hwnd = CreateWindowA(wc.lpszClassName, title.c_str(), WS_OVERLAPPEDWINDOW, Pos.x, Pos.y, Size.x, Size.y, NULL, NULL, wc.hInstance, NULL);
+	EGui.hwnd = CreateWindowA(wc.lpszClassName, title.c_str(), WS_OVERLAPPEDWINDOW, wPos.x, wPos.y, wSize.x, wSize.y, NULL, NULL, wc.hInstance, NULL);
 
 	this->hwnd = EGui.hwnd;
 
