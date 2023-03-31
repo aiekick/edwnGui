@@ -10,6 +10,8 @@ struct Textbox_info {
     bool bar;
     float bar_time;
     float bar_x;
+
+    float hold_time;
 };
 
 static std::map<int, Textbox_info> textbox_info;
@@ -55,10 +57,17 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
             }
         }
 
-		if (Input.IsKeyPressed(VK_BACK) && !str.empty()) {
-            Input.IsKeyDown(VK_CONTROL) ? str.clear() : str.pop_back();
+		if (!str.empty() && Input.IsKeyPressed(VK_BACK) && !str.empty()) {
+            textbox_info[GetItemIdentifier()].hold_time = timing.getRealTime();
+            str.pop_back();
             value_changed = true;
 		}
+
+        if (!str.empty() && Input.IsKeyDown(VK_BACK) && timing.getRealTime() - textbox_info[GetItemIdentifier()].hold_time > 0.5f) {
+            textbox_info[GetItemIdentifier()].hold_time = timing.getRealTime() - 0.460f;
+            str.pop_back();
+            value_changed = true;
+        }
 
         if (Input.IsKeyPressed(VK_ESCAPE) || Input.IsKeyPressed(VK_RETURN))
             textbox_info[GetItemIdentifier()].typing = !textbox_info[GetItemIdentifier()].typing;
@@ -92,7 +101,7 @@ bool EGuiMain::Textbox(const char* title, std::string &str) {
         if (textbox_info[GetItemIdentifier()].bar_x == NULL)
             textbox_info[GetItemIdentifier()].bar_x = TextSize.x;
 
-        textbox_info[GetItemIdentifier()].bar_x = Animations.lerp(textbox_info[GetItemIdentifier()].bar_x, TextSize.x, delta_time * 8);
+        textbox_info[GetItemIdentifier()].bar_x = Math.Clamp(Animations.lerp(textbox_info[GetItemIdentifier()].bar_x, TextSize.x, delta_time * 8), 0.f, TextSize.x);
 
         if (timing.getRealTime() >= textbox_info[GetItemIdentifier()].bar_time + 0.5f) {
             textbox_info[GetItemIdentifier()].bar_time = timing.getRealTime();
