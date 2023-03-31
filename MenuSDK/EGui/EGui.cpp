@@ -122,8 +122,6 @@ void EGuiMain::DemoWindow() {
                 static std::vector<bool> multi_selected = {};
                 MultiCombobox("Example mutli combo", multi_selected, { "test 1", "test 2", "test 3", "test 4", "test 5", "test 6", "test 21", "test 2565" });
 
-                Spacing();
-
                 static int listbox_selected = 0;
                 ListBox("Example List Box", &listbox_selected, {"Item 1" , "Item 2", "Item 3"});
             }
