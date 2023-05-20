@@ -1,4 +1,6 @@
 
+#This project is decapricated.
+
 ![alt text](https://cdn.discordapp.com/attachments/979215332432576532/1091069585320579162/edwnGui.png)
 Discord: https://discord.gg/cUpvKPATkk
 
